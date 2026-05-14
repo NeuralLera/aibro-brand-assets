@@ -1,0 +1,257 @@
+{
+  "name": "Aibro Icon Pack",
+  "version": "1.1.0",
+  "brand": "СММ АЙБРО",
+  "style": {
+    "viewBox": "24x24",
+    "strokeWidth": 2,
+    "strokeLinecap": "round",
+    "strokeLinejoin": "round",
+    "fill": "none",
+    "color": "currentColor"
+  },
+  "accent": {
+    "neutral": "currentColor",
+    "accent": "#10b981"
+  },
+  "groups": [
+    {
+      "id": "help-nav",
+      "title": "Помощь и навигация",
+      "icons": [
+        {
+          "name": "icon-home",
+          "file": "icons/icon-home.svg",
+          "sprite": "sprite.svg#icon-home"
+        },
+        {
+          "name": "icon-info",
+          "file": "icons/icon-info.svg",
+          "sprite": "sprite.svg#icon-info"
+        },
+        {
+          "name": "icon-user",
+          "file": "icons/icon-user.svg",
+          "sprite": "sprite.svg#icon-user"
+        },
+        {
+          "name": "icon-rocket",
+          "file": "icons/icon-rocket.svg",
+          "sprite": "sprite.svg#icon-rocket"
+        },
+        {
+          "name": "icon-plug",
+          "file": "icons/icon-plug.svg",
+          "sprite": "sprite.svg#icon-plug"
+        },
+        {
+          "name": "icon-layers",
+          "file": "icons/icon-layers.svg",
+          "sprite": "sprite.svg#icon-layers"
+        },
+        {
+          "name": "icon-flask",
+          "file": "icons/icon-flask.svg",
+          "sprite": "sprite.svg#icon-flask"
+        },
+        {
+          "name": "icon-life-buoy",
+          "file": "icons/icon-life-buoy.svg",
+          "sprite": "sprite.svg#icon-life-buoy"
+        },
+        {
+          "name": "icon-briefcase",
+          "file": "icons/icon-briefcase.svg",
+          "sprite": "sprite.svg#icon-briefcase"
+        },
+        {
+          "name": "icon-megaphone",
+          "file": "icons/icon-megaphone.svg",
+          "sprite": "sprite.svg#icon-megaphone"
+        },
+        {
+          "name": "icon-bolt",
+          "file": "icons/icon-bolt.svg",
+          "sprite": "sprite.svg#icon-bolt"
+        },
+        {
+          "name": "icon-calendar-clock",
+          "file": "icons/icon-calendar-clock.svg",
+          "sprite": "sprite.svg#icon-calendar-clock"
+        },
+        {
+          "name": "icon-message-circle",
+          "file": "icons/icon-message-circle.svg",
+          "sprite": "sprite.svg#icon-message-circle"
+        },
+        {
+          "name": "icon-settings",
+          "file": "icons/icon-settings.svg",
+          "sprite": "sprite.svg#icon-settings"
+        },
+        {
+          "name": "icon-credit-card",
+          "file": "icons/icon-credit-card.svg",
+          "sprite": "sprite.svg#icon-credit-card"
+        },
+        {
+          "name": "icon-users",
+          "file": "icons/icon-users.svg",
+          "sprite": "sprite.svg#icon-users"
+        },
+        {
+          "name": "icon-file-text",
+          "file": "icons/icon-file-text.svg",
+          "sprite": "sprite.svg#icon-file-text"
+        },
+        {
+          "name": "icon-help-circle",
+          "file": "icons/icon-help-circle.svg",
+          "sprite": "sprite.svg#icon-help-circle"
+        }
+      ]
+    },
+    {
+      "id": "legal",
+      "title": "Документы и юридическое",
+      "icons": [
+        {
+          "name": "icon-file",
+          "file": "icons/icon-file.svg",
+          "sprite": "sprite.svg#icon-file"
+        },
+        {
+          "name": "icon-scroll",
+          "file": "icons/icon-scroll.svg",
+          "sprite": "sprite.svg#icon-scroll"
+        },
+        {
+          "name": "icon-lock",
+          "file": "icons/icon-lock.svg",
+          "sprite": "sprite.svg#icon-lock"
+        },
+        {
+          "name": "icon-id-card",
+          "file": "icons/icon-id-card.svg",
+          "sprite": "sprite.svg#icon-id-card"
+        },
+        {
+          "name": "icon-download",
+          "file": "icons/icon-download.svg",
+          "sprite": "sprite.svg#icon-download"
+        },
+        {
+          "name": "icon-clock",
+          "file": "icons/icon-clock.svg",
+          "sprite": "sprite.svg#icon-clock"
+        }
+      ]
+    },
+    {
+      "id": "partner",
+      "title": "Партнёрская программа",
+      "icons": [
+        {
+          "name": "icon-percent",
+          "file": "icons/icon-percent.svg",
+          "sprite": "sprite.svg#icon-percent"
+        },
+        {
+          "name": "icon-bar-chart",
+          "file": "icons/icon-bar-chart.svg",
+          "sprite": "sprite.svg#icon-bar-chart"
+        }
+      ]
+    },
+    {
+      "id": "utility",
+      "title": "Интерактивные утилиты",
+      "icons": [
+        {
+          "name": "icon-external-link",
+          "file": "icons/icon-external-link.svg",
+          "sprite": "sprite.svg#icon-external-link"
+        },
+        {
+          "name": "icon-mouse-pointer",
+          "file": "icons/icon-mouse-pointer.svg",
+          "sprite": "sprite.svg#icon-mouse-pointer"
+        },
+        {
+          "name": "icon-keyboard",
+          "file": "icons/icon-keyboard.svg",
+          "sprite": "sprite.svg#icon-keyboard"
+        },
+        {
+          "name": "icon-warning",
+          "file": "icons/icon-warning.svg",
+          "sprite": "sprite.svg#icon-warning"
+        }
+      ]
+    }
+  ],
+  "total": 30,
+  "brand_marks": {
+    "title": "MAX — бренд-знаки",
+    "note": "Canonical glyph не перерисовывался. Варианты различаются только обработкой рамки/цвета.",
+    "variants": [
+      {
+        "name": "max-glyph",
+        "file": "icons/max/max-glyph.svg",
+        "use": "inline в тексте, чипы, кастомные контейнеры",
+        "color": "currentColor",
+        "recommendedSize": "16–24"
+      },
+      {
+        "name": "max-outline",
+        "file": "icons/max/max-outline.svg",
+        "use": "списки, меню, иерархия — спокойный stroke-look",
+        "color": "currentColor",
+        "recommendedSize": "20–32"
+      },
+      {
+        "name": "max-mono-light",
+        "file": "icons/max/max-mono-light.svg",
+        "use": "плоский UI на светлой теме (без gradient/grain)",
+        "color": "static",
+        "recommendedSize": "24+"
+      },
+      {
+        "name": "max-mono-dark",
+        "file": "icons/max/max-mono-dark.svg",
+        "use": "плоский UI на тёмной теме",
+        "color": "static",
+        "recommendedSize": "24+"
+      },
+      {
+        "name": "max-brand-emerald",
+        "file": "icons/max/max-brand-emerald.svg",
+        "use": "CTA «Подключить MAX», feature-tiles",
+        "color": "static",
+        "recommendedSize": "32+"
+      },
+      {
+        "name": "max-circle",
+        "file": "icons/max/max-circle.svg",
+        "use": "аватары, статусы, бейджи аккаунта",
+        "color": "static",
+        "recommendedSize": "24+"
+      },
+      {
+        "name": "max-brand-light",
+        "file": "icons/max/max-brand-light.svg",
+        "use": "canonical app-icon (light) — премиум-блоки",
+        "color": "static",
+        "recommendedSize": "48+"
+      },
+      {
+        "name": "max-brand-dark",
+        "file": "icons/max/max-brand-dark.svg",
+        "use": "canonical app-icon (dark) — премиум-блоки",
+        "color": "static",
+        "recommendedSize": "48+"
+      }
+    ]
+  },
+  "total_with_brand": 38
+}
