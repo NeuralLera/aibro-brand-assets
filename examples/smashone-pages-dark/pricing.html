@@ -1,0 +1,1744 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pricing — SmashOne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:wght@100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/colors_and_type.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--surface-base); color: var(--text-primary); }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; padding: 0; }
+
+  .tabular { font-variant-numeric: tabular-nums lining-nums; font-feature-settings: "tnum" 1, "lnum" 1; }
+  .cs { font-size: 0.78em; }
+
+  /* ============ HEADER ============ */
+  .hdr {
+    position: fixed; inset: 0 0 auto 0; height: 64px; z-index: 100;
+    background: rgba(10,10,10,0.7);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .hdr-inner {
+    max-width: 1200px; margin: 0 auto; height: 100%;
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  }
+  .hdr-nav { display: flex; align-items: center; gap: 28px; }
+  .hdr-nav-link {
+    font-family: var(--font-body); font-size: 14px; font-weight: 500;
+    color: var(--text-secondary); transition: color var(--dur-hover) var(--ease-ui);
+    position: relative; padding: 4px 0;
+  }
+  .hdr-nav-link:hover { color: var(--text-primary); }
+  .hdr-nav-link.is-active { color: var(--text-strong); }
+  .hdr-nav-link.is-active::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -22px;
+    height: 2px; background: var(--brand-gold); border-radius: 2px;
+  }
+  .hdr-cta {
+    height: 36px; padding: 0 16px; border-radius: 10px;
+    background: var(--brand-gold); color: #111;
+    font-family: var(--font-body); font-size: 13.5px; font-weight: 580;
+    display: inline-flex; align-items: center;
+    transition: transform var(--dur-hover) var(--ease-ui), box-shadow var(--dur-hover) var(--ease-ui);
+  }
+  .hdr-cta:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .hdr-cta:active { transform: translateY(0) scale(0.98); }
+
+  /* ============ HERO ============ */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    padding: 144px 32px 96px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background: url('assets/empty-tile-dark.svg') repeat;
+    background-size: 512px 512px;
+    opacity: 0.05; mix-blend-mode: soft-light;
+    animation: tileDrift 60s linear infinite;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 800px 600px at center 55%, rgba(201,166,70,0.08), transparent 70%),
+                linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none;
+  }
+  @keyframes tileDrift { from { background-position: 0 0; } to { background-position: 8px 8px; } }
+
+  .hero-content {
+    position: relative; z-index: 1;
+    max-width: 720px; width: 100%; text-align: center;
+  }
+  .hero-eyebrow { color: var(--text-tertiary); }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 72px; line-height: 76px;
+    letter-spacing: -0.04em; font-weight: 650;
+    color: var(--text-strong); margin: 16px 0 20px;
+    text-wrap: balance;
+  }
+  .hero-sub {
+    font-size: 18px; line-height: 30px; color: var(--text-primary);
+    max-width: 540px; margin: 0 auto 48px; font-weight: 450;
+  }
+
+  /* ============ PRICING CARD ============ */
+  .pcard {
+    position: relative; z-index: 1;
+    max-width: 540px; width: 100%; margin: 0 auto;
+    background: var(--surface-raised);
+    border: 1px solid var(--brand-gold-glow);
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 60px rgba(201,166,70,0.06);
+    text-align: left;
+  }
+  .pcard-eyebrow { color: var(--brand-gold-text); }
+  .price-block {
+    display: flex; align-items: baseline; gap: 8px;
+    margin-top: 8px; margin-bottom: 12px;
+  }
+  .price-amount {
+    font-family: var(--font-display); font-size: 72px; line-height: 1;
+    font-weight: 650; letter-spacing: -0.04em;
+    color: var(--brand-gold-text);
+  }
+  .price-cadence { font-size: 16px; font-weight: 450; color: var(--text-secondary); }
+  .setup-line {
+    font-size: 14px; line-height: 22px; color: var(--text-secondary);
+    margin-bottom: 20px;
+  }
+  .setup-line strong { color: var(--text-primary); font-weight: 550; }
+  .setup-line a { color: var(--brand-gold-text); border-bottom: 1px solid rgba(212,180,110,0.4); }
+  .setup-line a:hover { border-bottom-color: var(--brand-gold-text); }
+
+  /* path toggle */
+  .ptoggle {
+    display: flex; gap: 4px; padding: 4px;
+    background: var(--surface-overlay);
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+  }
+  .ptoggle-btn {
+    flex: 1; padding: 10px 14px;
+    border-radius: 999px;
+    font-size: 13px; font-weight: 550;
+    color: var(--text-secondary);
+    transition: all var(--dur-card) var(--ease-ui);
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    text-align: center; line-height: 1.3;
+    white-space: nowrap;
+  }
+  .ptoggle-btn:hover { color: var(--text-primary); }
+  .ptoggle-btn.is-active {
+    background: var(--brand-gold); color: #111; font-weight: 600;
+    box-shadow: 0 4px 12px rgba(201,166,70,0.25);
+  }
+  .ptoggle-rec {
+    font-size: 10px; padding: 2px 6px; border-radius: 4px;
+    background: rgba(201,166,70,0.15); color: var(--brand-gold-text);
+    letter-spacing: 0.04em; font-weight: 600;
+  }
+  .ptoggle-btn.is-active .ptoggle-rec { background: rgba(17,17,17,0.15); color: #111; }
+  .ptoggle-tertiary {
+    font-size: 13px; line-height: 20px; color: var(--text-tertiary);
+    text-align: center; margin-top: 12px;
+  }
+  .ptoggle-tertiary a { color: var(--brand-gold-text); }
+  .ptoggle-tertiary a:hover { border-bottom: 1px solid var(--brand-gold-text); }
+  .dsa-note {
+    font-size: 13px; line-height: 20px; color: var(--text-tertiary);
+    text-align: center; max-width: 480px; margin: 16px auto 0;
+  }
+
+  .pcard hr {
+    border: none; border-top: 1px solid var(--border-subtle);
+    margin: 24px 0;
+  }
+  .feature-list { list-style: none; padding: 0; margin: 0 0 28px; }
+  .feature-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; line-height: 22px; color: var(--text-primary);
+    padding: 4px 0;
+  }
+  .feature-list li strong { font-weight: 550; color: var(--text-strong); }
+  .check {
+    flex-shrink: 0; width: 16px; height: 16px; margin-top: 3px;
+    color: var(--brand-gold);
+  }
+
+  .btn-primary {
+    width: 100%; height: 52px;
+    background: var(--brand-gold); color: #111;
+    border-radius: 12px;
+    font-family: var(--font-body); font-size: 15px; font-weight: 580;
+    transition: transform var(--dur-hover) var(--ease-ui), box-shadow var(--dur-hover) var(--ease-ui);
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,166,70,0.3); }
+  .btn-primary:active { transform: translateY(0) scale(0.98); }
+  .btn-primary.lg { height: 56px; font-size: 16px; }
+
+  .risk-microcopy {
+    font-size: 13px; line-height: 20px; color: var(--text-tertiary);
+    text-align: center; margin-top: 16px;
+  }
+
+  /* ============ SECTIONS COMMON ============ */
+  section { position: relative; }
+  .section-pad { padding: 96px 32px; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .container-narrow { max-width: 960px; margin: 0 auto; }
+  .container-wide { max-width: 1200px; margin: 0 auto; }
+  .section-head { text-align: center; margin-bottom: 56px; }
+  .section-eyebrow {
+    text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px;
+    font-weight: 600; color: var(--text-tertiary); margin-bottom: 12px;
+  }
+  .section-h2 {
+    font-family: var(--font-display);
+    font-size: 40px; line-height: 48px; letter-spacing: -0.024em;
+    font-weight: 620; color: var(--text-strong); margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  .section-sub {
+    font-size: 18px; line-height: 28px; color: var(--text-secondary);
+    max-width: 640px; margin: 0 auto; font-weight: 450;
+    text-wrap: pretty;
+  }
+
+  /* ============ METRICS BAND (1.5) ============ */
+  .metrics-band { padding: 64px 32px; }
+  .metrics-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    max-width: 1000px; margin: 0 auto;
+  }
+  .metric-tile {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px; padding: 28px 24px;
+    text-align: center;
+  }
+  .metric-num {
+    font-family: var(--font-display); font-size: 36px; line-height: 1;
+    font-weight: 650; color: var(--brand-gold-text);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .metric-lbl {
+    font-size: 13px; line-height: 20px; color: var(--text-secondary);
+  }
+  .metrics-foot {
+    text-align: center; font-size: 14px; color: var(--text-tertiary);
+    max-width: 540px; margin: 32px auto 0; line-height: 22px;
+  }
+
+  /* ============ TIMELINE (1.7) ============ */
+  .timeline-wrap { margin-top: 64px; position: relative; }
+  .timeline {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
+    position: relative;
+  }
+  .timeline::before {
+    content: ""; position: absolute; left: 8%; right: 8%; top: 38px;
+    height: 2px; background: linear-gradient(to right, rgba(201,166,70,0.15), rgba(201,166,70,0.6), rgba(201,166,70,0.15));
+    z-index: 0;
+  }
+  .tl-node {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    text-align: center;
+  }
+  .tl-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--surface-elevated);
+    border: 2px solid var(--brand-gold-glow);
+    margin-top: 30px;
+  }
+  .tl-node.highlight .tl-dot {
+    background: var(--brand-gold); border-color: var(--brand-gold);
+    box-shadow: 0 0 24px var(--brand-gold-glow);
+    width: 20px; height: 20px; margin-top: 28px;
+  }
+  .tl-card {
+    width: 100%; max-width: 220px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px; padding: 20px;
+    text-align: left;
+  }
+  .tl-node.highlight .tl-card {
+    background: rgba(201,166,70,0.06);
+    border-color: var(--brand-gold);
+  }
+  .tl-eyebrow { color: var(--text-tertiary); }
+  .tl-node.highlight .tl-eyebrow { color: var(--brand-gold-text); font-weight: 700; }
+  .tl-h {
+    font-family: var(--font-display); font-size: 17px; line-height: 24px;
+    font-weight: 620; color: var(--text-strong);
+    margin: 6px 0 10px; letter-spacing: -0.01em;
+  }
+  .tl-body { font-size: 13px; line-height: 20px; color: var(--text-secondary); }
+  .tl-body strong { color: var(--text-strong); font-weight: 580; }
+  .tl-disclosure {
+    font-size: 14px; line-height: 22px; color: var(--text-tertiary);
+    max-width: 720px; margin: 48px auto 0; text-align: center;
+  }
+  .tl-disclosure strong { color: var(--text-secondary); font-weight: 550; }
+
+  /* ============ CARDS GRID (Sec 2) ============ */
+  .three-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  .feat-card {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px; padding: 32px;
+    transition: transform var(--dur-card) var(--ease-ui),
+                border-color var(--dur-card) var(--ease-ui),
+                box-shadow var(--dur-card) var(--ease-ui);
+  }
+  .feat-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-emphasis);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 24px rgba(201,166,70,0.06);
+  }
+  .feat-card-eyebrow { color: var(--brand-gold-text); margin-bottom: 14px; }
+  .feat-card h3 {
+    font-family: var(--font-display); font-size: 22px; line-height: 28px;
+    font-weight: 600; letter-spacing: -0.012em;
+    color: var(--text-strong); margin: 0 0 20px;
+  }
+  .feat-list { list-style: none; padding: 0; margin: 0; }
+  .feat-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; line-height: 22px; color: var(--text-primary);
+    padding: 6px 0;
+  }
+
+  /* ============ PAIN/SOLUTION (Sec 3) ============ */
+  .two-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  }
+  .ps-card {
+    background: var(--surface-raised);
+    border-radius: 16px; padding: 32px;
+  }
+  .ps-card.pain { border: 1px solid rgba(239,68,68,0.18); }
+  .ps-card.solution { border: 1px solid var(--brand-gold-glow); }
+  .ps-card h3 {
+    font-family: var(--font-display); font-size: 22px; line-height: 28px;
+    font-weight: 600; color: var(--text-strong); margin: 0 0 6px;
+    letter-spacing: -0.012em;
+  }
+  .ps-sub {
+    font-style: italic; font-size: 14px; color: var(--text-tertiary);
+    margin-bottom: 20px;
+  }
+  .ps-list { list-style: none; padding: 0; margin: 0; }
+  .ps-list li {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 16px; line-height: 26px; color: var(--text-primary);
+    padding: 8px 0;
+  }
+  .ps-list li strong { font-weight: 600; color: var(--text-strong); }
+  .x-icon { color: var(--state-error); flex-shrink: 0; margin-top: 5px; }
+  .big-num {
+    font-family: var(--font-display);
+    font-size: 64px; line-height: 1; font-weight: 650;
+    color: var(--brand-gold-text); letter-spacing: -0.035em;
+    text-align: center; margin: 16px 0 20px;
+  }
+  .ps-solution-body { font-size: 16px; line-height: 26px; color: var(--text-primary); }
+  .ps-solution-body p { margin: 0 0 10px; }
+  .ps-solution-alt {
+    font-size: 14px; line-height: 22px; color: var(--text-tertiary);
+    font-style: italic; margin-top: 20px;
+    padding-top: 20px; border-top: 1px solid var(--border-subtle);
+  }
+
+  /* ============ COMPARISON TABLE (Sec 4) ============ */
+  .cmp-wrap {
+    max-width: 1100px; margin: 0 auto;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px; overflow: hidden;
+  }
+  .cmp-table { width: 100%; border-collapse: collapse; }
+  .cmp-table th, .cmp-table td {
+    padding: 18px 20px; text-align: left;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 15px; line-height: 22px;
+  }
+  .cmp-table th {
+    background: var(--surface-elevated);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-tertiary);
+    position: sticky; top: 64px; z-index: 1;
+  }
+  .cmp-table th:first-child, .cmp-table td:first-child {
+    color: var(--text-secondary); font-weight: 500;
+    width: 26%;
+  }
+  .cmp-table td.col-smash {
+    background: rgba(201,166,70,0.04);
+    color: var(--text-strong); font-weight: 550;
+    border-left: 2px solid var(--brand-gold);
+  }
+  .cmp-table th.col-smash {
+    background: rgba(201,166,70,0.08);
+    color: var(--brand-gold-text);
+    border-left: 2px solid var(--brand-gold);
+  }
+  .cmp-table td.col-other {
+    color: var(--text-secondary);
+  }
+  .cmp-table tr:last-child td { border-bottom: none; }
+  .cmp-table tr.savings td {
+    background: rgba(201,166,70,0.08);
+    border-top: 1px solid var(--brand-gold);
+    font-weight: 600; color: var(--text-strong);
+  }
+  .cmp-table tr.savings td.col-smash {
+    background: rgba(201,166,70,0.12);
+  }
+  .cmp-cap {
+    text-align: center; font-size: 13px; color: var(--text-tertiary);
+    max-width: 720px; margin: 24px auto 0; line-height: 20px;
+  }
+  .cmp-seal {
+    text-align: center; font-size: 18px; font-weight: 550;
+    color: var(--brand-gold-text); margin-top: 32px;
+  }
+
+  /* ============ BUNDLES (Sec 5) ============ */
+  .free-callout {
+    text-align: center; font-size: 14px; color: var(--text-secondary);
+    max-width: 720px; margin: 0 auto 32px;
+    padding: 12px 20px;
+    background: rgba(201,166,70,0.04);
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .free-callout-wrap { text-align: center; }
+  .bundle-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-top: 32px;
+  }
+  .bundle-card {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px; padding: 24px;
+    cursor: pointer;
+    transition: transform var(--dur-card) var(--ease-ui),
+                border-color var(--dur-card) var(--ease-ui),
+                background var(--dur-card) var(--ease-ui),
+                box-shadow var(--dur-card) var(--ease-ui);
+    text-align: left;
+    display: flex; flex-direction: column;
+  }
+  .bundle-card:hover {
+    transform: translateY(-2px); border-color: var(--brand-gold-glow);
+    box-shadow: 0 0 24px rgba(201,166,70,0.08);
+  }
+  .bundle-card.is-selected {
+    background: rgba(201,166,70,0.08);
+    border-color: var(--brand-gold);
+    box-shadow: 0 0 32px rgba(201,166,70,0.15);
+  }
+  .bundle-icon {
+    width: 32px; height: 32px; color: var(--brand-gold-text);
+    margin-bottom: 16px;
+  }
+  .bundle-name {
+    font-family: var(--font-display); font-size: 18px; line-height: 24px;
+    font-weight: 620; color: var(--text-strong); margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .bundle-hint {
+    font-size: 13px; line-height: 18px; color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+  .bundle-list { list-style: none; padding: 0; margin: 0 0 16px; flex: 1; }
+  .bundle-list li {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 13px; line-height: 20px; color: var(--text-primary);
+    padding: 3px 0;
+  }
+  .bundle-list svg { color: var(--brand-gold); flex-shrink: 0; margin-top: 4px; }
+  .bundle-price {
+    font-family: var(--font-display); font-size: 20px; font-weight: 650;
+    color: var(--brand-gold-text); letter-spacing: -0.015em;
+    margin-top: auto;
+  }
+
+  .build-own {
+    text-align: center; margin-top: 32px; margin-bottom: 48px;
+  }
+  .build-own a {
+    color: var(--brand-gold-text); font-size: 15px; font-weight: 550;
+  }
+  .build-own a:hover { border-bottom: 1px solid var(--brand-gold-text); }
+
+  .live-total {
+    background: var(--surface-elevated);
+    border: 1px solid var(--brand-gold-glow);
+    border-radius: 12px; padding: 20px 24px;
+    max-width: 1100px; margin: 0 auto 64px;
+    display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;
+  }
+  .live-total-label {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-tertiary); margin-bottom: 6px; font-weight: 600;
+  }
+  .live-total-rows { font-size: 14px; line-height: 22px; color: var(--text-secondary); }
+  .live-total-rows strong { color: var(--text-strong); font-weight: 600; }
+  .live-total-rows .lt-day { color: var(--text-tertiary); font-size: 13px; margin-top: 4px; display: block; }
+
+  /* per-tile addons grid */
+  .addon-section { margin-top: 32px; }
+  .addon-cat { margin-bottom: 32px; }
+  .addon-cat-head {
+    text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px;
+    font-weight: 600; color: var(--text-tertiary); margin-bottom: 16px;
+  }
+  .addon-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .addon-tile {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px; padding: 24px;
+    transition: transform var(--dur-card) var(--ease-ui),
+                border-color var(--dur-card) var(--ease-ui),
+                box-shadow var(--dur-card) var(--ease-ui);
+  }
+  .addon-tile:hover {
+    transform: translateY(-3px); border-color: var(--brand-gold-glow);
+    box-shadow: 0 0 24px rgba(201,166,70,0.06);
+  }
+  .addon-title {
+    font-family: var(--font-display); font-size: 17px; line-height: 24px;
+    font-weight: 600; color: var(--text-strong); margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .addon-price {
+    font-family: var(--font-display); font-size: 26px; line-height: 1;
+    font-weight: 650; color: var(--brand-gold-text);
+    letter-spacing: -0.02em; margin-bottom: 12px;
+  }
+  .addon-desc {
+    font-size: 13px; line-height: 20px; color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+  .addon-foot {
+    font-size: 12px; color: var(--text-tertiary); font-style: italic;
+  }
+
+  /* ============ CALCULATOR (Sec 6) ============ */
+  .calc-wrap {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px;
+  }
+  .calc-controls {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px; padding: 32px;
+  }
+  .calc-control { margin-bottom: 28px; }
+  .calc-control:last-child { margin-bottom: 0; }
+  .calc-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; gap: 16px;
+  }
+  .calc-label {
+    font-size: 15px; font-weight: 550; color: var(--text-primary);
+  }
+  .calc-val {
+    font-family: var(--font-display); font-size: 22px; font-weight: 650;
+    color: var(--brand-gold-text); letter-spacing: -0.015em;
+    white-space: nowrap;
+  }
+  .slider {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 6px; border-radius: 999px;
+    background: var(--surface-overlay); outline: none;
+    accent-color: var(--brand-gold);
+  }
+  .slider::-webkit-slider-runnable-track {
+    height: 6px; border-radius: 999px;
+    background: var(--surface-overlay);
+  }
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--brand-gold);
+    border: 2px solid #fff2; margin-top: -7px;
+    box-shadow: 0 4px 12px rgba(201,166,70,0.3);
+    cursor: pointer;
+  }
+  .slider::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--brand-gold); border: 2px solid #fff2;
+    box-shadow: 0 4px 12px rgba(201,166,70,0.3); cursor: pointer;
+  }
+
+  .addon-chips {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;
+  }
+  .addon-chip {
+    padding: 6px 12px; border-radius: 999px;
+    background: var(--surface-overlay); border: 1px solid var(--border-subtle);
+    font-size: 12px; color: var(--text-tertiary);
+    transition: all var(--dur-hover) var(--ease-ui);
+  }
+  .addon-chip.is-on {
+    background: rgba(201,166,70,0.12); border-color: var(--brand-gold-glow);
+    color: var(--brand-gold-text); font-weight: 550;
+  }
+  .billing-toggle {
+    display: flex; gap: 4px; padding: 4px;
+    background: var(--surface-overlay);
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+  }
+  .billing-toggle button {
+    flex: 1; padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px; font-weight: 550;
+    color: var(--text-secondary);
+    transition: all var(--dur-card) var(--ease-ui);
+  }
+  .billing-toggle button.is-active {
+    background: var(--brand-gold); color: #111; font-weight: 600;
+  }
+
+  .preset-row {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;
+  }
+  .preset-btn {
+    padding: 10px 16px; border-radius: 10px;
+    background: var(--surface-overlay); border: 1px solid var(--border-subtle);
+    font-size: 13px; font-weight: 550; color: var(--text-secondary);
+    transition: all var(--dur-hover) var(--ease-ui);
+  }
+  .preset-btn:hover { color: var(--text-primary); border-color: var(--border-emphasis); }
+  .preset-btn.is-active {
+    background: rgba(201,166,70,0.12); border-color: var(--brand-gold);
+    color: var(--brand-gold-text);
+  }
+
+  .calc-output {
+    background: var(--surface-elevated);
+    border: 1px solid var(--brand-gold-glow);
+    border-radius: 20px; padding: 32px;
+    display: flex; flex-direction: column;
+  }
+  .calc-output-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-tertiary); font-weight: 600;
+  }
+  .calc-output .ptoggle { margin: 14px 0; }
+  .calc-output .ptoggle-btn { font-size: 12px; padding: 8px 10px; }
+  .calc-bignum {
+    font-family: var(--font-display); font-size: 56px; line-height: 1;
+    font-weight: 650; color: var(--brand-gold-text);
+    letter-spacing: -0.035em; margin: 8px 0 16px;
+    transition: opacity var(--dur-card) var(--ease-ui);
+  }
+  .calc-breakdown {
+    list-style: none; padding: 0; margin: 0;
+  }
+  .calc-breakdown li {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; font-size: 14px; color: var(--text-secondary);
+    border-bottom: 1px dashed var(--border-subtle);
+  }
+  .calc-breakdown li:last-child { border-bottom: none; }
+  .calc-breakdown li.is-total {
+    color: var(--brand-gold-text); font-weight: 600; padding-top: 12px;
+    border-top: 1px solid var(--border-strong); border-bottom: none;
+    margin-top: 4px; font-size: 16px;
+  }
+  .calc-day15 {
+    font-size: 13px; line-height: 20px; color: var(--text-tertiary);
+    font-style: italic; margin-top: 12px;
+  }
+  .calc-cmp {
+    margin-top: 20px; padding-top: 20px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 15px; line-height: 24px; color: var(--text-primary);
+  }
+  .calc-cmp-save {
+    font-size: 18px; font-weight: 600; color: var(--brand-gold-text);
+    margin-top: 4px;
+  }
+  .calc-link {
+    font-size: 13px; color: var(--brand-gold-text); margin-top: 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .calc-link:hover { border-bottom: 1px solid var(--brand-gold-text); }
+
+  /* ============ RISK REVERSAL (Sec 7) ============ */
+  .risk-band {
+    position: relative; overflow: hidden;
+    padding: 96px 32px;
+  }
+  .risk-band::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 900px 500px at center, rgba(201,166,70,0.08), transparent 60%);
+    pointer-events: none;
+  }
+  .risk-content { position: relative; z-index: 1; }
+  .risk-seal {
+    display: inline-block; padding: 8px 16px;
+    background: var(--surface-elevated);
+    border: 1px solid var(--brand-gold);
+    border-radius: 999px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 600; color: var(--brand-gold-text);
+    margin: 0 auto 24px;
+  }
+  .risk-h2 {
+    font-family: var(--font-display);
+    font-size: 48px; line-height: 56px; letter-spacing: -0.03em;
+    font-weight: 640; color: var(--text-strong);
+    max-width: 760px; margin: 0 auto 20px;
+    text-wrap: balance;
+  }
+  .risk-sub {
+    font-size: 17px; line-height: 28px; color: var(--text-secondary);
+    max-width: 720px; margin: 0 auto 64px;
+    text-wrap: pretty;
+  }
+  .risk-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    max-width: 1080px; margin: 0 auto;
+  }
+  .risk-card {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px; padding: 32px;
+    text-align: left;
+  }
+  .risk-card-icon {
+    width: 32px; height: 32px; color: var(--brand-gold-text);
+    margin-bottom: 16px;
+  }
+  .risk-card h4 {
+    font-family: var(--font-display); font-size: 18px; line-height: 26px;
+    font-weight: 620; color: var(--text-strong); margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .risk-card-body { font-size: 14px; line-height: 22px; color: var(--text-primary); }
+  .risk-card-body ul { list-style: none; padding: 0; margin: 0; }
+  .risk-card-body li { padding: 4px 0; }
+  .risk-card-body .verbatim {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-secondary); font-style: italic;
+  }
+
+  /* ============ FAQ (Sec 8) ============ */
+  .faq-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+  .faq-item {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color var(--dur-hover) var(--ease-ui);
+  }
+  .faq-item.is-open { border-color: var(--brand-gold-glow); }
+  .faq-q {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 18px 24px; gap: 16px;
+    font-size: 16px; font-weight: 550; color: var(--text-primary);
+    text-align: left;
+  }
+  .faq-q svg {
+    flex-shrink: 0; color: var(--text-secondary);
+    transition: transform var(--dur-card) var(--ease-ui);
+  }
+  .faq-item.is-open .faq-q svg { transform: rotate(180deg); color: var(--brand-gold); }
+  .faq-a {
+    max-height: 0; overflow: hidden;
+    transition: max-height var(--dur-card) var(--ease-open);
+  }
+  .faq-item.is-open .faq-a { max-height: 600px; }
+  .faq-a-inner {
+    padding: 0 24px 24px;
+    font-size: 15px; line-height: 26px; color: var(--text-secondary);
+  }
+  .faq-a-inner strong { color: var(--text-primary); font-weight: 580; }
+  .faq-a-inner a { color: var(--brand-gold-text); border-bottom: 1px solid rgba(212,180,110,0.4); }
+
+  /* ============ FINAL CTA (Sec 9) ============ */
+  .final-cta {
+    position: relative; padding: 120px 32px; overflow: hidden;
+    text-align: center;
+  }
+  .final-cta::before {
+    content: ""; position: absolute; inset: 0;
+    background: url('assets/empty-tile-dark.svg') repeat;
+    background-size: 512px 512px;
+    opacity: 0.05; mix-blend-mode: soft-light;
+  }
+  .final-cta::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 700px 500px at center, rgba(201,166,70,0.1), transparent 65%);
+    pointer-events: none;
+  }
+  .final-cta-content { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+  .final-cta h2 {
+    font-family: var(--font-display);
+    font-size: 48px; line-height: 56px; letter-spacing: -0.03em;
+    font-weight: 640; color: var(--text-strong); margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  .final-cta-sub {
+    font-size: 18px; line-height: 28px; color: var(--text-secondary);
+    max-width: 540px; margin: 0 auto 32px;
+  }
+  .final-cta .btn-primary { width: auto; padding: 0 32px; }
+  .final-cta-mc {
+    font-size: 13px; line-height: 20px; color: var(--text-tertiary);
+    margin-top: 20px;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    padding: 64px 32px 32px;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--surface-base);
+  }
+  .footer-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr; gap: 32px;
+    padding-bottom: 48px;
+  }
+  .foot-tag {
+    font-size: 14px; line-height: 22px; color: var(--text-secondary);
+    margin-top: 12px; max-width: 240px;
+  }
+  .foot-jur {
+    font-size: 13px; color: var(--text-tertiary); margin-top: 16px;
+  }
+  .foot-col-h {
+    text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px;
+    font-weight: 600; color: var(--text-tertiary); margin-bottom: 16px;
+  }
+  .foot-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .foot-col a {
+    font-size: 14px; color: var(--text-secondary);
+    transition: color var(--dur-hover) var(--ease-ui);
+  }
+  .foot-col a:hover { color: var(--text-primary); }
+  .foot-col a.is-active { color: var(--brand-gold-text); font-weight: 550; }
+  .foot-bottom {
+    max-width: 1200px; margin: 0 auto;
+    padding-top: 24px; border-top: 1px solid var(--border-subtle);
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
+    font-size: 13px; color: var(--text-tertiary);
+  }
+  .foot-social { display: flex; gap: 12px; align-items: center; }
+  .foot-social img {
+    width: 24px; height: 24px; opacity: 0.7;
+    transition: opacity var(--dur-hover) var(--ease-ui);
+  }
+  .foot-social a:hover img { opacity: 1; }
+  .foot-lang {
+    justify-self: end;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px; padding: 6px 12px;
+    font-size: 12px; color: var(--text-secondary);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+
+  /* ============ STICKY MOBILE CTA ============ */
+  .mob-sticky {
+    display: none;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+    padding: 12px 16px; background: var(--surface-elevated);
+    border-top: 1px solid var(--border-subtle);
+    backdrop-filter: blur(12px);
+  }
+  .mob-sticky .btn-primary { height: 48px; }
+
+  /* ============ SCROLL REVEAL ============ */
+  .reveal {
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 360ms var(--ease-emphasis), transform 360ms var(--ease-emphasis);
+  }
+  .reveal.is-in { opacity: 1; transform: translateY(0); }
+
+  /* ============ FOCUS ============ */
+  :focus-visible {
+    outline: 2px solid var(--brand-gold);
+    outline-offset: 4px; border-radius: 4px;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1024px) {
+    .three-grid { grid-template-columns: repeat(2, 1fr); }
+    .bundle-grid { grid-template-columns: repeat(2, 1fr); }
+    .addon-row { grid-template-columns: repeat(2, 1fr); }
+    .risk-grid { grid-template-columns: repeat(2, 1fr); }
+    .calc-wrap { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: repeat(3, 1fr); }
+    .timeline { grid-template-columns: 1fr; gap: 24px; }
+    .timeline::before { display: none; }
+    .tl-node { flex-direction: row; align-items: flex-start; gap: 20px; padding-left: 8px;
+      border-left: 2px solid rgba(201,166,70,0.3); padding-left: 24px; position: relative; }
+    .tl-node .tl-dot { position: absolute; left: -9px; top: 6px; margin-top: 0; }
+    .tl-card { max-width: 100%; }
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .hdr-nav .hdr-nav-link:not(.is-active) { display: none; }
+    .hero { padding: 112px 16px 80px; }
+    .hero h1 { font-size: 44px; line-height: 50px; letter-spacing: -0.03em; }
+    .hero-sub { font-size: 16px; line-height: 26px; }
+    .pcard { padding: 28px 20px; border-radius: 20px; }
+    .price-amount { font-size: 56px; }
+    .ptoggle { flex-direction: column; }
+    .ptoggle-btn { width: 100%; }
+    .section-pad { padding: 64px 16px; }
+    .section-h2 { font-size: 30px; line-height: 36px; }
+    .three-grid { grid-template-columns: 1fr; }
+    .two-grid { grid-template-columns: 1fr; }
+    .bundle-grid { grid-template-columns: 1fr; }
+    .addon-row { grid-template-columns: 1fr; }
+    .risk-grid { grid-template-columns: 1fr; }
+    .risk-h2 { font-size: 32px; line-height: 38px; }
+    .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    .foot-bottom { grid-template-columns: 1fr; text-align: center; }
+    .foot-lang { justify-self: center; }
+    .final-cta h2 { font-size: 32px; line-height: 38px; }
+    .metrics-grid { grid-template-columns: 1fr; }
+    .cmp-table { display: none; }
+    .cmp-cards { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+    .mob-sticky { display: block; }
+    body { padding-bottom: 76px; }
+  }
+  .cmp-cards { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero::before { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <a href="#" class="wordmark" aria-label="SmashOne home">SmashOne</a>
+    <nav class="hdr-nav" aria-label="Primary">
+      <a class="hdr-nav-link is-active" href="#">Pricing</a>
+      <a class="hdr-nav-link" href="#">Automator program</a>
+      <a class="hdr-nav-link" href="#">Sign in</a>
+      <a class="hdr-cta" href="#">Start free trial</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" data-screen-label="01 Hero">
+  <div class="hero-content">
+    <div class="section-eyebrow hero-eyebrow">PRICING</div>
+    <h1>One simple price.<br/>Trio + AI included.</h1>
+    <p class="hero-sub">No tiers. No per-seat fees. No surprise upgrades.</p>
+
+    <div class="pcard" id="pricingCard">
+      <div class="section-eyebrow pcard-eyebrow" style="margin-bottom:8px">BASE — TRIO + AI ASSISTANT</div>
+      <div class="price-block tabular">
+        <span class="price-amount"><span class="cs">$</span>79</span>
+        <span class="price-cadence">/month</span>
+      </div>
+      <p class="setup-line" id="setupLine">
+        <strong>Self-signup (default): $0 setup.</strong> Optional automator-led setup: $199 one-time, charged Day 15 (Path 1/3/4). <a href="#paths">Learn the difference →</a>
+      </p>
+
+      <div class="ptoggle" role="radiogroup" aria-label="Setup path">
+        <button class="ptoggle-btn is-active" data-path="self" role="radio" aria-checked="true">
+          Self-signup — $79/mo only
+        </button>
+        <button class="ptoggle-btn" data-path="auto" role="radio" aria-checked="false">
+          With automator — $79/mo + $199 <span class="ptoggle-rec">★ Recommended</span>
+        </button>
+      </div>
+      <p class="ptoggle-tertiary">Want help setting this up? <a href="#">Request automator assistance →</a></p>
+      <p class="dsa-note">You will not be charged until Day 15. The $199 setup fee (if applicable) is charged together with your first subscription payment as a single combined transaction.</p>
+
+      <hr/>
+      <ul class="feature-list tabular">
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span><strong>3 platforms included</strong> — Facebook, Instagram, Telegram (auto-posting + AI DM replies)</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>5 auto-posts per day (≈150/month)</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>Unlimited quick posts</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>AI replies — 1,000 DMs per month</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>Smart auto-tagging in catalog</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>Product/service catalog — 1,000 items</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>Booking links + discount codes</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>Real-time engagement metrics</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>Per-platform performance analytics</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>Best-time-to-post recommendations</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>24/7 chat support</span></li>
+        <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg><span>Onboarding call included</span></li>
+      </ul>
+
+      <button class="btn-primary">Start my 14-day trial — $0 today</button>
+      <p class="risk-microcopy">Card linked Day 1 ($0 charged). Cancel anytime during 14-day trial — zero charges. 14-day money-back on subscription after Day 15. Setup fee non-refundable after Day 15 charge.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 1.5 METRICS BAND -->
+<section class="metrics-band" data-screen-label="02 Metrics">
+  <div class="container">
+    <div class="section-head reveal" style="margin-bottom: 40px;">
+      <div class="section-eyebrow">WHAT YOU GET, EXACTLY</div>
+    </div>
+    <div class="metrics-grid tabular">
+      <div class="metric-tile reveal"><div class="metric-num">5</div><div class="metric-lbl">Auto-posts per day, per platform</div></div>
+      <div class="metric-tile reveal"><div class="metric-num">1,000</div><div class="metric-lbl">AI replies per month</div></div>
+      <div class="metric-tile reveal"><div class="metric-num">1,000</div><div class="metric-lbl">Catalog items supported</div></div>
+      <div class="metric-tile reveal"><div class="metric-num">18</div><div class="metric-lbl">Platforms in roadmap (13 active + 2 coming Q3 2026 + 3 messaging)</div></div>
+      <div class="metric-tile reveal"><div class="metric-num">Day 15</div><div class="metric-lbl">Transparent first-charge timing (not Day 1)</div></div>
+      <div class="metric-tile reveal"><div class="metric-num">14-day</div><div class="metric-lbl">Money-back guarantee, no questions asked</div></div>
+    </div>
+    <p class="metrics-foot reveal">Pre-launch product. Built for SMB owners who want clarity, not buzzwords.</p>
+  </div>
+</section>
+
+<!-- 1.7 TIMELINE -->
+<section class="section-pad" data-screen-label="03 Timeline">
+  <div class="container-narrow">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">WHAT HAPPENS WHEN</div>
+      <h2 class="section-h2">Your 14-day trial, day by day.</h2>
+      <p class="section-sub">No surprises. No hidden charges. Here's the exact chronology.</p>
+    </div>
+    <div class="timeline-wrap reveal">
+      <ol class="timeline" style="list-style: none; padding: 0; margin: 0;">
+        <li class="tl-node">
+          <span class="tl-dot"></span>
+          <div class="tl-card">
+            <div class="section-eyebrow tl-eyebrow">DAY 1</div>
+            <div class="tl-h">Trial starts.</div>
+            <div class="tl-body">Card linked.<br/><strong>$0 charged.</strong><br/>Full access to all features.</div>
+          </div>
+        </li>
+        <li class="tl-node">
+          <span class="tl-dot"></span>
+          <div class="tl-card">
+            <div class="section-eyebrow tl-eyebrow">DAY 11</div>
+            <div class="tl-h">Reminder email.</div>
+            <div class="tl-body">Email reminder.<br/>3 days left to evaluate.<br/>Cancel anytime — zero charges.</div>
+          </div>
+        </li>
+        <li class="tl-node">
+          <span class="tl-dot"></span>
+          <div class="tl-card">
+            <div class="section-eyebrow tl-eyebrow">DAY 14</div>
+            <div class="tl-h">Trial ending banner.</div>
+            <div class="tl-body">Last day of free trial.<br/>Cancel by end of day → no charges.<br/>Continue → charge tomorrow.</div>
+          </div>
+        </li>
+        <li class="tl-node highlight">
+          <span class="tl-dot"></span>
+          <div class="tl-card">
+            <div class="section-eyebrow tl-eyebrow">DAY 15 — CHARGE</div>
+            <div class="tl-h">Single combined transaction.</div>
+            <div class="tl-body tabular">Self-signup: <strong>$79</strong> charged.<br/>With automator: <strong>$278</strong> ($79 sub + $199 setup).<br/>Add-ons (if selected) included.<br/>14-day money-back window opens.</div>
+          </div>
+        </li>
+        <li class="tl-node">
+          <span class="tl-dot"></span>
+          <div class="tl-card">
+            <div class="section-eyebrow tl-eyebrow">DAY 30+</div>
+            <div class="tl-h">Standard subscription.</div>
+            <div class="tl-body">$79 monthly recurring.<br/>Cancel anytime in 2 clicks.<br/>Pause up to 90 days, 2×/year.</div>
+          </div>
+        </li>
+      </ol>
+      <p class="tl-disclosure reveal">
+        <strong>DSA timing disclosure:</strong> You will not be charged any amount until Day 15. The $199 setup fee (if applicable to your chosen path) is charged together with your first subscription payment as a single combined transaction. The 14-day money-back guarantee covers the <strong>$79 subscription only</strong> — the $199 setup fee is non-refundable after the Day 15 charge because it pays for manual platform configuration work performed by our team. You may cancel during the 14-day free trial (Day 1-14) at any time with zero charges.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 — What's included -->
+<section class="section-pad" data-screen-label="04 Included">
+  <div class="container-wide">
+    <div class="section-head reveal">
+      <h2 class="section-h2">Everything in $79. No add-on traps.</h2>
+      <p class="section-sub">Three jobs, one subscription. Posting, replying, selling — handled.</p>
+    </div>
+    <div class="three-grid">
+      <div class="feat-card reveal">
+        <div class="section-eyebrow feat-card-eyebrow">POSTING & SCHEDULING</div>
+        <h3>Post anywhere, automatic.</h3>
+        <ul class="feat-list">
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>5 auto-posts per day (≈150/mo)</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Unlimited quick posts</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>3 platforms included (FB · IG · TG) — add 13 more from $9/mo</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Native formatting per platform</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Smart cross-posting calendar</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Bulk import from CSV</li>
+        </ul>
+      </div>
+      <div class="feat-card reveal">
+        <div class="section-eyebrow feat-card-eyebrow">AI REPLIES & CATALOG</div>
+        <h3>Replies while you sleep. Catalog that sells.</h3>
+        <ul class="feat-list">
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>1,000 AI DM replies per month</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Smart auto-tagging</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Custom tone of voice training</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>1,000-item product catalog</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Booking links built in</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Discount codes built in</li>
+        </ul>
+      </div>
+      <div class="feat-card reveal">
+        <div class="section-eyebrow feat-card-eyebrow">ANALYTICS & SUPPORT</div>
+        <h3>See what works. Get help when you need it.</h3>
+        <ul class="feat-list">
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Real-time engagement metrics</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Per-platform performance</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Best-time-to-post recommendations</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>24/7 chat support</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Onboarding call included</li>
+          <li><svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Priority email response</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 — Pain/Solution -->
+<section class="section-pad" data-screen-label="05 Math">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-h2">The math is brutal.</h2>
+      <p class="section-sub">Here's what owners spend before SmashOne.</p>
+    </div>
+    <div class="two-grid">
+      <div class="ps-card pain reveal">
+        <h3>What it costs without SmashOne</h3>
+        <p class="ps-sub">Pick one. Or pick all three.</p>
+        <ul class="ps-list">
+          <li><svg class="x-icon" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg><span><strong>$18,000–$60,000 a year</strong> for an SMM agency. Annual contract. Slow turnaround.</span></li>
+          <li><svg class="x-icon" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg><span><strong>$1,800 a month</strong> for a part-time VA. Sick days. Vacations. Turnover.</span></li>
+          <li><svg class="x-icon" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg><span><strong>20 hours a week</strong> of your own time. At $50/hr, that's $52,000 a year you're not billing.</span></li>
+        </ul>
+      </div>
+      <div class="ps-card solution reveal">
+        <h3>What it costs with SmashOne</h3>
+        <p class="ps-sub">All-in. Year one. Total.</p>
+        <div class="big-num tabular"><span class="cs">$</span>948</div>
+        <div class="ps-solution-body tabular">
+          <p><strong>$79 × 12 months</strong> subscription = $948</p>
+          <p><strong>Self-signup (Path 2a/2b default): $0 setup fee</strong> — configure trio yourself</p>
+          <p><strong>$948 total Year 1</strong> — less than $80/month. That's it.</p>
+        </div>
+        <p class="ps-solution-alt tabular">*Prefer automator-led setup? Path 1/3/4 = $948 + $199 setup fee (charged Day 15 with first subscription as single combined $278 transaction) = <strong>$1,147 Year 1</strong>. Our team configures everything once trial converts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4 — Comparison Table -->
+<section class="section-pad" data-screen-label="06 Compare">
+  <div class="container-wide">
+    <div class="section-head reveal">
+      <h2 class="section-h2">Year 1 cost reality check.</h2>
+      <p class="section-sub">Same outcomes. Vastly different prices. Math at a glance.</p>
+    </div>
+    <div class="cmp-wrap reveal">
+      <table class="cmp-table tabular">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="col-smash">SmashOne</th>
+            <th>SMM Agency</th>
+            <th>Hootsuite Pro</th>
+            <th>DIY (your time)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Monthly fee</td><td class="col-smash">$79</td><td class="col-other">$1,500–$5,000</td><td class="col-other">$249/user</td><td class="col-other">$0 cash, $50/hr time</td></tr>
+          <tr><td>Setup time</td><td class="col-smash">10 minutes</td><td class="col-other">2–4 weeks</td><td class="col-other">2–3 days</td><td class="col-other">Ongoing forever</td></tr>
+          <tr><td>Platforms supported</td><td class="col-smash">Trio + 13 add-ons</td><td class="col-other">4–6 typical</td><td class="col-other">6–8</td><td class="col-other">As many as you can manage</td></tr>
+          <tr><td>AI DM replies</td><td class="col-smash">1,000/mo built in</td><td class="col-other">Manual, 24–48 hr delay</td><td class="col-other">Not included</td><td class="col-other">You at 11 PM</td></tr>
+          <tr><td>Cancel terms</td><td class="col-smash">Anytime, 2 clicks</td><td class="col-other">Annual contract</td><td class="col-other">Annual contract</td><td class="col-other">N/A</td></tr>
+          <tr><td>Year 1 total (self-signup)</td><td class="col-smash">$948</td><td class="col-other">$18,000–$60,000</td><td class="col-other">$2,988</td><td class="col-other">$52,000</td></tr>
+          <tr><td>Year 1 total (automator-led)</td><td class="col-smash">$1,147 <span style="color:var(--text-tertiary);font-weight:450">(+$199 setup Day 15)</span></td><td class="col-other">—</td><td class="col-other">—</td><td class="col-other">—</td></tr>
+          <tr class="savings"><td>Year 1 savings vs SmashOne (self-signup)</td><td class="col-smash">—</td><td class="col-other">$17,052–$59,052</td><td class="col-other">$2,040</td><td class="col-other">$51,052</td></tr>
+        </tbody>
+      </table>
+      <div class="cmp-cards">
+        <!-- mobile card stack -->
+        <div class="bundle-card is-selected">
+          <div class="bundle-name">SmashOne</div>
+          <ul class="bundle-list tabular">
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Monthly: $79</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Setup: 10 minutes</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Platforms: Trio + 13 add-ons</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>AI replies: 1,000/mo</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Cancel: anytime</li>
+          </ul>
+          <div class="bundle-price">Year 1: $948</div>
+        </div>
+        <div class="bundle-card">
+          <div class="bundle-name">SMM Agency</div>
+          <div class="bundle-hint tabular">Monthly: $1,500–$5,000 · Setup: 2–4 weeks · 4–6 platforms · Manual replies · Annual contract</div>
+          <div class="bundle-price tabular">Year 1: $18,000–$60,000</div>
+        </div>
+        <div class="bundle-card">
+          <div class="bundle-name">Hootsuite Pro</div>
+          <div class="bundle-hint tabular">Monthly: $249/user · Setup: 2–3 days · 6–8 platforms · No AI replies · Annual contract</div>
+          <div class="bundle-price tabular">Year 1: $2,988</div>
+        </div>
+        <div class="bundle-card">
+          <div class="bundle-name">DIY (your time)</div>
+          <div class="bundle-hint tabular">$0 cash, $50/hr · Ongoing forever · You manage everything · You at 11 PM</div>
+          <div class="bundle-price tabular">Year 1: $52,000</div>
+        </div>
+      </div>
+    </div>
+    <p class="cmp-cap">DIY math: 20 hours per week × $50 per hour × 52 weeks. Hootsuite Pro: $249/mo per user list price 2026. SMM agency: typical mid-market retainer.</p>
+    <p class="cmp-seal">You don't need a $1,500-a-month agency. You need 10 minutes.</p>
+  </div>
+</section>
+
+<!-- SECTION 5 — Bundles + addons -->
+<section class="section-pad" data-screen-label="07 Add-ons">
+  <div class="container-wide">
+    <div class="section-head reveal">
+      <h2 class="section-h2">Need more? Add only what you use.</h2>
+      <p class="section-sub">Start with our trio. Add what your customers use. Modular only — no forced bundles.</p>
+    </div>
+    <div class="free-callout-wrap reveal">
+      <span class="free-callout">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--brand-gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>
+        Included: <strong style="color:var(--text-primary);font-weight:550">Facebook · Instagram · Telegram</strong> (free with $79 base)
+      </span>
+    </div>
+
+    <div class="bundle-grid" id="bundleGrid">
+      <button class="bundle-card" data-bundle="local">
+        <svg class="bundle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-5h16l1 5"/><path d="M5 9v11h14V9"/><path d="M9 14h6"/></svg>
+        <div class="bundle-name">Local business</div>
+        <div class="bundle-hint">Restaurants · cafés · breweries · taprooms</div>
+        <ul class="bundle-list">
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>WhatsApp Business setup ($19 setup)</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Bulk import 90-day backlog ($49 setup)</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Concierge onboarding ($19 setup)</li>
+        </ul>
+        <div class="bundle-price tabular">+$0/mo + $87 setup</div>
+      </button>
+      <button class="bundle-card" data-bundle="salon">
+        <svg class="bundle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3.5"/></svg>
+        <div class="bundle-name">Salon & beauty</div>
+        <div class="bundle-hint">Salons · spas · barbershops · nail studios</div>
+        <ul class="bundle-list">
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Pinterest Pro (+$9/mo)</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Custom AI voice training ($99 setup)</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Concierge onboarding ($19 setup)</li>
+        </ul>
+        <div class="bundle-price tabular">+$9/mo + $118 setup</div>
+      </button>
+      <button class="bundle-card" data-bundle="service">
+        <svg class="bundle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6.4 6.4l-5 5a1.5 1.5 0 0 0 2.1 2.1l5-5a4.5 4.5 0 0 0 6.4-6.4l-2.5 2.5-2-2 2.5-2.5z"/></svg>
+        <div class="bundle-name">Service pro</div>
+        <div class="bundle-hint">Auto · plumbing · cleaning · home services</div>
+        <ul class="bundle-list">
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>LinkedIn Premium API (+$19/mo)</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Bulk import 90-day backlog ($49 setup)</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Custom AI voice training ($99 setup)</li>
+        </ul>
+        <div class="bundle-price tabular">+$19/mo + $148 setup</div>
+      </button>
+      <button class="bundle-card" data-bundle="video">
+        <svg class="bundle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>
+        <div class="bundle-name">Video creator</div>
+        <div class="bundle-hint">Fitness · tutors · coaches · creators</div>
+        <ul class="bundle-list">
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>TikTok Business (+$29/mo)</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>AI image generation +500/mo (+$14/mo)</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 7 12 13 4"/></svg>Custom AI voice training ($99 setup)</li>
+        </ul>
+        <div class="bundle-price tabular">+$43/mo + $99 setup</div>
+      </button>
+    </div>
+
+    <div class="build-own"><a href="#addons">Build your own →</a></div>
+
+    <div class="live-total tabular reveal" id="liveTotal">
+      <div>
+        <div class="live-total-label">Your selected bundle: <span id="ltName" style="color:var(--text-strong);font-weight:600">Custom</span></div>
+        <div class="live-total-rows">
+          Monthly: <strong>$79</strong> (base) + <strong id="ltAddonMo">$0</strong> (add-ons) = <strong id="ltMonthly">$79/mo</strong><br/>
+          Self-signup Path 2a/2b (default): $0 setup + <strong id="ltAddonSetup">$0</strong> (per-platform setup) = <strong id="ltSelfSetup">$0</strong> charged Day 15 with first subscription<br/>
+          With automator Path 1/3/4 (optional): $199 setup + <strong id="ltAutoExtra">$0</strong> = <strong id="ltAutoTotal">$278</strong> charged Day 15 as single combined transaction
+          <span class="lt-day">Day 1: $0 charged. All charges occur Day 15.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="addon-section" id="addons">
+      <div class="addon-cat">
+        <div class="addon-cat-head">CONTENT ADD-ONS</div>
+        <div class="addon-row">
+          <div class="addon-tile reveal"><div class="addon-title">Extra posts +50/mo</div><div class="addon-price tabular"><span class="cs">$</span>9</div><div class="addon-desc">Push past the 5-per-day limit. Schedule denser content weeks.</div><div class="addon-foot">Add later in dashboard</div></div>
+          <div class="addon-tile reveal"><div class="addon-title">Extra posts +200/mo</div><div class="addon-price tabular"><span class="cs">$</span>19</div><div class="addon-desc">For owners running multiple brands or seasonal pushes.</div><div class="addon-foot">Add later in dashboard</div></div>
+          <div class="addon-tile reveal"><div class="addon-title">AI image generation +500/mo</div><div class="addon-price tabular"><span class="cs">$</span>14</div><div class="addon-desc">Auto-generate post images when you don't have your own photos.</div><div class="addon-foot">Add later in dashboard</div></div>
+        </div>
+      </div>
+      <div class="addon-cat">
+        <div class="addon-cat-head">PLATFORM ADD-ONS</div>
+        <div class="addon-row">
+          <div class="addon-tile reveal"><div class="addon-title">Pinterest Pro</div><div class="addon-price tabular"><span class="cs">$</span>9/mo</div><div class="addon-desc">Rich Pins, scheduling boards, board analytics. For visual-first niches.</div><div class="addon-foot">Add later in dashboard</div></div>
+          <div class="addon-tile reveal"><div class="addon-title">LinkedIn Premium API</div><div class="addon-price tabular"><span class="cs">$</span>19/mo</div><div class="addon-desc">Higher post limits + Sales Navigator integration for B2B service businesses.</div><div class="addon-foot">Add later in dashboard</div></div>
+          <div class="addon-tile reveal"><div class="addon-title">TikTok Business</div><div class="addon-price tabular"><span class="cs">$</span>29/mo</div><div class="addon-desc">Spark Ads integration + Creator Marketplace access.</div><div class="addon-foot">Add later in dashboard</div></div>
+        </div>
+      </div>
+      <div class="addon-cat">
+        <div class="addon-cat-head">SETUP ADD-ONS</div>
+        <div class="addon-row">
+          <div class="addon-tile reveal"><div class="addon-title">Concierge onboarding</div><div class="addon-price tabular"><span class="cs">$</span>19</div><div class="addon-desc">We connect every platform for you in a 30-minute call. One-time.</div><div class="addon-foot">Add later in dashboard</div></div>
+          <div class="addon-tile reveal"><div class="addon-title">Bulk import 90-day backlog</div><div class="addon-price tabular"><span class="cs">$</span>49</div><div class="addon-desc">Send us your Instagram archive, we'll backfill your catalog. One-time.</div><div class="addon-foot">Add later in dashboard</div></div>
+          <div class="addon-tile reveal"><div class="addon-title">Custom AI voice training</div><div class="addon-price tabular"><span class="cs">$</span>99 one-time</div><div class="addon-desc">Train AI replies on your existing customer convos. Sounds like you.</div><div class="addon-foot">Add later in dashboard</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6 — Calculator -->
+<section class="section-pad" data-screen-label="08 Calculator">
+  <div class="container-wide">
+    <div class="section-head reveal">
+      <h2 class="section-h2">See your actual year 1 cost.</h2>
+      <p class="section-sub">Move the sliders. The number updates live.</p>
+    </div>
+    <div class="calc-wrap reveal">
+      <div class="calc-controls">
+        <div class="preset-row" role="group" aria-label="Preset scenarios">
+          <button class="preset-btn" data-preset="restaurant">Restaurant</button>
+          <button class="preset-btn" data-preset="salon">Salon</button>
+          <button class="preset-btn" data-preset="ecom">E-commerce</button>
+          <button class="preset-btn" data-preset="service">Service business</button>
+          <button class="preset-btn" data-preset="tutor">Tutor</button>
+        </div>
+        <div class="calc-control">
+          <div class="calc-row">
+            <div class="calc-label">Posts per week</div>
+            <div class="calc-val tabular" id="cvPosts">15 / week</div>
+          </div>
+          <input id="sPosts" class="slider" type="range" min="5" max="35" step="1" value="15" aria-label="Posts per week" />
+        </div>
+        <div class="calc-control">
+          <div class="calc-row">
+            <div class="calc-label">Add-ons selected</div>
+            <div class="calc-val tabular" id="cvAddons">0</div>
+          </div>
+          <input id="sAddons" class="slider" type="range" min="0" max="3" step="1" value="0" aria-label="Number of add-ons" />
+          <div class="addon-chips" id="addonChips">
+            <span class="addon-chip" data-i="1">Extra posts +50</span>
+            <span class="addon-chip" data-i="2">Pinterest Pro</span>
+            <span class="addon-chip" data-i="3">Concierge setup</span>
+          </div>
+        </div>
+        <div class="calc-control">
+          <div class="calc-row">
+            <div class="calc-label">Billing cadence</div>
+          </div>
+          <div class="billing-toggle">
+            <button class="is-active" data-billing="monthly">Pay monthly</button>
+            <button data-billing="annual">Pay annually upfront −10%</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-output">
+        <div class="calc-output-label">YOUR YEAR 1 COST</div>
+        <div class="ptoggle" role="radiogroup" aria-label="Calculator path">
+          <button class="ptoggle-btn is-active" data-cpath="self">Self-signup</button>
+          <button class="ptoggle-btn" data-cpath="auto">With automator</button>
+        </div>
+        <div class="calc-bignum tabular" id="cBig"><span class="cs">$</span>948</div>
+        <ul class="calc-breakdown tabular">
+          <li><span>Subscription ($79 × 12)</span><span id="brSub">$948</span></li>
+          <li><span>Setup fee (charged Day 15)</span><span id="brSetup">$0</span></li>
+          <li><span>Add-ons selected (×<span id="brAddCount">0</span>)</span><span id="brAdd">$0</span></li>
+          <li><span>Annual discount applied</span><span id="brDisc">–$0</span></li>
+          <li class="is-total"><span>Total</span><span id="brTotal">$948</span></li>
+        </ul>
+        <p class="calc-day15">Day 1: $0 charged. Day 15: single combined transaction = first $79 subscription + $199 setup fee (if Path 1/3/4) = $79 or $278 total.</p>
+        <div class="calc-cmp">
+          <span><strong>vs SMM agency at $18,000–$60,000:</strong></span>
+          <div class="calc-cmp-save tabular" id="cSave">You save $17,052–$59,052 in year one.</div>
+        </div>
+        <a href="#" class="calc-link">Compare to your current spend →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 7 — Risk Reversal -->
+<section class="risk-band" data-screen-label="09 Risk">
+  <div class="risk-content" style="text-align:center">
+    <div class="risk-seal reveal">100% RISK-FREE</div>
+    <h2 class="risk-h2 reveal">Try it for 14 days. Subscription refundable.<br/><span style="color:var(--text-secondary);font-weight:550;font-size:0.7em">(Setup fee applies only to automator-led paths — covers manual setup work.)</span></h2>
+    <p class="risk-sub reveal">Default Path 2a/2b (self-signup): only the $79 subscription is charged Day 15 — <strong style="color:var(--text-primary)">full refund within 14 days (Day 15–29), no questions asked, no forms, no retention calls</strong>. Path 1/3/4 (with automator): same money-back on subscription. The $199 setup fee charged Day 15 (combined transaction) is non-refundable — it pays for manual platform setup performed by our team.</p>
+    <div class="risk-grid">
+      <div class="risk-card reveal">
+        <svg class="risk-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+        <h4>Subscription refunded. Setup fee non-refundable.</h4>
+        <div class="risk-card-body">
+          <ul>
+            <li>Subscription ($79) — refunded ✓ (within 14 days of Day 15 charge / Day 15–29 window)</li>
+            <li>Setup fee ($199, Path 1/3/4) — <strong>non-refundable after Day 15 charge</strong> — pays for manual platform configuration work</li>
+            <li>During 14-day free trial (Day 1–14): cancel anytime, <strong>zero charges</strong> (no setup fee, no subscription)</li>
+          </ul>
+          <p class="verbatim">"Full refund. No questions, no forms, no retention calls."</p>
+        </div>
+      </div>
+      <div class="risk-card reveal">
+        <svg class="risk-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 4 14 12 14 11 22 20 10 12 10 13 2"/></svg>
+        <h4>Three business days. Maybe less.</h4>
+        <div class="risk-card-body">
+          <p>Refund initiated the moment you cancel.</p>
+          <p>Hits your card in 1–3 business days.</p>
+          <p>We don't drag it out.</p>
+        </div>
+      </div>
+      <div class="risk-card reveal">
+        <svg class="risk-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V8a4 4 0 0 1 8 0v3"/><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M10 16l1.5 1.5L15 14"/></svg>
+        <h4>If we don't earn it, we shouldn't keep it.</h4>
+        <div class="risk-card-body">
+          <p>If 10 minutes of setup doesn't save you 20 hours of work in week one — that's our problem, not yours.</p>
+          <p>We bet our pricing on the product working.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 8 — FAQ -->
+<section class="section-pad" data-screen-label="10 FAQ">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-h2">Pricing questions, answered.</h2>
+      <p class="section-sub">If you can't find your answer here, our team responds in under 4 hours.</p>
+    </div>
+    <div class="faq-list reveal" id="faqList"></div>
+  </div>
+</section>
+
+<!-- SECTION 9 — Final CTA -->
+<section class="final-cta" data-screen-label="11 Final CTA">
+  <div class="final-cta-content">
+    <h2 class="reveal">Ready to swap $1,500 for $79?</h2>
+    <p class="final-cta-sub reveal">Start the 14-day trial. No credit card. Connect your first platform in 2 minutes.</p>
+    <button class="btn-primary lg reveal">Start my 14-day trial — $0 today</button>
+    <p class="final-cta-mc reveal">Card linked Day 1 ($0 charged) · Cancel anytime during trial — zero charges · 14-day money-back on subscription (Day 15–29) — no questions, no forms, no retention calls</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="foot-col">
+      <span class="wordmark wordmark--sm">SmashOne</span>
+      <p class="foot-tag">The only social media manager you'll ever hire.</p>
+      <p class="foot-jur">🇺🇸 United States</p>
+    </div>
+    <div class="foot-col">
+      <div class="foot-col-h">Product</div>
+      <ul>
+        <li><a class="is-active" href="#">Pricing</a></li>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Integrations</a></li>
+        <li><a href="#">Demo</a></li>
+        <li><a href="#">Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <div class="foot-col-h">Company</div>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <div class="foot-col-h">Resources</div>
+      <ul>
+        <li><a href="#">Help center</a></li>
+        <li><a href="#">API docs</a></li>
+        <li><a href="#">Status</a></li>
+        <li><a href="#">Community</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <div class="foot-col-h">Legal</div>
+      <ul>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Refund policy</a></li>
+        <li><a href="#">Cookie policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <div>© 2026 SMASHONE CORPORATION · Florida C-Corp · P26000023598</div>
+    <div class="foot-social">
+      <a href="#" aria-label="X"><img src="assets/x-tile-dark-official.svg" alt="X" /></a>
+      <a href="#" aria-label="LinkedIn"><img src="assets/linkedin-tile-dark.svg" alt="LinkedIn" /></a>
+      <a href="#" aria-label="YouTube"><img src="assets/youtube-tile-dark.svg" alt="YouTube" /></a>
+    </div>
+    <div class="foot-lang">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2a9 9 0 0 1 0 12M8 2a9 9 0 0 0 0 12"/></svg>
+      en-US
+      <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 6 8 10 12 6"/></svg>
+    </div>
+  </div>
+</footer>
+
+<!-- MOBILE STICKY -->
+<div class="mob-sticky">
+  <button class="btn-primary">Start free trial — $0 today</button>
+</div>
+
+<script>
+// =============== FAQ ===============
+const faqData = [
+  {q:"Does the price change after the trial?", a:"No. $79/month flat, forever. Setup fee is one-time (Path 1/3/4 only, charged Day 15) and never repeats. We don't run \"introductory pricing.\""},
+  {q:"Do I have to pay the $199 setup fee?", a:"<strong>Only if you choose automator-led setup (Path 1/3/4).</strong> Default = self-signup (Path 2a/2b): $0 setup fee, you configure the trio yourself in 10 minutes via our wizard. Path 1/3/4 = $199 one-time, <strong>charged Day 15 alongside your first $79 subscription as a single combined $278 transaction</strong> (NOT Day 1). Our team manually configures Facebook + Instagram + Telegram OAuth + content calendar + account-warming so your posts don't trip platform anti-spam. The setup fee is non-refundable once charged because it pays for real configuration work performed by our team. The 14-day free trial means no charges occur Day 1–14 regardless of path."},
+  {q:"Can I cancel and re-subscribe later?", a:"Yes. Cancel anytime in 2 clicks from the dashboard. If you originally signed up via Path 1/3/4 (automator-led) and re-subscribe within 90 days, your setup fee carries over — you don't pay $199 again, all your platform configurations are restored. After 90 days you re-enter as a new customer — $199 applies again. Self-signup paths (Path 2a/2b) re-subscriptions are simply $0 setup again."},
+  {q:"What happens if I add a platform mid-month?", a:"Pro-rated. Most platform add-ons activate within 30 seconds. A few (LinkedIn Premium API, TikTok Business) require 24-hour KYC review on the platform's end."},
+  {q:"Are there volume discounts for multiple locations?", a:"Each location runs as a separate subscription so analytics stay clean. Contact our team for chain discounts at 5+ locations — typically 15–25% off."},
+  {q:"What about taxes?", a:"US customers see sales tax added at checkout based on Florida nexus rules and your state. International customers see VAT or GST per your jurisdiction at checkout. No surprise taxes on the renewal."},
+  {q:"What if I want more than the trio?", a:"The base $79/mo subscription gives you Facebook + Instagram + Telegram + AI replies. Adding 1 of 13 add-on platforms costs $9–29/mo + $19–99 one-time setup per platform — pay only for the ones you actively use. Add anytime later from the dashboard — add-on charges are pro-rated and added to your next monthly invoice. (If you took Path 1/3/4 automator-led setup, the $199 setup fee covered manual configuration of the trio specifically; add-ons are configured separately when added.)"},
+  {q:"Is there a free tier?", a:"No. The 14-day money-back guarantee gives you full access to every feature — if it doesn't work for you in 14 days, full refund, no questions asked. Free tiers attract spam accounts that hurt the platform — we'd rather earn the trial than gate it."},
+  {q:"Do you support [obscure platform]?", a:"Probably. We integrate with 18 platforms in our roadmap (3 included with base, 13 as paid add-ons, 2 launching Q3 2026 — Aitu, Zalo). Request platform additions from the dashboard — high-vote platforms ship within 90 days."},
+  {q:"What about contract length?", a:"None. Month-to-month, every month. Cancel anytime in 2 clicks from the dashboard. No annual lock-in, ever."},
+  {q:"How does billing work for the automator program?", a:"Affiliate revenue from automator referrals goes to the automator, not the customer. Your $79 stays $79 — automator earnings come from SmashOne's share of the setup fee + a portion of the subscription. Three roles for automators: 70% (find clients + set up), 50% (set up only), or partnership-only (refer customers, earn 10% L1 + 5% L2 lifetime). <a href=\"#\">Full automator program details — earn 70% / 50% / partnership-only — choose your hustle level →</a>"},
+  {q:"What's charged on Day 1 vs Day 15?", a:"<strong>Day 1: $0 charged.</strong> You link your card to start the 14-day free trial, but nothing is billed. <strong>Day 15:</strong> if you continue, your card is charged in a single combined transaction — $79 subscription only (Path 2a/2b self-signup) or $278 ($79 sub + $199 setup, Path 1/3/4 with automator). The setup fee is never charged Day 1 — only Day 15 alongside subscription. This is explicit DSA timing disclosure."},
+  {q:"What if I want help setting up but no automator referred me?", a:"That's Path 4. After signup choose \"I want help setting this up\" — SmashOne assigns an automator from our network who handles the manual configuration. Same pricing as Path 1/3 ($79 sub + $199 setup, $278 charged Day 15). The assigned automator earns 50% of the $199 for the setup work; no referral commission applies because no one referred you."},
+  {q:"Can I get an enterprise plan?", a:"Not yet. We're laser-focused on SMB. If you need enterprise SSO, custom contracts, or dedicated support, Hootsuite Enterprise is probably the right fit."}
+];
+const faqList = document.getElementById('faqList');
+faqData.forEach((item, i) => {
+  const el = document.createElement('div');
+  el.className = 'faq-item';
+  el.innerHTML = `
+    <button class="faq-q" aria-expanded="false">
+      <span>${item.q}</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="faq-a"><div class="faq-a-inner">${item.a}</div></div>
+  `;
+  el.querySelector('.faq-q').addEventListener('click', () => {
+    const wasOpen = el.classList.contains('is-open');
+    document.querySelectorAll('.faq-item.is-open').forEach(x => x.classList.remove('is-open'));
+    if (!wasOpen) {
+      el.classList.add('is-open');
+      el.querySelector('.faq-q').setAttribute('aria-expanded','true');
+    } else {
+      el.querySelector('.faq-q').setAttribute('aria-expanded','false');
+    }
+  });
+  faqList.appendChild(el);
+});
+
+// =============== HERO PATH TOGGLE ===============
+const setupLine = document.getElementById('setupLine');
+document.querySelectorAll('#pricingCard .ptoggle-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#pricingCard .ptoggle-btn').forEach(b => { b.classList.remove('is-active'); b.setAttribute('aria-checked','false'); });
+    btn.classList.add('is-active'); btn.setAttribute('aria-checked','true');
+    const path = btn.dataset.path;
+    setupLine.style.opacity = '0';
+    setTimeout(() => {
+      if (path === 'self') {
+        setupLine.innerHTML = '<strong>Self-signup (default): $0 setup.</strong> Optional automator-led setup: $199 one-time, charged Day 15 (Path 1/3/4). <a href="#paths">Learn the difference →</a>';
+      } else {
+        setupLine.innerHTML = '<strong>Automator-led setup: $199 one-time</strong>, charged Day 15 with first $79 subscription as a single combined <strong>$278</strong> transaction (Path 1/3/4). <a href="#paths">Learn the difference →</a>';
+      }
+      setupLine.style.opacity = '1';
+    }, 160);
+  });
+});
+setupLine.style.transition = 'opacity 160ms var(--ease-ui)';
+
+// =============== BUNDLES ===============
+const bundleMeta = {
+  local:   { name:'Local business',  addMo:0,  addSetup:87 },
+  salon:   { name:'Salon & beauty',  addMo:9,  addSetup:118 },
+  service: { name:'Service pro',     addMo:19, addSetup:148 },
+  video:   { name:'Video creator',   addMo:43, addSetup:99 }
+};
+let selectedBundle = null;
+const ltName = document.getElementById('ltName');
+const ltAddonMo = document.getElementById('ltAddonMo');
+const ltAddonSetup = document.getElementById('ltAddonSetup');
+const ltMonthly = document.getElementById('ltMonthly');
+const ltSelfSetup = document.getElementById('ltSelfSetup');
+const ltAutoExtra = document.getElementById('ltAutoExtra');
+const ltAutoTotal = document.getElementById('ltAutoTotal');
+
+function updateLiveTotal() {
+  const b = selectedBundle ? bundleMeta[selectedBundle] : { name:'Custom', addMo:0, addSetup:0 };
+  ltName.textContent = b.name;
+  ltAddonMo.textContent = `$${b.addMo}`;
+  ltAddonSetup.textContent = `$${b.addSetup}`;
+  ltMonthly.textContent = `$${79 + b.addMo}/mo`;
+  ltSelfSetup.textContent = `$${b.addSetup}`;
+  ltAutoExtra.textContent = `$${b.addSetup}`;
+  ltAutoTotal.textContent = `$${79 + 199 + b.addSetup}`;
+}
+document.querySelectorAll('#bundleGrid .bundle-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const b = card.dataset.bundle;
+    if (selectedBundle === b) {
+      selectedBundle = null;
+      card.classList.remove('is-selected');
+    } else {
+      document.querySelectorAll('#bundleGrid .bundle-card').forEach(c => c.classList.remove('is-selected'));
+      selectedBundle = b;
+      card.classList.add('is-selected');
+    }
+    updateLiveTotal();
+  });
+});
+updateLiveTotal();
+
+// =============== CALCULATOR ===============
+const sPosts = document.getElementById('sPosts');
+const sAddons = document.getElementById('sAddons');
+const cvPosts = document.getElementById('cvPosts');
+const cvAddons = document.getElementById('cvAddons');
+const cBig = document.getElementById('cBig');
+const brSub = document.getElementById('brSub');
+const brSetup = document.getElementById('brSetup');
+const brAddCount = document.getElementById('brAddCount');
+const brAdd = document.getElementById('brAdd');
+const brDisc = document.getElementById('brDisc');
+const brTotal = document.getElementById('brTotal');
+const cSave = document.getElementById('cSave');
+const addonChips = document.getElementById('addonChips');
+let calcPath = 'self';
+let calcBilling = 'monthly';
+
+const ADDON_COST_MO = [9, 9, 0]; // extra posts +50 ($9/mo), Pinterest Pro ($9/mo), Concierge setup (one-time $19)
+const ADDON_COST_SETUP = [0, 0, 19];
+
+function updateCalc() {
+  const posts = +sPosts.value;
+  const addonN = +sAddons.value;
+  cvPosts.textContent = `${posts} / week`;
+  cvAddons.textContent = `${addonN}`;
+  // chips
+  document.querySelectorAll('#addonChips .addon-chip').forEach((c,i) => {
+    c.classList.toggle('is-on', i < addonN);
+  });
+  // also raise post limit hint via add-on 0 if posts/wk > 35 — kept simple here
+  const sub = 79 * 12;
+  let addAnnualMo = 0, addSetup = 0;
+  for (let i = 0; i < addonN; i++) {
+    addAnnualMo += ADDON_COST_MO[i] * 12;
+    addSetup += ADDON_COST_SETUP[i];
+  }
+  const setupBase = calcPath === 'auto' ? 199 : 0;
+  let discount = 0;
+  if (calcBilling === 'annual') {
+    discount = Math.round((sub + addAnnualMo) * 0.10);
+  }
+  const total = sub + addAnnualMo + addSetup + setupBase - discount;
+
+  cBig.style.opacity = '0.5';
+  setTimeout(() => {
+    brSub.textContent = `$${sub.toLocaleString()}`;
+    brSetup.textContent = `$${setupBase}`;
+    brAddCount.textContent = addonN;
+    brAdd.textContent = `$${(addAnnualMo + addSetup).toLocaleString()}`;
+    brDisc.textContent = `–$${discount.toLocaleString()}`;
+    brTotal.textContent = `$${total.toLocaleString()}`;
+    cBig.innerHTML = `<span class="cs">$</span>${total.toLocaleString()}`;
+    const saveLow = 18000 - total;
+    const saveHigh = 60000 - total;
+    cSave.textContent = `You save $${saveLow.toLocaleString()}–$${saveHigh.toLocaleString()} in year one.`;
+    cBig.style.opacity = '1';
+  }, 80);
+}
+sPosts.addEventListener('input', updateCalc);
+sAddons.addEventListener('input', updateCalc);
+document.querySelectorAll('.calc-output .ptoggle-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.calc-output .ptoggle-btn').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    calcPath = btn.dataset.cpath;
+    updateCalc();
+  });
+});
+document.querySelectorAll('.billing-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.billing-toggle button').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    calcBilling = btn.dataset.billing;
+    updateCalc();
+  });
+});
+// presets
+const presets = {
+  restaurant: { posts: 12, addons: 1 },
+  salon:      { posts: 10, addons: 2 },
+  ecom:       { posts: 22, addons: 3 },
+  service:    { posts: 8,  addons: 1 },
+  tutor:      { posts: 6,  addons: 0 }
+};
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    const p = presets[btn.dataset.preset];
+    sPosts.value = p.posts;
+    sAddons.value = p.addons;
+    updateCalc();
+  });
+});
+updateCalc();
+
+// =============== REVEAL ===============
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('is-in');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

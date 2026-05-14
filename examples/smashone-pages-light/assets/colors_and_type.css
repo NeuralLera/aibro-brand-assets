@@ -1,0 +1,283 @@
+/* ============================================================================
+   SmashOne Design System v3 — colors_and_type.css
+   Light theme primary (public marketing) · Dark theme (cabinets, admin, auth)
+   Source of truth: tokens/design-tokens.md
+   ============================================================================ */
+
+/* ---------- 1. Webfonts (Google Fonts CDN) ------------------------------- */
+/* NOTE: Geist, Inter, IBM Plex Mono are all OFL. Self-host in production.
+   Geist is hosted by Vercel; we use a Google Fonts proxy via @import below. */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;650;700&family=Inter:wght@400;450;500;550;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+/* ---------- 2. Root tokens (LIGHT THEME — default) ----------------------- */
+:root {
+  /* Surfaces (4-tier elevation) */
+  --surface-base:     #fafafa;
+  --surface-raised:   #f4f4f5;
+  --surface-elevated: #ffffff;
+  --surface-overlay:  #ffffff;
+
+  /* Foreground — black at decreasing opacity */
+  --text-strong:    rgba(0, 0, 0, 0.96);
+  --text-primary:   rgba(0, 0, 0, 0.88);
+  --text-secondary: rgba(0, 0, 0, 0.70);
+  --text-tertiary:  rgba(0, 0, 0, 0.54);
+  --text-quiet:     rgba(0, 0, 0, 0.50);
+  --text-disabled:  rgba(0, 0, 0, 0.36);
+
+  /* Borders — depth comes mostly from shadow in light theme */
+  --border-subtle:   rgba(0, 0, 0, 0.06);
+  --border-strong:   rgba(0, 0, 0, 0.10);
+  --border-emphasis: rgba(0, 0, 0, 0.14);
+
+  /* Brand gold — dual-token strategy */
+  --brand-gold:       #c9a646;             /* UI accent — CTAs / borders / icons */
+  --brand-gold-text:  #8c6f1e;             /* AAA body text on white (~7:1) */
+  --brand-gold-glow:  rgba(201, 166, 70, 0.18);
+  --brand-gold-tint:  rgba(201, 166, 70, 0.06);
+
+  /* State colors */
+  --state-success:    #10B981;
+  --state-warning:    #F59E0B;
+  --state-error:      #EF4444;
+  --state-info:       #3B82F6;
+  --state-success-bg: rgba(16, 185, 129, 0.10);
+  --state-warning-bg: rgba(245, 158, 11, 0.10);
+  --state-error-bg:   rgba(239, 68, 68, 0.10);
+  --state-info-bg:    rgba(59, 130, 246, 0.10);
+
+  /* Typography stack */
+  --font-display: "Geist", "InterVariable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body:    "Inter", "InterVariable", "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:    "IBM Plex Mono", "Geist Mono", "SF Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+
+  /* Type scale — size / line-height / tracking / weight */
+  --display-1-size: 72px;   --display-1-lh: 76px;   --display-1-track: -0.040em;  --display-1-weight: 650;
+  --display-2-size: 56px;   --display-2-lh: 60px;   --display-2-track: -0.035em;  --display-2-weight: 650;
+  --display-3-size: 48px;   --display-3-lh: 52px;   --display-3-track: -0.030em;  --display-3-weight: 640;
+  --h1-size: 40px;          --h1-lh: 48px;          --h1-track: -0.024em;         --h1-weight: 620;
+  --h2-size: 32px;          --h2-lh: 40px;          --h2-track: -0.020em;         --h2-weight: 620;
+  --h3-size: 28px;          --h3-lh: 36px;          --h3-track: -0.016em;         --h3-weight: 610;
+  --h4-size: 24px;          --h4-lh: 32px;          --h4-track: -0.012em;         --h4-weight: 600;
+  --h5-size: 20px;          --h5-lh: 28px;          --h5-track: -0.008em;         --h5-weight: 600;
+  --h6-size: 18px;          --h6-lh: 26px;          --h6-track: -0.004em;         --h6-weight: 580;
+  --body-lg-size: 18px;     --body-lg-lh: 30px;
+  --body-md-size: 16px;     --body-md-lh: 26px;
+  --body-sm-size: 14px;     --body-sm-lh: 22px;
+  --label-md-size: 13px;    --label-md-lh: 18px;
+  --label-sm-size: 12px;    --label-sm-lh: 16px;
+  --eyebrow-size: 11px;     --eyebrow-lh: 14px;     --eyebrow-track: 0.08em;
+  --code-md-size: 13px;     --code-md-lh: 20px;
+
+  /* Spacing scale */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* Border radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows — light theme: depth via shadow, not borders */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 10px 15px rgba(0,0,0,0.08);
+  --shadow-lg: 0 20px 25px rgba(0,0,0,0.10), 0 10px 10px rgba(0,0,0,0.04);
+  --shadow-xl: 0 25px 50px rgba(0,0,0,0.12);
+  --shadow-glow: 0 0 16px var(--brand-gold-glow);
+
+  /* Motion */
+  --ease-ui:       cubic-bezier(0.2, 0, 0.38, 0.9);
+  --ease-open:     cubic-bezier(0, 0, 0.38, 0.9);
+  --ease-close:    cubic-bezier(0.2, 0, 1, 0.9);
+  --ease-emphasis: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --dur-press: 110ms;
+  --dur-hover: 160ms;
+  --dur-card:  200ms;
+  --dur-panel: 260ms;
+  --dur-page:  220ms;
+
+  /* Theme color transition (toggle) */
+  transition: background-color 220ms var(--ease-ui), color 220ms var(--ease-ui);
+}
+
+/* ---------- 3. Dark theme overrides -------------------------------------- */
+[data-theme="dark"] {
+  --surface-base:     #0a0a0a;
+  --surface-raised:   #11151b;
+  --surface-elevated: #151b22;
+  --surface-overlay:  #1a212a;
+
+  --text-strong:    rgba(255, 255, 255, 0.96);
+  --text-primary:   rgba(255, 255, 255, 0.88);
+  --text-secondary: rgba(255, 255, 255, 0.70);
+  --text-tertiary:  rgba(255, 255, 255, 0.54);
+  --text-quiet:     rgba(255, 255, 255, 0.50);
+  --text-disabled:  rgba(255, 255, 255, 0.36);
+
+  --border-subtle:   rgba(255, 255, 255, 0.08);
+  --border-strong:   rgba(255, 255, 255, 0.12);
+  --border-emphasis: rgba(255, 255, 255, 0.16);
+
+  --brand-gold-text:  #d4b46e;
+  --brand-gold-glow:  rgba(201, 166, 70, 0.30);
+  --brand-gold-tint:  rgba(201, 166, 70, 0.05);
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.30);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.32);
+  --shadow-lg: 0 10px 28px rgba(0,0,0,0.36);
+  --shadow-xl: 0 16px 40px rgba(0,0,0,0.40);
+  --shadow-glow: 0 0 24px var(--brand-gold-glow);
+}
+
+/* ---------- 4. Base reset + semantic typography -------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--surface-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--body-md-size);
+  line-height: var(--body-md-lh);
+  font-weight: 450;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Semantic display + heading helpers (apply via class or element) */
+.display-1, h1.display-1 {
+  font-family: var(--font-display);
+  font-size: var(--display-1-size);
+  line-height: var(--display-1-lh);
+  letter-spacing: var(--display-1-track);
+  font-weight: var(--display-1-weight);
+  color: var(--text-strong);
+  margin: 0;
+}
+.display-2 {
+  font-family: var(--font-display);
+  font-size: var(--display-2-size); line-height: var(--display-2-lh);
+  letter-spacing: var(--display-2-track); font-weight: var(--display-2-weight);
+  color: var(--text-strong); margin: 0;
+}
+.display-3 {
+  font-family: var(--font-display);
+  font-size: var(--display-3-size); line-height: var(--display-3-lh);
+  letter-spacing: var(--display-3-track); font-weight: var(--display-3-weight);
+  color: var(--text-strong); margin: 0;
+}
+h1, .h1 {
+  font-family: var(--font-display);
+  font-size: var(--h1-size); line-height: var(--h1-lh);
+  letter-spacing: var(--h1-track); font-weight: var(--h1-weight);
+  color: var(--text-strong); margin: 0;
+}
+h2, .h2 {
+  font-family: var(--font-display);
+  font-size: var(--h2-size); line-height: var(--h2-lh);
+  letter-spacing: var(--h2-track); font-weight: var(--h2-weight);
+  color: var(--text-strong); margin: 0;
+}
+h3, .h3 {
+  font-family: var(--font-display);
+  font-size: var(--h3-size); line-height: var(--h3-lh);
+  letter-spacing: var(--h3-track); font-weight: var(--h3-weight);
+  color: var(--text-strong); margin: 0;
+}
+h4, .h4 {
+  font-family: var(--font-display);
+  font-size: var(--h4-size); line-height: var(--h4-lh);
+  letter-spacing: var(--h4-track); font-weight: var(--h4-weight);
+  color: var(--text-strong); margin: 0;
+}
+h5, .h5 {
+  font-family: var(--font-display);
+  font-size: var(--h5-size); line-height: var(--h5-lh);
+  letter-spacing: var(--h5-track); font-weight: var(--h5-weight);
+  color: var(--text-strong); margin: 0;
+}
+h6, .h6 {
+  font-family: var(--font-display);
+  font-size: var(--h6-size); line-height: var(--h6-lh);
+  letter-spacing: var(--h6-track); font-weight: var(--h6-weight);
+  color: var(--text-strong); margin: 0;
+}
+
+p, .body-md { font-size: var(--body-md-size); line-height: var(--body-md-lh); margin: 0; }
+.body-lg    { font-size: var(--body-lg-size); line-height: var(--body-lg-lh); }
+.body-sm    { font-size: var(--body-sm-size); line-height: var(--body-sm-lh); }
+.label-md   { font-size: var(--label-md-size); line-height: var(--label-md-lh); font-weight: 550; letter-spacing: 0.01em; }
+.label-sm   { font-size: var(--label-sm-size); line-height: var(--label-sm-lh); font-weight: 560; letter-spacing: 0.04em; }
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--eyebrow-size); line-height: var(--eyebrow-lh);
+  letter-spacing: var(--eyebrow-track);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.eyebrow--gold { color: var(--brand-gold-text); }
+
+code, .code-md, .mono {
+  font-family: var(--font-mono);
+  font-size: var(--code-md-size);
+  line-height: var(--code-md-lh);
+}
+
+/* Tabular numbers — apply on price/metric containers */
+.tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+/* Wordmark — TEXT only, never an image */
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+  font-size: 22px;
+  line-height: 1;
+}
+.wordmark--lg { font-size: 32px; }
+.wordmark--sm { font-size: 18px; }
+
+/* Text-color helpers */
+.fg-strong    { color: var(--text-strong); }
+.fg-primary   { color: var(--text-primary); }
+.fg-secondary { color: var(--text-secondary); }
+.fg-tertiary  { color: var(--text-tertiary); }
+.fg-gold      { color: var(--brand-gold-text); }
+
+/* Focus indicator (always visible) */
+:where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--brand-gold);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="db" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#151515"></stop>
+      <stop offset="1" stop-color="#060606"></stop>
+    </linearGradient>
+    <radialGradient id="dw" cx="0.85" cy="0.15" r="0.75">
+      <stop offset="0" stop-color="#c9a646" stop-opacity="0.10"></stop>
+      <stop offset="0.55" stop-color="#c9a646" stop-opacity="0.02"></stop>
+      <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
+    </radialGradient>
+    <pattern id="dstrie" width="2" height="2" patternUnits="userSpaceOnUse">
+      <rect width="1" height="2" fill="#fff" fill-opacity="0.012"></rect>
+    </pattern>
+    <linearGradient id="dte" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.18"></stop>
+      <stop offset="0.08" stop-color="#fff" stop-opacity="0"></stop>
+    </linearGradient>
+    <radialGradient id="dig" cx="0.78" cy="0.22" r="0.55">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.06"></stop>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="dvg" cx="0.5" cy="0.5" r="0.75">
+      <stop offset="0.55" stop-color="#000" stop-opacity="0"></stop>
+      <stop offset="1" stop-color="#000" stop-opacity="0.30"></stop>
+    </radialGradient>
+    <clipPath id="dcl"><rect x="0" y="0" width="64" height="64" rx="14" ry="14"></rect></clipPath>
+  </defs>
+  <g clip-path="url(#dcl)">
+    <rect width="64" height="64" fill="#0a0a0a"></rect>
+    <rect width="64" height="64" fill="url(#db)" opacity="0.75"></rect>
+    <rect width="64" height="64" fill="url(#dstrie)"></rect>
+    <rect width="64" height="64" fill="url(#dw)"></rect>
+    <rect width="64" height="64" fill="url(#dig)"></rect>
+    <rect width="64" height="64" fill="url(#dvg)"></rect>
+    <rect width="64" height="64" fill="url(#dte)"></rect>
+  </g>
+  <rect x="0.6" y="0.6" width="62.8" height="62.8" rx="13.4" ry="13.4" fill="none" stroke="#c0c0c0" stroke-opacity="0.30" stroke-width="1.2"></rect>
+</svg>

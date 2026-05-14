@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automator program · SmashOne</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:wght@100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/colors_and_type.css">
+<link rel="stylesheet" href="assets/page.css">
+<link rel="stylesheet" href="assets/calculator.css">
+</head>
+
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header">
+  <div class="inner">
+    <a href="#" aria-label="SmashOne home">
+      <span class="wordmark">SmashOne</span>
+    </a>
+    <nav aria-label="Primary">
+      <a class="nav-link" href="#pricing">Pricing</a>
+      <a class="nav-link is-active" href="#" aria-current="page">Automator program</a>
+      <a class="nav-link" href="#signin">Sign in</a>
+      <a class="btn btn-primary" href="#apply">Start free trial</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== SECTION 1 — HERO ===== -->
+<section class="hero" data-screen-label="01 Hero">
+  <div class="container-wide">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <span class="hero-eyebrow">Automator program</span>
+        <h1 class="hero-title">Three ways to earn —<br>choose your <span class="accent">hustle level.</span></h1>
+        <p class="hero-sub">
+          Find and set up your own clients (70% of $199 setup + 10% recurring). Take by-request setup work (50% of $199, no hustle). Or just distribute your referral link (10% L1 + 5% L2 lifetime, no setup needed). Mix all three. Each role rewarded for what's actually done.
+        </p>
+        <p class="hero-roles">
+          <strong>Hustler · Path 1:</strong> find clients yourself + setup → $139.30 per install + 10% L1 + 5% L2 lifetime. <strong>By-request setter · Path 3/4:</strong> SmashOne or a partner brings you the client, you setup → $99.50 per install, no partnership. <strong>Link-distributor · Path 2b:</strong> distribute your referral link, client self-setups → 10% L1 + 5% L2 only, no setup fee. Pure subscription work follows Path 2a (no automator involvement).
+        </p>
+        <div class="hero-cta-row">
+          <a class="btn btn-primary btn-lg" href="#apply">Apply to become an automator</a>
+          <a class="btn btn-ghost btn-lg" href="#calculator">See earnings calculator →</a>
+        </div>
+        <p class="hero-micro">
+          Application reviewed within 3 business days. Approval based on track record, not network size.
+        </p>
+      </div>
+
+      <!-- Hero calculator preview (visual snapshot) -->
+      <aside class="hero-preview" aria-label="Calculator preview">
+        <div class="hero-preview-label">
+          <span>Hustler example — Path 1</span>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);">/ preview</span>
+        </div>
+        <div class="hero-preview-tabs" role="presentation">
+          <div class="hero-preview-tab active">Hustler</div>
+          <div class="hero-preview-tab">By-request</div>
+          <div class="hero-preview-tab">Distributor</div>
+        </div>
+        <div class="hero-preview-slider">
+          <div class="row"><span>Installs / week</span><b>2/wk</b></div>
+          <div class="hero-preview-track"><div class="hero-preview-fill" style="width: 18%;"></div></div>
+        </div>
+        <div class="hero-preview-slider">
+          <div class="row"><span>Retention rate</span><b>80%</b></div>
+          <div class="hero-preview-track"><div class="hero-preview-fill" style="width: 60%;"></div></div>
+        </div>
+        <div class="hero-preview-slider">
+          <div class="row"><span>Months out</span><b>12 mo</b></div>
+          <div class="hero-preview-track"><div class="hero-preview-fill" style="width: 100%;"></div></div>
+        </div>
+        <div class="hero-preview-output">
+          <div class="hero-preview-num"><span style="font-size: 0.6em; vertical-align: baseline;">$</span>22,176</div>
+          <div class="hero-preview-cap">Year 1 pre-tax · Path 1 hustler · 2 installs/wk steady</div>
+          <a href="#calculator" class="hero-preview-link">See full calculator — all three roles →</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+  <div class="vignette"></div>
+</section>
+
+<!-- ===== SECTION 2 — HOW IT WORKS ===== -->
+<section data-screen-label="02 How it works">
+  <div class="container">
+    <header class="section-head">
+      <div class="section-eyebrow">How it works</div>
+      <h2 class="section-h2">Three steps. No team-building. No volume thresholds.</h2>
+      <p class="section-sub">Refer · install · get paid. The boring version of "passive income."</p>
+    </header>
+
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">01<span class="icon">refer</span></div>
+        <h3 class="step-title">Refer or accept the assignment</h3>
+        <p class="step-body">
+          Send a customer your tracking link <strong>(Path 1 — hustler)</strong> using your custom subdomain <code style="color: var(--brand-gold-text); font-size: 13px;">yourname.smashone.us</code>. Or accept a by-request assignment when SmashOne or a partner brings you a client <strong>(Path 3/4)</strong>. Or distribute your referral link for clients who self-setup <strong>(Path 2b — no setup work)</strong>.
+        </p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">02<span class="icon">setup</span></div>
+        <h3 class="step-title">You set up the customer</h3>
+        <p class="step-body">
+          Customer signs up Day 1 — <strong>$0 charged</strong> during the 14-day free trial. You spend 1–2 hours configuring their trio (Facebook + Instagram + Telegram OAuth + content calendar + AI-assistant tuning). On <strong>Day 15</strong> the customer pays one combined transaction: $79 subscription + $199 setup fee = <strong>$278 total</strong> (or $79 alone for Path 2b — no setup work, no setup fee).
+        </p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">03<span class="icon">paid</span></div>
+        <h3 class="step-title">You get paid</h3>
+        <p class="step-body">
+          <strong>Day 30 release</strong> (after the 14-day money-back window closes): $139.30 if you found the client (Path 1, 70% × $199) or $99.50 if it was by-request (Path 3/4, 50% × $199). <strong>Plus</strong> $7.90/month per active customer (10% L1) + $3.95/month per L2 sub-referral — paid lifetime, paused if customer cancels. Paid monthly via Stripe Connect Express. No clawbacks past Day 30.
+        </p>
+      </div>
+    </div>
+
+    <p class="steps-foot">That's it. We do the rest.</p>
+  </div>
+</section>
+
+<!-- ===== SECTION 3 — MATH ===== -->
+<section data-screen-label="03 Math transparency">
+  <div class="container">
+    <header class="section-head">
+      <div class="section-eyebrow">The math, exactly</div>
+      <h2 class="section-h2">Every dollar accounted for.</h2>
+      <p class="section-sub">No hidden tiers. No qualifying volumes. No mystery formulas.</p>
+    </header>
+
+    <div class="math-card">
+      <div class="math-eyebrow">Per install — Day 30 release</div>
+
+      <div class="math-cols">
+        <!-- Col 1: Hustler -->
+        <div class="math-col">
+          <h4>Hustler — you found the client</h4>
+          <div class="col-sub">Path 1 · 70% setup + partnership</div>
+
+          <div class="math-row">
+            <span class="label">Setup fee customer pays Day 15</span>
+            <span class="val">$199</span>
+          </div>
+          <div class="math-row is-hero">
+            <span class="label">Your Day 30 payout</span>
+            <span class="val">$139.30</span>
+          </div>
+          <div class="math-row">
+            <span class="label">SmashOne keeps</span>
+            <span class="val muted">$59.70</span>
+          </div>
+          <div class="math-row">
+            <span class="label">L1 partnership / mo</span>
+            <span class="val gold">$7.90</span>
+          </div>
+          <div class="math-row">
+            <span class="label">L2 sub-referral / mo</span>
+            <span class="val gold-sec">$3.95</span>
+          </div>
+
+          <p class="math-foot-col">Maximum payout. You source AND set up the client.</p>
+        </div>
+
+        <!-- Col 2: By-request -->
+        <div class="math-col">
+          <h4>By-request setter</h4>
+          <div class="col-sub">Path 3 / 4 · 50% setup, no partnership</div>
+
+          <div class="math-row">
+            <span class="label">Setup fee customer pays Day 15</span>
+            <span class="val">$199</span>
+          </div>
+          <div class="math-row is-hero">
+            <span class="label">Your Day 30 payout</span>
+            <span class="val">$99.50</span>
+          </div>
+          <div class="math-row">
+            <span class="label">SmashOne keeps</span>
+            <span class="val muted">$99.50</span>
+          </div>
+          <div class="math-row">
+            <span class="label">Subscription partnership</span>
+            <span class="val muted">$0</span>
+          </div>
+
+          <p class="math-foot-col">Quiet by-request work. SmashOne or a partner brings the client.</p>
+        </div>
+
+        <!-- Col 3: Link-distributor -->
+        <div class="math-col">
+          <h4>Link-distributor</h4>
+          <div class="col-sub">Path 2b · subscription partnership only</div>
+
+          <div class="math-row">
+            <span class="label">Setup fee</span>
+            <span class="val muted">$0</span>
+          </div>
+          <div class="math-row">
+            <span class="label">Day 30 payout</span>
+            <span class="val muted">$0</span>
+          </div>
+          <div class="math-row is-hero">
+            <span class="label">L1 partnership / mo</span>
+            <span class="val">$7.90</span>
+          </div>
+          <div class="math-row">
+            <span class="label">L2 sub-referral / mo</span>
+            <span class="val gold-sec">$3.95</span>
+          </div>
+
+          <p class="math-foot-col">Passive lifetime income. Client self-setups via your link.</p>
+        </div>
+      </div>
+
+      <p class="math-disclaimer">
+        Day 1 — $0 charged (free 14-day trial). Day 15 — customer charged $278 ($79 subscription + $199 setup) or $79 alone (Path 2a/2b). Day 30 — your setup payout released after the 14-day money-back window. Everything pre-tax. 1099-NEC issued each January.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 4 — CALCULATOR ===== -->
+<section id="calculator" class="calc-section" data-screen-label="04 Calculator">
+  <div class="container-wide">
+    <header class="section-head">
+      <div class="section-eyebrow">Earnings calculator</div>
+      <h2 class="section-h2">See realistic earnings — by role, no hype.</h2>
+      <p class="section-sub">
+        Pick your role tab. Move the sliders. The math updates live. These are pre-tax numbers based on actual payout assumptions per the SmashOne automator agreement. Three roles, three formulas — one widget.
+      </p>
+    </header>
+
+    <div id="calculator-mount"></div>
+  </div>
+</section>
+
+<!-- ===== SECTION 5 — FAQ ===== -->
+<section data-screen-label="05 Objections">
+  <div class="container">
+    <header class="section-head">
+      <div class="section-eyebrow">Common objections</div>
+      <h2 class="section-h2">We get it. "Affiliate program" pages set off alarms.</h2>
+      <p class="section-sub">Here's the unflinching truth — answered honestly.</p>
+    </header>
+
+    <div class="faq-list" id="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span>Is this MLM?</span>
+          <svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">
+          No. There are exactly 2 commission levels on subscriptions: customers you bring (10% L1 lifetime) and customers your sub-automators bring (5% L2 lifetime). No level 3+. No team-building bonuses. No volume thresholds. No products you have to buy. You can never owe SmashOne money.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span>Can I do all three roles?</span>
+          <svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Yes. Most automators mix: primary income from Path 1 (find + setup), passive income from Path 2b referrals, occasional by-request work via Path 3/4 when SmashOne or your partner brings clients. The earnings calculator above lets you model each role separately — combine them mentally for your real plan.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span>What if the client cancels during trial?</span>
+          <svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">
+          You accept the risk. If the client cancels Days 1–14, you do NOT receive payment for the setup work already done. Day 15 is when the customer is actually charged — only then can your Day 30 commission release. This is part of the business model — choose your clients consciously, especially in by-request mode where you don't pre-qualify them.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span>When do I receive my commission?</span>
+          <svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">
+          70% (Path 1) or 50% (Path 3/4) of the $199 setup fee — released <strong>Day 30</strong>, after the 14-day money-back window expires. Subscription partnership (10% L1 + 5% L2 from $79/month) — paid monthly via Stripe Connect Express, starting the month after first paid renewal. No clawbacks past Day 30.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span>How much do automators actually make?</span>
+          <svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Depends entirely on role and volume. Path 1 hustler median: 2 installs/week → ≈ $22,176 Year 1. Path 3/4 by-request setter at 3 installs/week → ≈ $15,545 Year 1 (no subscription partnership). Path 2b link-distributor depends on audience size — typically $1,000–$5,000 Year 1 with a relevant SMB-owner network. Top 10% of Path 1 hustlers: $55,000+. Bottom 50% across all roles: $0–$80/month — refers occasionally to friends.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span>Do I need a website / following / list?</span>
+          <svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Depends on role. Path 1 hustler — no, but having SMB peers helps. Path 3/4 by-request setter — no, SmashOne brings the client. Path 2b link-distributor — yes, your audience size directly drives results. Recommended path: existing SmashOne customers refer their peers.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span>What if my referred customer cancels later?</span>
+          <svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Your Day 30 setup fee payout is yours — non-refundable to you. Your monthly L1/L2 partnership stops the month they cancel. No clawbacks past Day 30 — short cancellations after the money-back window don't penalize you.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span>How is this different from affiliate programs like Hootsuite's?</span>
+          <svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Setup fee revenue share + lifetime subscription partnership. Hootsuite affiliates get a flat $50–100 bounty. SmashOne Path 1 hustlers get $139.30 + $7.90/mo recurring per customer. Aligned incentives — we both win when the customer stays.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span>What's stopping me from referring my own businesses?</span>
+          <svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Self-referrals are explicitly allowed (and common). If you own 3 restaurants and want to install SmashOne for all 3, you can earn the setup fee yourself + the recurring partnership. No fraud here — you're a legitimate customer doing legitimate work.
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 6 — WHAT AUTOMATORS GET ===== -->
+<section data-screen-label="06 What you get">
+  <div class="container">
+    <header class="section-head">
+      <div class="section-eyebrow">What automators get</div>
+      <h2 class="section-h2">Real tools. Real support. Co-branded materials.</h2>
+      <p class="section-sub">No "good luck out there." We give you everything we'd want if we were doing this.</p>
+    </header>
+
+    <div class="benefits">
+      <article class="benefit-card">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+        <h3 class="benefit-title">Onboarding kit</h3>
+        <ul class="benefit-list">
+          <li>Custom subdomain (<code style="font-family: var(--font-mono); font-size: 13px; color: var(--brand-gold-text);">yourname.smashone.us</code>)</li>
+          <li>Tracking links + UTM tags pre-built</li>
+          <li>50 social post templates</li>
+          <li>10 email templates (cold + warm)</li>
+          <li>Pitch deck (Keynote + PDF)</li>
+          <li>5-min demo video (white-label)</li>
+          <li>2-pager case studies × 6 industries</li>
+        </ul>
+      </article>
+
+      <article class="benefit-card">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+        </div>
+        <h3 class="benefit-title">Tools &amp; dashboard</h3>
+        <ul class="benefit-list">
+          <li>Real-time install tracking</li>
+          <li>Payout dashboard with monthly statement export</li>
+          <li>Customer health monitor</li>
+          <li>Automator-only Slack community</li>
+          <li>1099-NEC auto-issued each January</li>
+          <li>Direct deposit payouts (Net-30)</li>
+        </ul>
+      </article>
+
+      <article class="benefit-card">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3z"></path><path d="M3 19a2 2 0 0 0 2 2h1v-6H3z"></path></svg>
+        </div>
+        <h3 class="benefit-title">Support</h3>
+        <ul class="benefit-list">
+          <li>Dedicated automator-success rep for first 30 days</li>
+          <li>Office hours weekly call (Wednesdays)</li>
+          <li>Priority email response (24h SLA)</li>
+          <li>Co-branded marketing materials on request</li>
+          <li>Quarterly automator summit (virtual)</li>
+          <li>Annual top-25 in-person event</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 7 — ROLES ===== -->
+<section data-screen-label="07 Roles">
+  <div class="container">
+    <header class="section-head">
+      <div class="section-eyebrow">Three roles · three shapes</div>
+      <h2 class="section-h2">Pick one or mix all three.</h2>
+      <p class="section-sub">Math is identical regardless of who does the work. The dashboard tracks each role separately.</p>
+    </header>
+
+    <div class="roles">
+      <article class="role-card is-featured">
+        <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+        <h3 class="role-title">Hustler — find + setup</h3>
+        <p class="role-body">
+          You source clients via your own channels (LinkedIn, cold email, local network) and run the 1–2 hour setup yourself. Highest-paying role because you do both jobs.
+        </p>
+        <div class="role-divider"></div>
+        <div class="role-math">
+          <div><strong>Per install:</strong> 70% × $199 setup fee = $139.30 (Day 30)</div>
+          <div><strong>Lifetime:</strong> 10% L1 + 5% L2 of $79/mo subscription = $7.90/mo per active client</div>
+        </div>
+        <span class="role-badge">$139.30 + $7.90/mo recurring per install</span>
+      </article>
+
+      <article class="role-card">
+        <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        <h3 class="role-title">Setter — by-request work</h3>
+        <p class="role-body">
+          SmashOne or a referrer brings the client. You only run the setup (1–2 hours). Quiet predictable work, no client acquisition required.
+        </p>
+        <div class="role-divider"></div>
+        <div class="role-math">
+          <div><strong>Per install:</strong> 50% × $199 setup fee = $99.50 (Day 30)</div>
+          <div>No subscription partnership — referrer gets that.</div>
+        </div>
+        <span class="role-badge">$99.50 per setup, no recurring</span>
+      </article>
+
+      <article class="role-card">
+        <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+        <h3 class="role-title">Distributor — share link</h3>
+        <p class="role-body">
+          You distribute your referral link (Instagram bio / Twitter / blog / community). Clients self-setup via self-service. Zero setup work on your end.
+        </p>
+        <div class="role-divider"></div>
+        <div class="role-math">
+          <div><strong>Per referral:</strong> 10% L1 + 5% L2 of $79/mo subscription</div>
+          <div><strong>= $7.90/mo</strong> lifetime per active client. No setup fee involvement.</div>
+        </div>
+        <span class="role-badge">$7.90/mo recurring per active referral</span>
+      </article>
+    </div>
+
+    <p class="roles-foot">
+      Mix paths freely. The dashboard tracks each role separately. Earnings depend entirely on your volume + role choice — math is transparent above. No automator names or photos shown until post-launch with written consent.
+    </p>
+  </div>
+</section>
+
+<!-- ===== SECTION 8 — ELIGIBILITY ===== -->
+<section class="eligibility-section" data-screen-label="08 Eligibility">
+  <div class="container">
+    <header class="section-head">
+      <div class="section-eyebrow">Eligibility &amp; terms</div>
+      <h2 class="section-h2" style="font-size: 32px;">All up-front. No surprises in the agreement.</h2>
+    </header>
+
+    <div class="eligibility">
+      <div class="elig-col">
+        <h4>01 — Eligible</h4>
+        <h3>Who can apply</h3>
+        <ul class="elig-list">
+          <li>US legal residents</li>
+          <li>Age 18+</li>
+          <li>Active SmashOne customer or professional relationship to SMB owners</li>
+          <li>Valid Tax ID (SSN or EIN)</li>
+          <li>Bank account for direct deposit payouts</li>
+        </ul>
+      </div>
+
+      <div class="elig-col">
+        <h4>02 — Restrictions</h4>
+        <h3>What we don't allow</h3>
+        <ul class="elig-list">
+          <li>No spam / inbox blasting</li>
+          <li>No paid ad networks promoting our brand without approval</li>
+          <li>No fake reviews / testimonials</li>
+          <li>No competitor disparagement</li>
+          <li>One automator account per person or entity</li>
+        </ul>
+      </div>
+
+      <div class="elig-col">
+        <h4>03 — Payout terms</h4>
+        <h3>How money moves</h3>
+        <ul class="elig-list">
+          <li>Net-30 monthly (earnings month X paid by end of month X+1)</li>
+          <li>Direct deposit only (ACH)</li>
+          <li>Minimum payout threshold $25 (rolls over if below)</li>
+          <li>1099-NEC issued for earnings ≥ $600/year</li>
+          <li>No clawbacks past Day 30</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 9 — APPLY CTA ===== -->
+<section id="apply" class="cta-band" data-screen-label="09 Apply CTA">
+  <div class="container">
+    <h2>Ready to earn alongside us?</h2>
+    <p>Application takes 8 minutes. We review within 3 business days. We approve based on track record and fit — not network size.</p>
+    <a class="btn btn-primary btn-xl" href="#apply-form">Apply to become an automator</a>
+    <p class="micro">Already a SmashOne customer? You're pre-qualified — fast-track approval available in your dashboard.</p>
+  </div>
+</section>
+
+<!-- ===== SECTION 10 — FOOTER ===== -->
+<footer class="site-footer" data-screen-label="10 Footer">
+  <div class="container">
+    <div class="footer-cols">
+      <div>
+        <span class="wordmark wordmark--sm">SmashOne</span>
+        <p class="foot-tag">The only social media manager you'll ever hire.</p>
+        <span class="foot-juris">🇺🇸 United States</span>
+      </div>
+      <div>
+        <div class="foot-h">Product</div>
+        <ul class="foot-list">
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Features</a></li>
+          <li><a href="#">Integrations</a></li>
+          <li><a href="#">Demo</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="foot-h">Company</div>
+        <ul class="foot-list">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="foot-h">Resources</div>
+        <ul class="foot-list">
+          <li><a href="#">Help center</a></li>
+          <li><a href="#">API docs</a></li>
+          <li><a href="#">Status</a></li>
+          <li><a href="#">Community</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="foot-h">Legal</div>
+        <ul class="foot-list">
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Refund policy</a></li>
+          <li><a href="#">Cookie policy</a></li>
+          <li><a href="#" style="color: var(--brand-gold-text);">Automator agreement</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="inner">
+      <span>© 2026 SMASHONE CORPORATION · Florida C-Corp · P26000023598</span>
+      <div class="socials" aria-label="Social links">
+        <a href="#" aria-label="X / Twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="color: var(--text-secondary);"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="color: var(--text-secondary);"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+        <a href="#" aria-label="YouTube"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="color: var(--text-secondary);"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+      </div>
+      <select class="lang-switch" aria-label="Language">
+        <option>🇺🇸 en-US</option>
+      </select>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== MOBILE STICKY CTA ===== -->
+<div class="sticky-mobile-cta" id="sticky-cta" style="display: none;">
+  <a class="btn btn-primary" href="#apply">Apply to become an automator</a>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+// FAQ accordion (single-open)
+(function () {
+  const list = document.getElementById('faq-list');
+  if (!list) return;
+  list.addEventListener('click', (e) => {
+    const btn = e.target.closest('.faq-q');
+    if (!btn) return;
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('is-open');
+    // close all
+    list.querySelectorAll('.faq-item').forEach(i => {
+      i.classList.remove('is-open');
+      i.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+    });
+    if (!isOpen) {
+      item.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+})();
+
+// Scroll reveals
+(function () {
+  const els = document.querySelectorAll('section > .container > .section-head, .step-card, .math-card, .benefit-card, .role-card, .faq-list, #calculator-mount, .eligibility');
+  els.forEach(el => el.classList.add('reveal'));
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => io.observe(el));
+})();
+
+// Mobile sticky CTA — show after user scrolls past hero
+(function () {
+  const sticky = document.getElementById('sticky-cta');
+  if (!sticky) return;
+  const hero = document.querySelector('.hero');
+  function update() {
+    if (window.innerWidth > 768) { sticky.style.display = 'none'; return; }
+    const heroBottom = hero.getBoundingClientRect().bottom;
+    sticky.style.display = heroBottom < 0 ? 'block' : 'none';
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>
+
+<!-- React + Babel for the calculator -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="assets/calculator.jsx"></script>
+
+</body>
+</html>

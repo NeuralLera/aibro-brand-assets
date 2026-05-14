@@ -1,0 +1,526 @@
+/* ============================================================================
+   SmashOne Automator v6 LIGHT — automator.css
+   Loads after colors_and_type.css + site-core.css.
+   ============================================================================ */
+
+/* ---------- Automator hero -------------------------------------------- */
+.auto-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 96px 0 80px;
+  background: var(--surface-base);
+}
+.auto-hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: url('empty-tile-light.svg') repeat;
+  background-size: 512px 512px;
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+[data-theme="dark"] .auto-hero::before {
+  background-image: url('empty-tile-dark.svg');
+  opacity: 0.05;
+  mix-blend-mode: soft-light;
+}
+.auto-hero::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 65% 55% at 35% 45%, var(--brand-gold-glow) 0%, transparent 60%);
+  pointer-events: none;
+}
+.auto-hero__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+  gap: 64px;
+  align-items: center;
+}
+.auto-hero__copy { max-width: 580px; }
+.auto-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--brand-gold-text);
+  margin-bottom: 20px;
+}
+.auto-hero__eyebrow .dot {
+  width: 6px; height: 6px;
+  border-radius: 9999px;
+  background: var(--brand-gold);
+  box-shadow: 0 0 12px var(--brand-gold-glow);
+}
+.auto-hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5.4vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  font-weight: 680;
+  color: var(--text-strong);
+  margin: 0 0 24px;
+  text-wrap: balance;
+}
+.auto-hero__title .accent { color: var(--brand-gold-text); }
+.auto-hero__sub {
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0 0 32px;
+  max-width: 520px;
+  text-wrap: pretty;
+}
+.auto-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.auto-hero__micro {
+  margin-top: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-tertiary);
+}
+
+/* Hero stats card */
+.auto-stats {
+  position: relative;
+  z-index: 1;
+  background: var(--surface-elevated);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-xl);
+  padding: 32px;
+}
+.auto-stats__title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--brand-gold-text);
+  margin: 0 0 18px;
+}
+.auto-stats__list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+.auto-stats__list li { display: flex; flex-direction: column; gap: 4px; }
+.auto-stats__num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 32px;
+  color: var(--text-strong);
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: 1;
+}
+.auto-stats__num .gold { color: var(--brand-gold-text); }
+.auto-stats__label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+}
+.auto-stats__divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 4px 0 16px;
+}
+.auto-stats__legal {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ---------- Three roles tabs ---------------------------------------- */
+.roles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.role {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+.role--featured {
+  border: 2px solid var(--brand-gold);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(180deg, var(--brand-gold-tint), var(--surface-elevated) 40%);
+  transform: translateY(-6px);
+}
+.role__pill {
+  display: inline-block;
+  background: var(--surface-raised);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  align-self: flex-start;
+}
+.role--featured .role__pill {
+  background: var(--brand-gold);
+  color: #1a1300;
+}
+.role__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--brand-gold-tint);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-gold);
+  margin-bottom: 16px;
+}
+.role__icon svg { width: 28px; height: 28px; }
+.role__title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 620;
+  letter-spacing: -0.014em;
+  color: var(--text-strong);
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+.role__path {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  margin: 0 0 14px;
+  text-transform: uppercase;
+}
+.role__pitch {
+  font-size: 14.5px;
+  color: var(--text-primary);
+  line-height: 1.55;
+  margin: 0 0 18px;
+}
+.role__earnings {
+  background: var(--surface-raised);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin: 0 0 18px;
+}
+.role--featured .role__earnings {
+  background: var(--surface-elevated);
+  border: 1px solid var(--brand-gold-tint);
+}
+.role__earnings-label {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin: 0 0 6px;
+}
+.role__earnings-body {
+  font-size: 13.5px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin: 0;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.role__earnings-body strong { color: var(--brand-gold-text); font-weight: 650; }
+.role__list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+.role__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+.role__list li svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--brand-gold);
+}
+.role__cta { margin-top: auto; }
+
+/* ---------- Earnings calculator (static tiers) ----------------------- */
+.calc {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.calc__intro {
+  text-align: center;
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0 0 32px;
+  max-width: 720px;
+  margin-inline: auto;
+  line-height: 1.6;
+}
+.calc__intro strong { color: var(--brand-gold-text); }
+.calc__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.calc__tier {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+.calc__tier--featured {
+  border-color: var(--brand-gold);
+  background: linear-gradient(180deg, var(--brand-gold-tint), var(--surface-elevated) 40%);
+  box-shadow: var(--shadow-md);
+}
+.calc__tier-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.calc__tier-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 36px;
+  color: var(--brand-gold-text);
+  letter-spacing: -0.025em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.calc__tier-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+.calc__tier-total {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--text-strong);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.calc__tier-total .per { font-size: 14px; color: var(--text-secondary); font-weight: 450; }
+.calc__tier-year {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-bottom: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.calc__tier-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 0 0 16px;
+}
+.calc__tier-breakdown {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+.calc__tier-breakdown li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.calc__tier-breakdown li span:last-child {
+  color: var(--brand-gold-text);
+  font-weight: 600;
+}
+
+/* ---------- Partnership tree ------------------------------------------ */
+.tree {
+  max-width: 980px;
+  margin: 0 auto;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 48px 32px;
+  box-shadow: var(--shadow-md);
+}
+.tree svg { width: 100%; height: auto; display: block; }
+.tree__legend {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.tree__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.tree__legend-swatch {
+  width: 14px; height: 14px;
+  border-radius: var(--radius-xs);
+}
+
+/* ---------- Stripe Connect signup -------------------------------------- */
+.connect-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.connect-step {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+.connect-step__num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1;
+  color: var(--brand-gold);
+  letter-spacing: -0.025em;
+  margin: 0 0 14px;
+  font-variant-numeric: tabular-nums lining-nums;
+  display: block;
+}
+.connect-step__title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 620;
+  letter-spacing: -0.012em;
+  color: var(--text-strong);
+  margin: 0 0 8px;
+}
+.connect-step__body {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ---------- Scenarios -------------------------------------------------- */
+.scenarios {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.scenario-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+}
+.scenario-card__pill {
+  display: inline-block;
+  background: var(--brand-gold-tint);
+  color: var(--brand-gold-text);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.scenario-card__name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 620;
+  letter-spacing: -0.014em;
+  color: var(--text-strong);
+  margin: 0 0 6px;
+}
+.scenario-card__meta {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin: 0 0 16px;
+}
+.scenario-card__quote {
+  font-size: 14.5px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0 0 18px;
+  font-style: italic;
+  text-wrap: pretty;
+}
+.scenario-card__quote::before { content: "\201C"; color: var(--brand-gold); margin-right: 2px; }
+.scenario-card__quote::after { content: "\201D"; color: var(--brand-gold); margin-left: 2px; }
+.scenario-card__math {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  background: var(--surface-raised);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+.scenario-card__math strong {
+  color: var(--brand-gold-text);
+  font-weight: 600;
+}
+
+/* ---------- Responsive ----------------------------------------------- */
+@media (max-width: 1100px) {
+  .roles { grid-template-columns: 1fr; }
+  .role--featured { transform: none; }
+  .calc__grid { grid-template-columns: 1fr; }
+  .connect-steps { grid-template-columns: repeat(2, 1fr); }
+  .scenarios { grid-template-columns: 1fr; }
+}
+@media (max-width: 960px) {
+  .auto-hero__grid { grid-template-columns: 1fr; gap: 40px; }
+  .auto-hero__copy { max-width: none; }
+  .auto-hero { padding: 64px 0 56px; }
+  .auto-stats__list { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 720px) {
+  .auto-stats { padding: 24px; }
+  .auto-stats__list { grid-template-columns: 1fr; }
+  .connect-steps { grid-template-columns: 1fr; }
+  .scenario-card { padding: 24px; }
+  .tree { padding: 32px 20px; }
+}

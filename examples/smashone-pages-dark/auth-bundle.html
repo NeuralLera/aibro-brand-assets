@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SmashOne — Auth Bundle v1</title>
+<link rel="stylesheet" href="assets/shell.css"/>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="auth-bg"></div>
+<div class="auth-glow"></div>
+<div id="app"></div>
+
+<script type="text/babel" src="components/atoms.jsx"></script>
+<script type="text/babel" src="components/forms.jsx"></script>
+<script type="text/babel" src="components/screens-auth.jsx"></script>
+<script type="text/babel" src="components/screens-2fa-checkout.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+const ROUTES = [
+  { id: 'signup',        label: '/signup',         group: 'Auth' },
+  { id: 'login',         label: '/login',          group: 'Auth' },
+  { id: 'forgot',        label: '/forgot-password', group: 'Recovery' },
+  { id: 'reset',         label: '/reset-password',  group: 'Recovery' },
+  { id: 'verify-email',  label: '/verify-email',    group: 'Recovery' },
+  { id: '2fa-setup',     label: '/2fa-setup',       group: '2FA' },
+  { id: '2fa-verify',    label: '/2fa-verify',      group: '2FA' },
+  { id: 'checkout',      label: '/checkout',        group: 'Conversion' },
+];
+
+const RESET_STATES = [
+  { id: 'validating', label: 'Validating token' },
+  { id: 'valid',      label: 'Valid → form'    },
+  { id: 'expired',    label: 'Expired'         },
+  { id: 'used',       label: 'Already used'    },
+  { id: 'invalid',    label: 'Invalid'         },
+];
+const VERIFY_STATES = [
+  { id: 'verifying', label: 'Verifying'        },
+  { id: 'success',   label: 'Success'          },
+  { id: 'expired',   label: 'Expired'          },
+  { id: 'already',   label: 'Already verified' },
+  { id: 'invalid',   label: 'Invalid'          },
+];
+const LOGIN_ERROR_STATES = [
+  { id: null,         label: 'No error'        },
+  { id: 'wrong',      label: 'Wrong creds'     },
+  { id: 'locked',     label: 'Locked account'  },
+  { id: 'rate',       label: 'Rate-limited'    },
+  { id: 'unverified', label: 'Not verified'    },
+];
+
+function App() {
+  const [route, setRoute] = React.useState('signup');
+  const [path, setPath] = React.useState('2a');
+  const [resetState, setResetState] = React.useState('valid');
+  const [verifyState, setVerifyState] = React.useState('verifying');
+  const [loginError, setLoginError] = React.useState(null);
+  const [twoFAVariant, setTwoFAVariant] = React.useState('v1');
+  const [layoutVariant, setLayoutVariant] = React.useState('split');
+
+  const onNavigate = (id) => {
+    if (id === 'verify-success') {
+      setRoute('verify-email');
+      setVerifyState('success');
+      return;
+    }
+    setRoute(id);
+    // re-trigger demo states
+    if (id === 'verify-email') setVerifyState('verifying');
+  };
+
+  const screen = (() => {
+    switch (route) {
+      case 'signup':       return <SignupScreen path={path} onNavigate={onNavigate} />;
+      case 'login':        return <LoginScreen onNavigate={onNavigate} errorState={loginError} />;
+      case 'forgot':       return <ForgotScreen onNavigate={onNavigate} />;
+      case 'reset':        return <ResetScreen tokenState={resetState} onNavigate={onNavigate} />;
+      case 'verify-email': return <VerifyEmailScreen tokenState={verifyState} onNavigate={onNavigate} />;
+      case '2fa-setup':    return <TwoFASetupScreen onNavigate={onNavigate} variant={twoFAVariant} />;
+      case '2fa-verify':   return <TwoFAVerifyScreen onNavigate={onNavigate} />;
+      case 'checkout':     return <CheckoutScreen path={path} onNavigate={onNavigate} layoutVariant={layoutVariant} />;
+      default: return null;
+    }
+  })();
+
+  const groups = {};
+  ROUTES.forEach(r => { groups[r.group] = groups[r.group] || []; groups[r.group].push(r); });
+
+  return (
+    <ToastProvider>
+      <div className="proto">
+        <aside className="sidebar" aria-label="Prototype navigation">
+          <span className="wordmark">SmashOne</span>
+          <div className="helper" style={{padding:'0 8px 16px', fontSize:12, color:'var(--text-tertiary)'}}>
+            Auth bundle v1 · prototype
+          </div>
+
+          {Object.entries(groups).map(([g, items]) => (
+            <React.Fragment key={g}>
+              <h4>{g}</h4>
+              {items.map(r => (
+                <button key={r.id}
+                  className={`nav-btn ${route === r.id ? 'active' : ''}`}
+                  onClick={() => onNavigate(r.id)}>
+                  <span className="dot" />{r.label}
+                </button>
+              ))}
+            </React.Fragment>
+          ))}
+
+          <h4>Signup / Checkout — path</h4>
+          {Object.keys(PATHS).map(k => (
+            <button key={k}
+              className={`nav-btn ${path === k ? 'active' : ''}`}
+              onClick={() => setPath(k)}>
+              <span className="dot" /> {PATHS[k].label} <span className="nav-sub" style={{marginLeft:'auto', fontSize:10}}>${PATHS[k].day15} D15</span>
+            </button>
+          ))}
+
+          {route === 'reset' && (
+            <>
+              <h4>Reset token state</h4>
+              {RESET_STATES.map(s => (
+                <button key={s.id}
+                  className={`nav-btn ${resetState === s.id ? 'active' : ''}`}
+                  onClick={() => setResetState(s.id)}>
+                  <span className="dot" /> {s.label}
+                </button>
+              ))}
+            </>
+          )}
+
+          {route === 'verify-email' && (
+            <>
+              <h4>Verify token state</h4>
+              {VERIFY_STATES.map(s => (
+                <button key={s.id}
+                  className={`nav-btn ${verifyState === s.id ? 'active' : ''}`}
+                  onClick={() => setVerifyState(s.id)}>
+                  <span className="dot" /> {s.label}
+                </button>
+              ))}
+            </>
+          )}
+
+          {route === 'login' && (
+            <>
+              <h4>Login error state</h4>
+              {LOGIN_ERROR_STATES.map(s => (
+                <button key={s.id || 'none'}
+                  className={`nav-btn ${loginError === s.id ? 'active' : ''}`}
+                  onClick={() => setLoginError(s.id)}>
+                  <span className="dot" /> {s.label}
+                </button>
+              ))}
+            </>
+          )}
+
+          {route === '2fa-setup' && (
+            <>
+              <h4>2FA setup variant</h4>
+              <button className={`nav-btn ${twoFAVariant === 'v1' ? 'active' : ''}`} onClick={() => setTwoFAVariant('v1')}>
+                <span className="dot" /> V1 — single-screen wizard
+              </button>
+              <button className={`nav-btn ${twoFAVariant === 'v2' ? 'active' : ''}`} onClick={() => setTwoFAVariant('v2')}>
+                <span className="dot" /> V2 — paged with back arrow
+              </button>
+            </>
+          )}
+
+          {route === 'checkout' && (
+            <>
+              <h4>Checkout layout</h4>
+              <button className={`nav-btn ${layoutVariant === 'split' ? 'active' : ''}`} onClick={() => setLayoutVariant('split')}>
+                <span className="dot" /> Two-column (default)
+              </button>
+              <button className={`nav-btn ${layoutVariant === 'stacked' ? 'active' : ''}`} onClick={() => setLayoutVariant('stacked')}>
+                <span className="dot" /> Single-column stacked
+              </button>
+            </>
+          )}
+        </aside>
+
+        <main className="stage">{screen}</main>
+      </div>
+    </ToastProvider>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('app'));
+root.render(<App />);
+</script>
+</body>
+</html>
