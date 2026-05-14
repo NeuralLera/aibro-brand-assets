@@ -1,0 +1,29 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Build artifacts (not used here but defensive)
+node_modules/
+dist/
+build/
+*.log
+
+# Claude Code workspace
+.claude/
+
+# Local exports / scratch
+exports/
+scratch/
+*.tmp
+
+# Sensitive (defensive — should never be in this repo)
+.env
+.env.*
+secrets/
+credentials/

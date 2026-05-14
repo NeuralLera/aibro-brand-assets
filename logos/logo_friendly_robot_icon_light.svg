@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Friendly robot icon on light background">
+  <defs>
+    <linearGradient id="lb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7f7f3"/>
+      <stop offset="0.55" stop-color="#ecebe7"/>
+      <stop offset="1" stop-color="#fbfbf8"/>
+    </linearGradient>
+    <pattern id="lgrain" width="3" height="2" patternUnits="userSpaceOnUse">
+      <rect width="3" height="1" fill="#d8d8d3" fill-opacity="0.28"/>
+      <rect y="1" width="3" height="1" fill="#fff" fill-opacity="0.35"/>
+    </pattern>
+    <radialGradient id="lw" cx="0.85" cy="0.15" r="0.75">
+      <stop offset="0" stop-color="#c9a646" stop-opacity="0.08"/>
+      <stop offset="0.55" stop-color="#c9a646" stop-opacity="0.02"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="lte" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.85"/>
+      <stop offset="0.08" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="lig" cx="0.78" cy="0.22" r="0.55">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="lbs" x1="0" y1="0.7" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.06"/>
+    </linearGradient>
+    <clipPath id="lcl"><rect x="0" y="0" width="64" height="64" rx="14" ry="14"/></clipPath>
+    <linearGradient id="gold" x1="944.3439675174014" y1="197.43633990719258" x2="1037.3439675174013" y2="290.4363399071926" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f7c83d"/>
+      <stop offset="1" stop-color="#e6a800"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="scale(8)">
+    <g clip-path="url(#lcl)">
+      <rect width="64" height="64" fill="#ececec"/>
+      <rect width="64" height="64" fill="url(#lb)"/>
+      <rect width="64" height="64" fill="url(#lgrain)" opacity="0.75"/>
+      <rect width="64" height="64" fill="url(#lw)"/>
+      <rect width="64" height="64" fill="url(#lig)"/>
+      <rect width="64" height="64" fill="url(#lbs)"/>
+      <rect width="64" height="64" fill="url(#lte)"/>
+    </g>
+  </g>
+
+  <g transform="scale(0.4082934609)">
+    <circle cx="990.84" cy="243.94" r="46.50" fill="url(#gold)"/>
+    <path d="M 690 235 L 653 231 L 613 231 L 576 235 L 526 247 L 479 269 L 458 284 L 428 317 L 411 348 L 401 380 L 389 386 L 377 399 L 371 411 L 363 441 L 363 490 L 371 519 L 383 541 L 398 552 L 414 554 L 436 587 L 461 610 L 484 622 L 544 638 L 544 662 L 519 672 L 503 686 L 491 686 L 482 689 L 470 699 L 464 714 L 466 729 L 437 771 L 422 780 L 416 794 L 409 800 L 399 823 L 390 854 L 386 880 L 385 912 L 392 936 L 396 970 L 421 999 L 431 999 L 438 991 L 445 992 L 453 985 L 453 977 L 445 959 L 442 937 L 456 922 L 467 932 L 477 946 L 487 947 L 491 944 L 493 936 L 484 915 L 468 894 L 472 871 L 473 840 L 466 811 L 471 790 L 492 762 L 495 766 L 499 810 L 508 849 L 521 880 L 531 894 L 527 911 L 528 920 L 533 932 L 546 946 L 550 982 L 538 994 L 532 1007 L 528 1030 L 528 1065 L 535 1087 L 530 1100 L 530 1113 L 535 1120 L 548 1125 L 585 1126 L 598 1124 L 617 1116 L 624 1106 L 624 1093 L 619 1082 L 622 1072 L 622 1054 L 616 1018 L 607 994 L 590 976 L 588 942 L 593 937 L 614 944 L 636 946 L 658 943 L 689 929 L 702 937 L 718 939 L 720 941 L 721 960 L 711 968 L 706 977 L 697 1012 L 695 1083 L 699 1087 L 716 1093 L 766 1103 L 800 1104 L 810 1098 L 811 1087 L 807 1075 L 797 1060 L 786 1050 L 787 1011 L 784 990 L 775 963 L 762 953 L 759 926 L 760 908 L 754 895 L 739 880 L 753 852 L 760 827 L 767 782 L 768 748 L 786 741 L 796 728 L 848 718 L 862 721 L 873 720 L 881 716 L 890 705 L 916 693 L 934 676 L 950 656 L 971 624 L 976 612 L 1010 585 L 1019 574 L 1016 563 L 1007 560 L 977 578 L 973 578 L 1005 539 L 1004 529 L 994 523 L 985 526 L 955 560 L 953 559 L 971 519 L 969 509 L 958 505 L 948 511 L 925 557 L 912 565 L 904 535 L 898 531 L 890 531 L 884 535 L 882 548 L 889 594 L 878 607 L 862 633 L 853 655 L 852 668 L 841 679 L 788 689 L 775 681 L 753 680 L 730 665 L 700 659 L 701 636 L 741 628 L 775 616 L 798 603 L 821 582 L 840 551 L 847 529 L 857 524 L 864 517 L 871 504 L 878 470 L 878 440 L 872 408 L 863 388 L 852 376 L 844 371 L 839 352 L 826 322 L 801 288 L 781 271 L 746 251 L 724 243 Z M 523 360 L 542 344 L 560 336 L 600 326 L 632 322 L 690 321 L 722 324 L 760 332 L 780 341 L 794 352 L 804 366 L 812 386 L 818 414 L 821 446 L 819 495 L 814 519 L 805 539 L 790 555 L 771 565 L 744 572 L 707 577 L 654 580 L 609 579 L 571 574 L 541 563 L 529 553 L 517 534 L 510 511 L 505 477 L 504 420 L 506 402 L 512 379 Z M 335 473 L 316 514 L 295 577 L 285 625 L 281 666 L 283 758 L 292 816 L 306 874 L 306 896 L 281 1019 L 278 1046 L 281 1062 L 288 1074 L 298 1082 L 313 1087 L 342 1086 L 387 1074 L 427 1059 L 472 1037 L 503 1018 L 506 980 L 455 1011 L 388 1041 L 357 1051 L 328 1057 L 317 1056 L 310 1050 L 310 1034 L 324 972 L 337 897 L 337 873 L 318 783 L 312 717 L 314 654 L 320 609 L 329 573 L 345 527 L 337 498 Z M 976 661 L 956 689 L 934 710 L 928 731 L 909 773 L 876 823 L 831 871 L 785 906 L 787 941 L 820 920 L 859 888 L 887 859 L 913 826 L 942 778 L 957 744 L 970 701 Z M 727 510 L 724 505 L 716 503 L 693 518 L 682 521 L 664 521 L 650 517 L 632 505 L 625 505 L 620 509 L 619 516 L 626 525 L 643 535 L 663 540 L 683 540 L 702 535 L 715 528 L 725 519 Z M 592 418 L 580 422 L 573 429 L 569 439 L 569 450 L 573 460 L 579 466 L 585 469 L 596 470 L 607 466 L 613 460 L 617 451 L 617 438 L 614 430 L 609 424 L 600 419 Z M 742 414 L 732 418 L 726 424 L 722 433 L 721 443 L 723 451 L 730 461 L 741 466 L 749 466 L 759 462 L 765 456 L 769 447 L 769 434 L 766 426 L 759 418 L 749 414 Z M 903 424 L 906 453 L 904 482 L 920 513 L 923 505 L 930 494 L 942 484 L 928 458 Z" fill="#1b1c1c" fill-rule="evenodd"/>
+  </g>
+
+  <g transform="scale(8)">
+    <rect x="0.6" y="0.6" width="62.8" height="62.8" rx="13.4" ry="13.4" fill="none" stroke="#2a2a2a" stroke-opacity="0.22" stroke-width="1.2"/>
+  </g>
+</svg>
