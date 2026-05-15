@@ -13,13 +13,16 @@ This repo contains **visual brand identity** only — logos, design tokens, comp
 ### What's here
 
 - `logos/`
-  - `logo_friendly_robot_icon_light.svg` + preview — bright robot icon (light theme)
-  - `logo_friendly_robot_icon_dark.svg` + preview — bright robot icon (dark theme)
+  - `logo_friendly_robot_icon_light.svg` + preview — current friendly robot icon (light theme)
+  - `logo_friendly_robot_icon_dark.svg` + preview — current friendly robot icon (dark theme)
   - `MAX_light_icon.svg` + preview — MAX-platform icon в нашем стиле (light)
   - `MAX_dark_icon.svg` + preview — MAX-platform icon в нашем стиле (dark)
+  - `v2/` — source exports for robot v2 (master svgs + favicons)
+  - `current/` — structured copies (robot + MAX)
 - `tiles/`
   - `aibro-tile-light/` — light theme background tile pattern
   - `aibro-tile-dark/` — dark theme background tile pattern
+  - `light/` and `dark/` — structured copies of tile svgs
 - `tokens/`
   - `light-theme.md` — light theme tokens (colors / typography / spacing / radius / shadows)
   - `dark-theme.md` — dark theme tokens
