@@ -211,13 +211,10 @@ Sentence case везде. 168-ФЗ кириллица.
 
 ## Cross-references
 
-- `design/MOCKUPS_CANON.md` — phone mockups для hero
-- `design/STYLE_CANON.md` — components vocabulary
-- `design/knowledge/typography-system.md` — type scale
-- `design/knowledge/light-theme-tokens.md` + `dark-theme-tokens.md`
-- `design/knowledge/cabinet-ia-patterns.md` — для post-signup кабинета
-- SmashOne sister: `C:\MyProjects\SMM-Hub\design\knowledge\landing-page-patterns.md` (read-only — у них pricing tiered + EU/US, наш паттерн упрощён под single-tier RU)
+- `design/MOCKUPS_CANON.md` — phone mockups для hero (private repo)
+- `design/STYLE_CANON.md` секция 3-5 — components / typography / colors / tokens (canonical SSoT)
+- `design/MASTER-SITEMAP.md` — 4 surfaces architecture
 
 ## Version
 
-v1.0 — 2026-05-15 (Phase A. Single-tier 4 990 + триал 5 дней + CRM-pivot positioning. RU копирайтинг live tone vs SmashOne EN/PL.)
+v2.0 — 2026-05-16 (Cleanup orphan refs на удалённый design/knowledge/. Sister refs убраны — полная независимость. Canonical SSoT в private repo Aibro_SMM/design/STYLE_CANON.md.)

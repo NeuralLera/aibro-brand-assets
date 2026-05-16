@@ -10,26 +10,23 @@
 
 ## Зачем этот public repo
 
-1. **Visual ДНК reference (SmashOne)** — `examples/smashone-pages-light/` (22 страницы) + `examples/smashone-pages-dark/` (5 страниц). Берём layout / glassmorphism / типографику от sister-проекта, контент полностью под Aibro (тариф 4990 ₽, single-MAX, ИП Мальцев РФ, 168-ФЗ).
-2. **Утверждённые экспорты Aibro** — `examples/aibro-pages-light/` / `examples/aibro-pages-dark/` (заполняются по мере approve).
-3. **Compliance summaries** — `compliance/168-fz.md` + `compliance/single-max.md` (короткие чек-листы для быстрого review).
-4. **Pattern references** — `patterns/glassmorphism.md` + `patterns/landing-pages.md`.
+1. **Compliance summaries** — `compliance/168-fz.md` + `compliance/single-max.md` (короткие чек-листы для быстрого review).
+2. **Pattern references** — `patterns/glassmorphism.md` + `patterns/landing-pages.md`.
+3. **Утверждённые экспорты СММ АЙБРО** — `examples/aibro-pages-light/` + `examples/aibro-pages-dark/` (заполняются по мере approval).
 
 ## Структура
 
 ```
 aibro-brand-assets/
-├── compliance/         — Короткие чек-листы (168-ФЗ + single-MAX)
-│   ├── 168-fz.md         — Кириллица: ИИ / СММ / ЧЗВ / ПРО / СТАНДАРТ
-│   └── single-max.md     — Single-platform MAX (no Telegram / ВК / ОК / Дзен)
-├── patterns/           — Visual pattern references
-│   ├── glassmorphism.md  — Tile background + glassmorphism canon
-│   └── landing-pages.md  — Public one-pager + CRM-pivot section
-└── examples/           — Visual HTML references
-    ├── smashone-pages-light/  — 22 SmashOne pages (visual ДНК reference)
-    ├── smashone-pages-dark/   — 5 SmashOne dark pages
-    ├── aibro-pages-light/     — утверждённые наши страницы (light)
-    └── aibro-pages-dark/      — утверждённые наши страницы (dark)
+├── compliance/              — Короткие чек-листы (168-ФЗ + single-MAX)
+│   ├── 168-fz.md              — Кириллица: ИИ / СММ / ЧЗВ / ПРО / СТАНДАРТ
+│   └── single-max.md          — Single-platform MAX (no Telegram / ВК / ОК / Дзен)
+├── patterns/                — Visual pattern references
+│   ├── glassmorphism.md       — Tile background + glassmorphism canon
+│   └── landing-pages.md       — Public one-pager + CRM-pivot section
+└── examples/                — Visual HTML references (наши approved страницы)
+    ├── aibro-pages-light/     — утверждённые наши страницы (light theme)
+    └── aibro-pages-dark/      — утверждённые наши страницы (dark theme)
 ```
 
 ## Источник правды по design tokens / typography / icons
@@ -46,14 +43,10 @@ aibro-brand-assets/
 
 В setup форме Claude Design (https://claude.ai/design):
 
-- Поле **«Link code on GitHub»**: опционально — `https://github.com/NeuralLera/aibro-brand-assets` (даст visual ДНК references).
+- Поле **«Link code on GitHub»**: опционально — `https://github.com/NeuralLera/aibro-brand-assets` (даст compliance + pattern references).
 - **Основной canon** — paste содержимого `PROMPT.md` из task-папки (`Aibro_SMM/design/.claude/tasks/<TASK>/PROMPT.md`). PROMPT уже содержит canonical tokens / typography / iron rules.
-
-## Sister projects
-
-- `https://github.com/NeuralLera/smashone-brand-assets` — эталон по которому сделан наш repo
-- `https://smashone.ai` — sister international product (SmashOne)
+- **Brand assets (logos / icons / badges)** — drag-drop напрямую из `Aibro_SMM/design/assets/` (этот публичный repo не содержит SVG ассетов — только compliance + pattern docs).
 
 ## License
 
-См. `LICENSE`.
+См. `LICENSE`. All rights reserved — ИП Мальцев Валерий Валерьевич (ИНН 519041916737, Российская Федерация). Public visibility ≠ open-source.

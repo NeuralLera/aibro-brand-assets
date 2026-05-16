@@ -302,13 +302,10 @@ Performance:
 
 ## Cross-references
 
-- `design/knowledge/light-theme-tokens.md` — colors used в gradient
-- `design/knowledge/dark-theme-tokens.md` — dark variant
-- `design/knowledge/motion-system.md` — transitions on glass cards hover
+- `design/STYLE_CANON.md` секция 4-5 — colors / tokens (canonical SSoT, private repo)
+- `design/STYLE_CANON.md` секция 3 — motion / transitions canon
 - `web/src/styles/globals.css` — реализация tokens в CSS
-- `aibro-brand-assets/tiles/` — SVG tile patterns repo
-- SmashOne sister: `C:\MyProjects\SMM-Hub\design\knowledge\tile-background.md` (read-only — у них warm gold tile, у нас изумрудный)
 
 ## Version
 
-v1.0 — 2026-05-15 (Phase A. Изумрудный glassmorphism канон. Light-default + dark-toggle. Layered hero pattern.)
+v2.0 — 2026-05-16 (Cleanup orphan refs на удалённый design/knowledge/. Sister refs убраны — полная независимость. Canonical SSoT в private repo Aibro_SMM/design/STYLE_CANON.md.)

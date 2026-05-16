@@ -1,30 +1,31 @@
-Copyright © 2026 Valery Maltsev (NeuralLera). All rights reserved.
+Copyright © 2026 ИП Мальцев Валерий Валерьевич (ИНН 519041916737).
+All rights reserved.
 
-These visual brand assets — including but not limited to logos, tile background
-patterns, social platform icons, design tokens, and component specifications —
-are made publicly visible for the operational purpose of integrating with
-Claude Design (Anthropic Labs) and similar AI design tools that require
+These visual brand assets — including but not limited to logos, design tokens,
+glassmorphism patterns, landing page references, and compliance documentation —
+are made publicly visible solely for the operational purpose of integrating
+with Claude Design (Anthropic Labs) and similar AI design tools that require
 publicly accessible asset URLs.
 
 Public visibility does NOT constitute a permissive open-source license.
 
 UNAUTHORIZED USE PROHIBITED:
 - Reproduction, modification, or redistribution of these assets in any form
-- Use of these assets in commercial products other than the official SmashOne
-  platform (smashone.us / smashone.ai) and its authorized affiliates
+- Use of these assets in any commercial product other than the official
+  СММ АЙБРО platform (smmaibro.ru) and its authorized affiliates
 - Creation of derivative works claiming separate copyright
 - Use in any AI training corpus without explicit written authorization
 
 PERMITTED USES:
-- Referencing this repository through Claude Design or similar AI design tools
-  for the purpose of generating SmashOne brand-aligned designs
-- Inspection of asset structure and design token specifications for the
-  purpose of educational understanding
+- Referencing this repository through Claude Design or similar AI design
+  tools for the purpose of generating СММ АЙБРО brand-aligned designs
+- Inspection of asset structure and brand specifications for the purpose
+  of educational understanding
 
-The official SmashOne platform is operated by:
-- SMASHONE CORPORATION (Florida C-Corp, registration P26000023598) for the
-  US market via smashone.us
-- SmashOne Polska Sp. z o.o. for the EU market via smashone.ai
+The official СММ АЙБРО platform is operated by:
+- ИП Мальцев Валерий Валерьевич (Российская Федерация, ИНН 519041916737,
+  УСН 6%) via smmaibro.ru and authorized subdomains
+  (cabinet.smmaibro.ru / admin.smmaibro.ru / partners.smmaibro.ru)
 
 For commercial licensing inquiries, partnerships, or other authorizations,
 contact: neurallera@gmail.com
