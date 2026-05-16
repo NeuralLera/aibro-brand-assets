@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Справка — СММ АЙБРО</title>
+<link rel="icon" href="assets/logos/favicon-light.svg">
+<link rel="stylesheet" href="assets/colors_and_type.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────
+     Help page — local styles
+     Reuses tokens from colors_and_type.css. No new colors invented.
+     ───────────────────────────────────────────────────────────── */
+
+  body {
+    background: var(--bg-base);
+    background-image: var(--tile-bg-light);
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-size: 240px 240px;
+  }
+  @media (max-width: 768px) {
+    body { background-attachment: scroll; background-size: 200px 200px; }
+  }
+
+  /* skip link */
+  .skip {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--fg-1); color: var(--fg-inverse);
+    padding: 10px 14px; border-radius: 8px; z-index: 100;
+  }
+  .skip:focus { left: 16px; top: 12px; }
+
+  /* ─── Header (glass, sticky) ───────────────────────── */
+  .pub-header {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(250, 250, 250, 0.78);
+    border-bottom: 1px solid var(--border-1);
+  }
+  .pub-header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    height: 64px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .pub-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .pub-brand-tile {
+    width: 32px; height: 32px; border-radius: 9px; overflow: hidden;
+    background: var(--bg-elevated); border: 1px solid var(--border-1);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pub-brand-tile img { width: 26px; height: 26px; display: block; }
+  .pub-brand-word {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 17px;
+    letter-spacing: -0.02em;
+    color: var(--fg-1);
+    white-space: nowrap;
+  }
+  .pub-brand-word em { font-style: normal; color: var(--brand-700); }
+  .pub-nav {
+    display: flex; align-items: center; gap: 22px;
+    margin-left: 14px;
+  }
+  .pub-nav a {
+    font-family: var(--font-body); font-size: 14px;
+    color: var(--fg-2);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+  .pub-nav a:hover { color: var(--fg-1); text-decoration: none; }
+  .pub-nav a.is-current { color: var(--fg-1); font-weight: 500; }
+  .pub-header-actions {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 10px;
+  }
+  @media (max-width: 720px) {
+    .pub-nav { display: none; }
+  }
+
+  /* ─── Buttons (canonical) ───────────────────────── */
+  .pub-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border-radius: 12px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .pub-btn--md { height: 44px; padding: 0 18px; font-size: 15px; }
+  .pub-btn--sm { height: 36px; padding: 0 14px; font-size: 14px; }
+  .pub-btn--lg { height: 52px; padding: 0 24px; font-size: 16px; }
+  .pub-btn--primary { background: var(--brand-500); color: white; }
+  .pub-btn--primary:hover { background: var(--brand-600); text-decoration: none; }
+  .pub-btn--secondary { background: var(--bg-elevated); color: var(--fg-1); border-color: var(--border-2); }
+  .pub-btn--secondary:hover { background: var(--bg-subtle); border-color: var(--border-3); text-decoration: none; }
+  .pub-btn--ghost { background: transparent; color: var(--fg-1); }
+  .pub-btn--ghost:hover { background: var(--bg-subtle); text-decoration: none; }
+  .pub-btn:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }
+
+  /* ─── Page wrapper ───────────────────────── */
+  main { padding-bottom: 80px; }
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ─── Breadcrumbs ───────────────────────── */
+  .crumbs {
+    padding: 24px 0 0;
+    font-size: 14px;
+    color: var(--fg-3);
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .crumbs a { color: var(--fg-3); }
+  .crumbs a:hover { color: var(--fg-1); text-decoration: none; }
+  .crumbs .sep {
+    width: 4px; height: 4px; border-radius: 999px;
+    background: var(--fg-4);
+    display: inline-block;
+  }
+  .crumbs .current { color: var(--fg-1); font-weight: 500; }
+
+  /* ─── Hero ───────────────────────── */
+  .hero {
+    position: relative;
+    margin-top: 24px;
+    padding: 56px 48px 56px;
+    border-radius: 28px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    box-shadow: var(--shadow-2);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 85% 20%, rgba(16, 185, 129, 0.14) 0%, transparent 55%),
+      radial-gradient(ellipse at 15% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .hero-inner { position: relative; max-width: 720px; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-display);
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--brand-700);
+    margin-bottom: 16px;
+  }
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 999px;
+    background: var(--brand-500);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(36px, 4.4vw, 52px);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--fg-1);
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .hero p {
+    font-size: 18px; line-height: 1.55;
+    color: var(--fg-2);
+    margin: 0 0 28px;
+    max-width: 580px;
+    text-wrap: pretty;
+  }
+
+  /* Search */
+  .search {
+    position: relative;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 14px;
+    box-shadow: var(--shadow-1);
+    display: flex; align-items: center;
+    transition: border-color var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-fast) var(--ease-standard);
+  }
+  .search:focus-within {
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+  }
+  .search-ico {
+    flex-shrink: 0;
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--fg-3);
+  }
+  .search input {
+    flex: 1;
+    height: 56px;
+    border: 0;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--fg-1);
+    outline: 0;
+    padding: 0 0 0 4px;
+  }
+  .search input::placeholder { color: var(--fg-4); }
+  .search-hint {
+    display: none;
+    padding: 0 20px;
+    font-size: 13px; color: var(--fg-3);
+  }
+  @media (min-width: 720px) {
+    .search-hint { display: flex; align-items: center; gap: 6px; }
+  }
+  .search-kbd {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 22px; height: 22px;
+    padding: 0 6px;
+    border-radius: 6px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-2);
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--fg-2);
+  }
+  .search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0; right: 0;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 14px;
+    box-shadow: var(--shadow-3);
+    overflow: hidden;
+    display: none;
+    z-index: 20;
+  }
+  .search-results.is-open { display: block; }
+  .search-results .sr-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 18px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-1);
+    color: var(--fg-1);
+    text-decoration: none;
+  }
+  .search-results .sr-row:last-child { border-bottom: 0; }
+  .search-results .sr-row:hover,
+  .search-results .sr-row:focus-visible {
+    background: var(--bg-subtle);
+    outline: none;
+  }
+  .search-results .sr-row .sr-cat {
+    font-size: 12px; color: var(--fg-3);
+    font-family: var(--font-display); font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .search-results .sr-empty {
+    padding: 18px;
+    font-size: 14px; color: var(--fg-3);
+    text-align: center;
+  }
+  .search-results mark {
+    background: rgba(16, 185, 129, 0.18);
+    color: inherit;
+    padding: 0 2px; border-radius: 3px;
+  }
+
+  .hero-trust {
+    margin-top: 22px;
+    display: flex; flex-wrap: wrap; gap: 22px;
+    font-size: 13px; color: var(--fg-3);
+  }
+  .hero-trust span { display: inline-flex; align-items: center; gap: 8px; }
+  .hero-trust .ico {
+    width: 16px; height: 16px;
+    color: var(--brand-700);
+    display: inline-flex; align-items: center;
+  }
+
+  /* ─── Section ───────────────────────── */
+  section.block { margin-top: 64px; }
+  .section-head {
+    display: flex; align-items: end; justify-content: space-between; gap: 24px;
+    margin-bottom: 24px;
+  }
+  .section-head h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--fg-1);
+    margin: 0;
+  }
+  .section-head .section-meta {
+    font-size: 14px; color: var(--fg-3);
+  }
+
+  /* ─── Category grid ───────────────────────── */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 880px) { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .cat-grid { grid-template-columns: 1fr; } }
+
+  .cat-card {
+    position: relative;
+    display: flex; flex-direction: column;
+    gap: 14px;
+    padding: 22px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 16px;
+    box-shadow: var(--shadow-1);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-fast) var(--ease-standard),
+                background var(--dur-fast) var(--ease-standard);
+    min-height: 180px;
+  }
+  .cat-card:hover {
+    border-color: var(--border-3);
+    box-shadow: var(--shadow-2);
+    text-decoration: none;
+  }
+  .cat-card:focus-visible {
+    outline: 2px solid var(--brand-500);
+    outline-offset: 2px;
+  }
+  .cat-card .ico-tile {
+    width: 40px; height: 40px;
+    border-radius: 11px;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--brand-700);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .cat-card .ico-tile svg { width: 22px; height: 22px; }
+  .cat-card h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--fg-1);
+    margin: 0;
+  }
+  .cat-card p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg-2);
+    margin: 0;
+    flex: 1;
+  }
+  .cat-card .cat-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-1);
+  }
+  .cat-card .cat-count {
+    font-size: 13px;
+    color: var(--fg-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .cat-card .cat-arrow {
+    color: var(--fg-3);
+    display: inline-flex;
+    transition: transform var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard);
+  }
+  .cat-card:hover .cat-arrow {
+    color: var(--brand-700);
+    transform: translateX(3px);
+  }
+
+  /* compliance row — subtle tonal distinction */
+  .cat-card[data-tone="compliance"] .ico-tile {
+    background: rgba(15, 23, 42, 0.05);
+    color: var(--fg-1);
+  }
+
+  /* ─── FAQ accordion ───────────────────────── */
+  .faq {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 16px;
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+  }
+  .faq-item { border-bottom: 1px solid var(--border-1); }
+  .faq-item:last-child { border-bottom: 0; }
+  .faq-q {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    text-align: left;
+    padding: 20px 24px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--fg-1);
+    transition: background var(--dur-fast) var(--ease-standard);
+  }
+  .faq-q:hover { background: var(--bg-subtle); }
+  .faq-q:focus-visible {
+    outline: 2px solid var(--brand-500);
+    outline-offset: -2px;
+  }
+  .faq-q .caret {
+    flex-shrink: 0;
+    color: var(--fg-3);
+    transition: transform var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard);
+  }
+  .faq-item[aria-expanded="true"] .faq-q .caret {
+    transform: rotate(180deg);
+    color: var(--brand-700);
+  }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--dur-base) var(--ease-standard);
+  }
+  .faq-a-inner {
+    padding: 0 24px 22px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--fg-2);
+    max-width: 720px;
+    text-wrap: pretty;
+  }
+  .faq-a-inner a { color: var(--brand-700); }
+  .faq-foot {
+    padding: 18px 24px;
+    background: var(--bg-subtle);
+    border-top: 1px solid var(--border-1);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    font-size: 14px; color: var(--fg-3);
+  }
+  .faq-foot a {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--brand-700);
+    font-weight: 600;
+    font-family: var(--font-display);
+  }
+
+  /* ─── Support CTA ───────────────────────── */
+  .support {
+    margin-top: 64px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--bg-inverse);
+    color: var(--fg-inverse);
+    padding: 40px 44px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 32px;
+  }
+  .support::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(16, 185, 129, 0.24) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(16, 185, 129, 0.14) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .support > * { position: relative; }
+  .support h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+  .support p {
+    margin: 0;
+    font-size: 16px; line-height: 1.55;
+    color: rgba(250, 250, 250, 0.72);
+    max-width: 540px;
+  }
+  .support .stats {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .support .stats > div {
+    display: flex; flex-direction: column;
+    gap: 2px;
+  }
+  .support .stats .v {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--brand-300);
+    font-variant-numeric: tabular-nums;
+  }
+  .support .stats .l {
+    font-size: 12px;
+    color: rgba(250, 250, 250, 0.55);
+  }
+  .support .max-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--brand-500);
+    color: white;
+    padding: 0 22px;
+    height: 52px;
+    border-radius: 14px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    transition: background var(--dur-fast) var(--ease-standard);
+    white-space: nowrap;
+  }
+  .support .max-cta:hover { background: var(--brand-600); text-decoration: none; }
+  .support .max-cta img { width: 22px; height: 22px; display: block; }
+
+  @media (max-width: 720px) {
+    .support { grid-template-columns: 1fr; padding: 32px 24px; }
+  }
+
+  /* ─── Footer ───────────────────────── */
+  .pub-footer {
+    background: var(--bg-subtle);
+    padding: 56px 24px 28px;
+    border-top: 1px solid var(--border-1);
+    margin-top: 80px;
+  }
+  .pub-footer-inner { max-width: 1080px; margin: 0 auto; }
+  .footer-cols {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 720px) { .footer-cols { grid-template-columns: 1fr 1fr; } }
+  .footer-brand { display: flex; flex-direction: column; gap: 12px; max-width: 280px; }
+  .footer-brand .pub-brand-word { font-size: 18px; }
+  .footer-brand p {
+    font-size: 13px; line-height: 1.55;
+    color: var(--fg-3);
+    margin: 0;
+  }
+  .pub-footer h5 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 14px;
+    margin: 0 0 14px;
+    color: var(--fg-1);
+  }
+  .pub-footer ul {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .pub-footer a { color: var(--fg-2); font-size: 14px; }
+  .pub-footer a:hover { color: var(--fg-1); text-decoration: none; }
+  .footer-legal {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-1);
+    display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+    font-size: 12px; color: var(--fg-3);
+    line-height: 1.6;
+  }
+  .footer-legal p { margin: 0; max-width: 640px; }
+
+  /* ─── Mobile tweaks ───────────────────────── */
+  @media (max-width: 720px) {
+    .hero { padding: 36px 24px; border-radius: 20px; }
+    .hero h1 { font-size: 32px; }
+    .hero p { font-size: 16px; }
+    .search-ico { width: 48px; height: 48px; }
+    .search input { height: 48px; font-size: 15px; }
+    section.block { margin-top: 48px; }
+    .section-head h2 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip">К содержимому</a>
+
+<!-- ───────────────────────── HEADER ───────────────────────── -->
+<header class="pub-header">
+  <div class="pub-header-inner">
+    <a href="#" class="pub-brand" aria-label="СММ АЙБРО — на главную">
+      <span class="pub-brand-tile" aria-hidden="true">
+        <img src="assets/logos/robot-icon-light.svg" alt="">
+      </span>
+      <span class="pub-brand-word">СММ <em>АЙБРО</em></span>
+    </a>
+    <nav class="pub-nav" aria-label="Основная навигация">
+      <a href="#">Возможности</a>
+      <a href="#">Примеры</a>
+      <a href="#">Тариф</a>
+      <a href="#">Партнёрам</a>
+      <a href="#" class="is-current" aria-current="page">Справка</a>
+    </nav>
+    <div class="pub-header-actions">
+      <a href="#" class="pub-btn pub-btn--ghost pub-btn--sm">Войти</a>
+      <a href="#" class="pub-btn pub-btn--primary pub-btn--sm">Пробный период</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <div class="container">
+
+    <!-- Breadcrumbs -->
+    <nav class="crumbs" aria-label="Хлебные крошки">
+      <a href="#">Главная</a>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="current" aria-current="page">Справка</span>
+    </nav>
+
+    <!-- ───────────────────────── HERO ───────────────────────── -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <div class="hero-eyebrow">
+          <span class="dot" aria-hidden="true"></span>
+          Центр помощи
+        </div>
+        <h1 id="hero-title">Справка СММ&nbsp;АЙБРО</h1>
+        <p>Найдите ответ или свяжитесь с поддержкой — мы отвечаем в&nbsp;течение часа в&nbsp;рабочее время.</p>
+
+        <div class="search" role="search">
+          <span class="search-ico" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+          </span>
+          <input
+            id="help-search"
+            type="search"
+            placeholder="Поиск по справке: «как подключить», «ОРД», «пробный период»…"
+            aria-label="Поиск по справке"
+            aria-controls="search-results"
+            aria-autocomplete="list"
+            autocomplete="off"
+          >
+          <div class="search-hint" aria-hidden="true">
+            <span class="search-kbd">⌘</span>
+            <span class="search-kbd">K</span>
+          </div>
+          <div class="search-results" id="search-results" role="listbox" aria-label="Результаты поиска"></div>
+        </div>
+
+        <div class="hero-trust">
+          <span>
+            <span class="ico" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            </span>
+            Cоответствие 168‑ФЗ
+          </span>
+          <span>
+            <span class="ico" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"></path></svg>
+            </span>
+            Поддержка в&nbsp;MAX
+          </span>
+          <span>
+            <span class="ico" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+            </span>
+            Ответ в&nbsp;течение часа
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── CATEGORIES ───────────────────────── -->
+    <section class="block" aria-labelledby="cats-title">
+      <div class="section-head">
+        <h2 id="cats-title">Популярные разделы</h2>
+        <div class="section-meta">9 разделов · 78 статей</div>
+      </div>
+
+      <div class="cat-grid">
+
+        <a href="#" class="cat-card" data-cat-title="Подключение" data-tone="onboarding">
+          <span class="ico-tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 2v6"></path>
+              <path d="M15 2v6"></path>
+              <path d="M6 8h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8z"></path>
+              <path d="M12 17v5"></path>
+            </svg>
+          </span>
+          <h3>Подключение</h3>
+          <p>Подключение к&nbsp;MAX и&nbsp;первые шаги за&nbsp;один день — от&nbsp;регистрации до&nbsp;первого ответа ИИ.</p>
+          <div class="cat-foot">
+            <span class="cat-count">8&nbsp;статей</span>
+            <span class="cat-arrow" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-card" data-cat-title="Контент" data-tone="content">
+          <span class="ico-tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 11 14-5v12L3 13v-2z"></path>
+              <path d="M17 7.5v9"></path>
+              <path d="M17 8a3 3 0 0 1 0 6"></path>
+              <path d="M11.5 17.2a3 3 0 1 1-5.6-1.7"></path>
+            </svg>
+          </span>
+          <h3>Контент и&nbsp;посты</h3>
+          <p>Автопостинг до&nbsp;5&nbsp;постов в&nbsp;день, быстрые посты, контент‑план, шаблоны и&nbsp;медиа.</p>
+          <div class="cat-foot">
+            <span class="cat-count">12&nbsp;статей</span>
+            <span class="cat-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg></span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-card" data-cat-title="CRM" data-tone="crm">
+          <span class="ico-tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m7.5 4.27 9 5.15"></path>
+              <path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.73l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8z"></path>
+              <path d="m3.3 7 8.7 5 8.7-5"></path>
+              <path d="M12 22V12"></path>
+            </svg>
+          </span>
+          <h3>CRM: заказы и&nbsp;записи</h3>
+          <p>Приём заказов, запись на&nbsp;услуги, карточки клиентов, история. Оплату вы&nbsp;принимаете на&nbsp;своей кассе.</p>
+          <div class="cat-foot">
+            <span class="cat-count">14&nbsp;статей</span>
+            <span class="cat-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg></span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-card" data-cat-title="Каталог" data-tone="catalog">
+          <span class="ico-tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 8h14l-1.2 11.1A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.9L5 8z"></path>
+              <path d="M8.5 8V6a3.5 3.5 0 0 1 7 0v2"></path>
+            </svg>
+          </span>
+          <h3>Каталог</h3>
+          <p>Товары и&nbsp;услуги, варианты и&nbsp;модификаторы, цены, фото, импорт списком, остатки.</p>
+          <div class="cat-foot">
+            <span class="cat-count">10&nbsp;статей</span>
+            <span class="cat-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg></span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-card" data-cat-title="ИИ-ассистент" data-tone="ai">
+          <span class="ico-tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.5 13.5 7l4.5 1.5L13.5 10 12 14.5 10.5 10 6 8.5 10.5 7 12 2.5z"></path>
+              <path d="M19 14.5 19.7 16.5 21.5 17.2 19.7 17.9 19 19.9 18.3 17.9 16.5 17.2 18.3 16.5 19 14.5z"></path>
+              <path d="M5.5 16 6.2 17.5 7.7 18.2 6.2 18.9 5.5 20.4 4.8 18.9 3.3 18.2 4.8 17.5 5.5 16z"></path>
+            </svg>
+          </span>
+          <h3>ИИ‑ассистент</h3>
+          <p>Промпты под нишу, тон голоса, лимиты ответов, ИИ‑коуч, передача диалога оператору.</p>
+          <div class="cat-foot">
+            <span class="cat-count">9&nbsp;статей</span>
+            <span class="cat-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg></span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-card" data-cat-title="Оплата" data-tone="billing">
+          <span class="ico-tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2.5" y="5" width="19" height="14" rx="2"></rect>
+              <line x1="2.5" y1="10" x2="21.5" y2="10"></line>
+              <line x1="6" y1="15" x2="9" y2="15"></line>
+            </svg>
+          </span>
+          <h3>Оплата и&nbsp;тариф</h3>
+          <p>Единый тариф 4&nbsp;990&nbsp;₽/мес, пробный период 5&nbsp;дней без карты, чеки, возвраты, ИП.</p>
+          <div class="cat-foot">
+            <span class="cat-count">7&nbsp;статей</span>
+            <span class="cat-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg></span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-card" data-cat-title="168-ФЗ" data-tone="compliance">
+          <span class="ico-tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </span>
+          <h3>168‑ФЗ</h3>
+          <p>Соответствие закону о&nbsp;государственном языке: кириллица в&nbsp;интерфейсе и&nbsp;уведомлениях.</p>
+          <div class="cat-foot">
+            <span class="cat-count">4&nbsp;статьи</span>
+            <span class="cat-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg></span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-card" data-cat-title="ОРД" data-tone="compliance">
+          <span class="ico-tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.5 14.5 5h3.5v3.5L20.5 11 18 13.5V17h-3.5L12 19.5 9.5 17H6v-3.5L3.5 11 6 8.5V5h3.5L12 2.5z"></path>
+              <path d="m9 11 2.2 2.2L15 9.5"></path>
+            </svg>
+          </span>
+          <h3>ОРД и&nbsp;маркировка</h3>
+          <p>Автоматическая маркировка рекламы, токен erid, отчёты в&nbsp;ОРД, лимиты по&nbsp;рекламным постам.</p>
+          <div class="cat-foot">
+            <span class="cat-count">6&nbsp;статей</span>
+            <span class="cat-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg></span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-card" data-cat-title="Партнёрка" data-tone="partners">
+          <span class="ico-tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </span>
+          <h3>Партнёрская программа</h3>
+          <p>10%&nbsp;+ 10% lifetime: с&nbsp;первой оплаты партнёра и&nbsp;со&nbsp;всех его клиентов. Промокоды и&nbsp;выплаты.</p>
+          <div class="cat-foot">
+            <span class="cat-count">8&nbsp;статей</span>
+            <span class="cat-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg></span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ───────────────────────── FAQ ───────────────────────── -->
+    <section class="block" aria-labelledby="faq-title">
+      <div class="section-head">
+        <h2 id="faq-title">Частые вопросы</h2>
+        <div class="section-meta">Обновлено 12.05.2026</div>
+      </div>
+
+      <div class="faq" id="faq">
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-1" id="faq-q-1">
+            <span>Как подключить бизнес‑канал в&nbsp;MAX?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-1" role="region" aria-labelledby="faq-q-1">
+            <div class="faq-a-inner">
+              В&nbsp;кабинете СММ АЙБРО нажмите «Подключить бизнес» и&nbsp;следуйте инструкции: создаёте бизнес‑канал в&nbsp;MAX, добавляете нашего бота администратором с&nbsp;правом постинга и&nbsp;ответов. На&nbsp;всё уходит около 10&nbsp;минут. После подключения ассистент начинает отвечать сразу.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-2" id="faq-q-2">
+            <span>Сколько стоит и&nbsp;что входит в&nbsp;тариф?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-2" role="region" aria-labelledby="faq-q-2">
+            <div class="faq-a-inner">
+              Единый тариф — <b>4&nbsp;990&nbsp;₽/мес</b>. В&nbsp;него входит: ИИ‑ассистент клиентам 24/7, автопостинг до&nbsp;5&nbsp;постов в&nbsp;день, приём заказов и&nbsp;запись на&nbsp;услуги, мини‑CRM, ОРД с&nbsp;автоматическим erid (до&nbsp;30&nbsp;рекламных постов в&nbsp;месяц). Никаких аддонов и&nbsp;скрытых платежей.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-3" id="faq-q-3">
+            <span>Что такое пробный период 5&nbsp;дней?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-3" role="region" aria-labelledby="faq-q-3">
+            <div class="faq-a-inner">
+              5&nbsp;дней полного доступа без привязки банковской карты. Подключаете бизнес, проверяете ассистента, автопостинг и&nbsp;CRM на&nbsp;реальных клиентах. Если подходит — оплачиваете тариф. Если нет — просто перестаёте пользоваться, никаких списаний.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-4" id="faq-q-4">
+            <span>Как работает приём заказов через ИИ?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-4" role="region" aria-labelledby="faq-q-4">
+            <div class="faq-a-inner">
+              Клиент пишет в&nbsp;ваш канал в&nbsp;MAX, ассистент уточняет позиции, считает сумму, фиксирует имя и&nbsp;контакт. Заказ появляется в&nbsp;CRM с&nbsp;историей переписки. <b>Оплату клиент проводит мимо нас</b> — на&nbsp;вашей кассе, через ваш банк или наличными при получении. Мы&nbsp;не&nbsp;платёжный агент.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-5" id="faq-q-5">
+            <span>Что такое ОРД и&nbsp;зачем мне маркировать рекламу?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-5" role="region" aria-labelledby="faq-q-5">
+            <div class="faq-a-inner">
+              ОРД — оператор рекламных данных. По&nbsp;закону любая интернет‑реклама в&nbsp;РФ должна маркироваться токеном erid и&nbsp;учитываться. Когда вы&nbsp;помечаете пост как рекламный, СММ АЙБРО автоматически регистрирует креатив, получает erid и&nbsp;добавляет его в&nbsp;текст поста. Отчёты сдаются за&nbsp;вас.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-6" id="faq-q-6">
+            <span>Какие лимиты по&nbsp;постам, ответам ИИ, товарам?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-6" role="region" aria-labelledby="faq-q-6">
+            <div class="faq-a-inner">
+              До&nbsp;5&nbsp;автопостов в&nbsp;день, до&nbsp;30&nbsp;рекламных постов с&nbsp;маркировкой в&nbsp;месяц, до&nbsp;1&nbsp;000 товаров и&nbsp;услуг в&nbsp;каталоге. Ответы ИИ клиентам — без верхнего лимита по&nbsp;количеству сообщений в&nbsp;разумных рамках честного использования.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-7" id="faq-q-7">
+            <span>Как пригласить партнёра и&nbsp;получать с&nbsp;него 10%?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-7" role="region" aria-labelledby="faq-q-7">
+            <div class="faq-a-inner">
+              В&nbsp;кабинете на&nbsp;вкладке «Партнёрам» получаете персональный промокод и&nbsp;реферальную ссылку. С&nbsp;каждого, кто оплатит подписку по&nbsp;вашей рекомендации, вам начисляется <b>10%&nbsp;lifetime</b>. Если ваш партнёр сам станет агентом и&nbsp;приведёт клиентов — вы&nbsp;получите ещё <b>10%&nbsp;со&nbsp;второго уровня</b>.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-8" id="faq-q-8">
+            <span>Возврат и&nbsp;отмена подписки</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-8" role="region" aria-labelledby="faq-q-8">
+            <div class="faq-a-inner">
+              Подписку можно отключить в&nbsp;любой момент в&nbsp;разделе «Тариф». Списания прекращаются с&nbsp;конца оплаченного периода. Если у&nbsp;вас остаются неиспользованные дни — возвращаем остаток пропорционально на&nbsp;карту в&nbsp;течение 5&nbsp;рабочих дней.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-foot">
+          <span>Не&nbsp;нашли свой вопрос?</span>
+          <a href="#">
+            Все вопросы (60+)
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── SUPPORT CTA ───────────────────────── -->
+    <section class="support" aria-labelledby="support-title">
+      <div>
+        <h2 id="support-title">Не&nbsp;нашли ответ?</h2>
+        <p>Напишите нам в&nbsp;MAX&nbsp;— команда поддержки отвечает в&nbsp;течение часа в&nbsp;рабочее время. По&nbsp;будням с&nbsp;9:00 до&nbsp;21:00&nbsp;МСК.</p>
+        <div class="stats">
+          <div>
+            <span class="v">~22 мин</span>
+            <span class="l">средний ответ</span>
+          </div>
+          <div>
+            <span class="v">9:00–21:00</span>
+            <span class="l">по&nbsp;будням, МСК</span>
+          </div>
+          <div>
+            <span class="v">RU</span>
+            <span class="l">только русский язык</span>
+          </div>
+        </div>
+      </div>
+      <a href="#" class="max-cta">
+        <img src="assets/logos/max-glyph.svg" alt="">
+        Открыть канал поддержки в&nbsp;MAX
+      </a>
+    </section>
+
+  </div>
+
+</main>
+
+<!-- ───────────────────────── FOOTER ───────────────────────── -->
+<footer class="pub-footer">
+  <div class="pub-footer-inner">
+    <div class="footer-cols">
+      <div class="footer-brand">
+        <a href="#" class="pub-brand" aria-label="СММ АЙБРО — на главную">
+          <span class="pub-brand-tile" aria-hidden="true">
+            <img src="assets/logos/robot-icon-light.svg" alt="">
+          </span>
+          <span class="pub-brand-word">СММ <em>АЙБРО</em></span>
+        </a>
+        <p>ИИ‑автоматизация бизнеса в&nbsp;мессенджере MAX: ассистент клиентам 24/7, автопостинг, приём заказов и&nbsp;мини‑CRM.</p>
+      </div>
+      <div>
+        <h5>Продукт</h5>
+        <ul>
+          <li><a href="#">Возможности</a></li>
+          <li><a href="#">Демо по&nbsp;нишам</a></li>
+          <li><a href="#">Тариф</a></li>
+          <li><a href="#">Пробный период</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Помощь</h5>
+        <ul>
+          <li><a href="#">Все статьи</a></li>
+          <li><a href="#">Частые вопросы</a></li>
+          <li><a href="#">Канал поддержки</a></li>
+          <li><a href="#">Статус сервиса</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Компания</h5>
+        <ul>
+          <li><a href="#">Партнёрам</a></li>
+          <li><a href="#">Реквизиты</a></li>
+          <li><a href="#">Договор‑оферта</a></li>
+          <li><a href="#">Политика данных</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>ИП Мальцев Валерий Валерьевич · ИНН 519041916737 · УСН 6% · Т‑Банк Санкт‑Петербург. Услуги оказываются на&nbsp;территории Российской Федерации.</p>
+      <p>© 2026 СММ АЙБРО</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ───── Accordion ───── */
+  (function () {
+    const items = document.querySelectorAll('.faq-item');
+    items.forEach((item) => {
+      const btn = item.querySelector('.faq-q');
+      const ans = item.querySelector('.faq-a');
+      btn.addEventListener('click', () => {
+        const open = item.getAttribute('aria-expanded') === 'true';
+        if (open) {
+          item.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-expanded', 'false');
+          ans.style.maxHeight = '0px';
+        } else {
+          item.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-expanded', 'true');
+          ans.style.maxHeight = ans.scrollHeight + 'px';
+        }
+      });
+    });
+  })();
+
+  /* ───── Search (client-side filter over category titles + FAQ questions) ───── */
+  (function () {
+    const input = document.getElementById('help-search');
+    const results = document.getElementById('search-results');
+
+    // Build index from page content
+    const cats = [...document.querySelectorAll('.cat-card')].map((el) => ({
+      title: el.dataset.catTitle,
+      blurb: el.querySelector('p').textContent.trim(),
+      href: el.getAttribute('href'),
+      cat: 'Раздел',
+    }));
+    const faqs = [...document.querySelectorAll('.faq-q')].map((el) => ({
+      title: el.querySelector('span').textContent.replace(/\u00a0/g, ' ').trim(),
+      blurb: el.closest('.faq-item').querySelector('.faq-a-inner').textContent.trim().slice(0, 110) + '…',
+      href: '#' + el.id,
+      cat: 'Частый вопрос',
+      item: el.closest('.faq-item'),
+    }));
+    const index = [...cats, ...faqs];
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
+    function highlight(text, q) {
+      if (!q) return escapeHtml(text);
+      const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      return escapeHtml(text).replace(re, '<mark>$1</mark>');
+    }
+
+    function close() { results.classList.remove('is-open'); results.innerHTML = ''; }
+    function render(q) {
+      const norm = q.trim().toLowerCase();
+      if (!norm) { close(); return; }
+      const hits = index.filter((r) =>
+        r.title.toLowerCase().includes(norm) || r.blurb.toLowerCase().includes(norm)
+      ).slice(0, 7);
+      results.classList.add('is-open');
+      if (!hits.length) {
+        results.innerHTML = '<div class="sr-empty">Ничего не&nbsp;нашли. Попробуйте написать в&nbsp;поддержку в&nbsp;MAX.</div>';
+        return;
+      }
+      results.innerHTML = hits.map((h, i) => `
+        <a class="sr-row" href="${h.href}" data-idx="${i}" role="option">
+          <div>
+            <div style="font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--fg-1);">${highlight(h.title, norm)}</div>
+            <div style="font-size:13px;color:var(--fg-3);margin-top:2px;">${highlight(h.blurb, norm)}</div>
+          </div>
+          <span class="sr-cat">${h.cat}</span>
+        </a>`).join('');
+      // wire faq jumps
+      results.querySelectorAll('.sr-row').forEach((row, i) => {
+        const hit = hits[i];
+        if (hit.item) {
+          row.addEventListener('click', (e) => {
+            e.preventDefault();
+            const item = hit.item;
+            const btn = item.querySelector('.faq-q');
+            if (item.getAttribute('aria-expanded') !== 'true') btn.click();
+            const rect = item.getBoundingClientRect();
+            const target = window.scrollY + rect.top - 120;
+            window.scrollTo({ top: target, behavior: 'smooth' });
+            close();
+            input.blur();
+          });
+        }
+      });
+    }
+
+    input.addEventListener('input', (e) => render(e.target.value));
+    input.addEventListener('focus', (e) => { if (e.target.value) render(e.target.value); });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search')) close();
+    });
+    // Cmd/Ctrl+K focus
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        input.focus();
+        input.select();
+      }
+      if (e.key === 'Escape') { close(); input.blur(); }
+    });
+  })();
+</script>
+
+</body>
+</html>

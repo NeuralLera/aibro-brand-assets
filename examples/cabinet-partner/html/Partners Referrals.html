@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Партнёрский кабинет — Мои рефералы</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/colors_and_type.css">
+  <link rel="stylesheet" href="design/partners-dashboard.css">
+  <link rel="stylesheet" href="design/partners-earnings.css">
+  <link rel="stylesheet" href="design/partners-referrals.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useEffect, useRef } = React;
+const ICO = "design/assets/icons/";
+
+function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+function fmtRub(n) { return fmt(n) + " ₽"; }
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+/* ---------- nav config (same as Earnings/Payouts) ---------- */
+const NAV_MAIN = [
+  { id: "home",      label: "Главная",   icon: "icon-nav-home",      href: "Partners Dashboard.html" },
+  { id: "referrals", label: "Рефералы",  icon: "icon-nav-team",      badge: 47, href: "Partners Referrals.html" },
+  { id: "income",    label: "Доход",     icon: "icon-nav-finance",   href: "Partners Earnings.html" },
+  { id: "payouts",   label: "Выплаты",   icon: "shield-check",       href: "Partners Payouts.html" },
+  { id: "materials", label: "Материалы", icon: "icon-nav-documents" },
+];
+const NAV_FOOT = [
+  { id: "settings", label: "Настройки", icon: "icon-nav-settings" },
+  { id: "help",     label: "Поддержка", icon: "icon-nav-help" },
+];
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+function Sidebar({ current }) {
+  return (
+    <aside className="pd-side" aria-label="Главная навигация">
+      <a className="pd-brand" href="Partners Dashboard.html">
+        <span className="pd-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+        <span>
+          <span className="pd-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="pd-brand-meta">Партнёры</div>
+        </span>
+      </a>
+
+      <div className="pd-biz">
+        <div className="pd-biz-ava">И</div>
+        <div>
+          <div className="pd-biz-name">Иван Петров</div>
+          <div className="pd-biz-handle">@ivan‑petrov · ФЛ</div>
+        </div>
+        <div className="pd-biz-pill">L2</div>
+      </div>
+
+      {NAV_MAIN.map((it) => {
+        const cls = `pd-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="pd-nav-caption">Аккаунт</div>
+      {NAV_FOOT.map((it) => (
+        <button key={it.id} className="pd-nav-item">
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+        </button>
+      ))}
+
+      <div className="pd-side-foot">
+        ИП Мальцев · единый тариф <b style={{color:"var(--fg-2)",fontWeight:600}}>4 990 ₽/мес</b><br/>
+        Партнёрская программа · <a href="#terms">правила</a>
+      </div>
+    </aside>
+  );
+}
+
+/* ---------- topbar ---------- */
+function TopBar({ onBurger }) {
+  return (
+    <header className="pd-top">
+      <button className="pd-burger" aria-label="Меню" onClick={onBurger}><span></span></button>
+      <div>
+        <div className="crumb">Партнёры / Рефералы</div>
+        <h1>Мои рефералы</h1>
+      </div>
+      <div className="pd-top-actions">
+        <button className="pd-iconbtn" aria-label="Уведомления">
+          <Ic name="icon-nav-notifications" size={20} />
+          <span className="dot"></span>
+        </button>
+        <div className="pd-profile" tabIndex="0">
+          <div className="ava">И</div>
+          <div className="meta">
+            <span className="name">Иван П.</span>
+            <span className="role">Партнёр · L2</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ============================================================
+   REFERRALS MOCK DATA — 12 businesses
+============================================================ */
+const REF_LINK = "https://smmaibro.ru/?ref=ivan-petrov";
+
+const REFERRALS = [
+  { id: "REF-001", name: "Пекарня «Уют»",         handle: "@pekarnya_uyut",  contact: "Анна Соколова",      phone: "+7 921 ••• 12‑45", level: "L1", registered: "12.06.2025", regTs: 20250612, status: "active",       mrr: 4990, income: 990,  monthsActive: 12 },
+  { id: "REF-002", name: "Пульс Фитнес",          handle: "@puls_fit",       contact: "Дмитрий Орлов",      phone: "+7 911 ••• 33‑02", level: "L1", registered: "04.09.2025", regTs: 20250904, status: "active",       mrr: 4990, income: 499,  monthsActive: 9  },
+  { id: "REF-003", name: "Алексей Страхов",       handle: "@a_strahov_ins",  contact: "Алексей Страхов",    phone: "+7 905 ••• 76‑18", level: "L1", registered: "21.10.2025", regTs: 20251021, status: "active",       mrr: 4990, income: 499,  monthsActive: 7  },
+  { id: "REF-004", name: "Смарт Тур",             handle: "@smart_tur",      contact: "Елена Иванова",      phone: "+7 916 ••• 04‑81", level: "L2", registered: "30.09.2025", regTs: 20250930, status: "active",       mrr: 4990, income: 499,  monthsActive: 8  },
+  { id: "REF-005", name: "Цветы СПб",             handle: "@flowers_spb",    contact: "Мария Лебедева",     phone: "+7 921 ••• 55‑70", level: "L2", registered: "12.05.2026", regTs: 20260512, status: "trial",        mrr: 0,    income: 0,    monthsActive: 0  },
+  { id: "REF-006", name: "Грумминг Лап",          handle: "@lap_groom",      contact: "Юлия Васильева",     phone: "+7 925 ••• 11‑89", level: "L1", registered: "08.11.2025", regTs: 20251108, status: "active",       mrr: 4990, income: 499,  monthsActive: 6  },
+  { id: "REF-007", name: "Этно — школа танцев",   handle: "@etno_dance",     contact: "Карина Сардарова",   phone: "+7 903 ••• 70‑42", level: "L1", registered: "17.12.2025", regTs: 20251217, status: "active",       mrr: 4990, income: 499,  monthsActive: 5  },
+  { id: "REF-008", name: "Шиномонтаж 24",         handle: "@shina24",        contact: "Игорь Зайцев",       phone: "+7 962 ••• 90‑33", level: "L1", registered: "23.01.2026", regTs: 20260123, status: "active",       mrr: 4990, income: 499,  monthsActive: 4  },
+  { id: "REF-009", name: "Кофейня У Лили",        handle: "@kofe_u_lily",    contact: "Лилия Чёрная",       phone: "+7 909 ••• 28‑15", level: "L2", registered: "14.05.2026", regTs: 20260514, status: "trial",        mrr: 0,    income: 0,    monthsActive: 0  },
+  { id: "REF-010", name: "Антон С. — психолог",   handle: "@anton_ps",       contact: "Антон Степанов",     phone: "+7 968 ••• 42‑07", level: "L1", registered: "11.02.2026", regTs: 20260211, status: "active",       mrr: 4990, income: 499,  monthsActive: 3  },
+  { id: "REF-011", name: "Design Atelier",        handle: "@d_atelier",      contact: "Полина Тимофеева",   phone: "+7 999 ••• 04‑96", level: "L2", registered: "02.03.2026", regTs: 20260302, status: "active",       mrr: 4990, income: 499,  monthsActive: 2  },
+  { id: "REF-012", name: "Cargo Moscow",          handle: "@cargo_msk",      contact: "Сергей Михайлов",    phone: "+7 985 ••• 17‑23", level: "L2", registered: "20.10.2025", regTs: 20251020, status: "unsubscribed", mrr: 0,    income: 0,    monthsActive: 4  },
+];
+
+const STATUS_META = {
+  trial:        { label: "Триал",      icon: "clock",                     cls: "ref-st-trial" },
+  active:       { label: "Активен",    icon: "shield-check",              cls: "ref-st-active" },
+  unsubscribed: { label: "Отписался",  icon: "icon-action-external-link", cls: "ref-st-off" },
+  paused:       { label: "Пауза",      icon: "clock",                     cls: "ref-st-paused" },
+};
+
+/* Fake payment history for drawer (per referral) */
+function buildPayments(item) {
+  const months = ["май 2026","апр 2026","мар 2026","фев 2026","янв 2026","дек 2025","ноя 2025","окт 2025","сен 2025","авг 2025","июл 2025","июн 2025"];
+  if (item.status !== "active") return [];
+  const take = Math.min(item.monthsActive, months.length);
+  return months.slice(0, take).map((m, i) => ({
+    period: m,
+    amount: 499,
+    status: i === 0 ? "pending" : "paid",
+  }));
+}
+
+/* ============================================================
+   SHARE BLOCK (large emerald card)
+============================================================ */
+function ShareBlock({ onToast }) {
+  const inputRef = useRef(null);
+
+  function copyLink() {
+    if (inputRef.current) {
+      inputRef.current.select();
+      try {
+        navigator.clipboard.writeText(REF_LINK);
+        onToast && onToast("Ссылка скопирована");
+      } catch (e) {
+        document.execCommand("copy");
+        onToast && onToast("Ссылка скопирована");
+      }
+    }
+  }
+
+  return (
+    <section className="ref-share">
+      <div className="ref-share-side">
+        <div className="ref-share-eyebrow">
+          <Ic name="icon-action-share-link" size={14} />
+          <span>Ваша реферальная ссылка</span>
+        </div>
+        <h3 className="ref-share-h">
+          Приглашайте бизнес — <span style={{color:"var(--brand-700)"}}>получайте 10% lifetime</span>
+        </h3>
+        <p className="ref-share-sub">
+          За каждого реферала, который оплатил подписку (<b>4 990 ₽/мес</b>), вам начисляется
+          10% от его платежа — каждый месяц, пока он остаётся клиентом. Плюс ещё 10% с тех,
+          кого он сам пригласит (L2).
+        </p>
+
+        <div className="ref-share-row">
+          <input
+            ref={inputRef}
+            type="text"
+            readOnly
+            value={REF_LINK}
+            className="ref-share-input"
+            aria-label="Ваша реферальная ссылка"
+            onFocus={(e) => e.target.select()}
+          />
+          <button className="ref-btn-primary" onClick={copyLink}>
+            <Ic name="icon-action-copy" size={16} style={{filter:"brightness(0) invert(1)"}} />
+            <span>Скопировать</span>
+          </button>
+          <button className="ref-btn-secondary" type="button">
+            <Ic name="icon-status-info" size={16} />
+            <span>QR‑код</span>
+          </button>
+          <button className="ref-btn-ghost" type="button">
+            <Ic name="icon-action-download" size={16} />
+            <span>Материалы</span>
+          </button>
+        </div>
+
+        <div className="ref-share-stats">
+          <div className="ref-share-stat">
+            <span className="num">142</span>
+            <span className="lbl">переходов · 30 дней</span>
+          </div>
+          <span className="ref-share-sep">·</span>
+          <div className="ref-share-stat">
+            <span className="num">5</span>
+            <span className="lbl">регистраций</span>
+          </div>
+          <span className="ref-share-sep">·</span>
+          <div className="ref-share-stat">
+            <span className="num"><span style={{color:"var(--brand-700)"}}>3</span></span>
+            <span className="lbl">оплатили</span>
+          </div>
+          <span className="ref-share-cvr">Конверсия в платящих <b>2,1 %</b></span>
+        </div>
+      </div>
+
+      <div className="ref-share-art" aria-hidden="true">
+        <div className="ref-share-art-orb">
+          <Ic name="icon-action-share-link" size={42} />
+        </div>
+        <div className="ref-share-art-chip ref-share-art-chip-1">L1 · 10 %</div>
+        <div className="ref-share-art-chip ref-share-art-chip-2">L2 · 10 %</div>
+        <div className="ref-share-art-chip ref-share-art-chip-3">lifetime</div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   KPI ROW (3 cards)
+============================================================ */
+function KpiRow({ stats }) {
+  return (
+    <div className="ref-kpi">
+      <div className="kpi">
+        <div className="kpi-head">
+          <div className="kpi-ico"><Ic name="icon-nav-team" size={18} /></div>
+          <div className="kpi-lbl">Всего рефералов</div>
+        </div>
+        <div className="kpi-val">{stats.total}<span className="unit">бизн.</span></div>
+        <div className="kpi-foot ref-kpi-split">
+          <span className="ref-kpi-pill ref-kpi-pill-active">{stats.active} активны</span>
+          <span className="ref-kpi-pill ref-kpi-pill-trial">{stats.trial} на триале</span>
+        </div>
+      </div>
+
+      <div className="kpi">
+        <div className="kpi-head">
+          <div className="kpi-ico"><Ic name="icon-nav-customers" size={18} /></div>
+          <div className="kpi-lbl">L1 — прямые приглашения</div>
+        </div>
+        <div className="kpi-val">{stats.l1}<span className="unit">бизн.</span></div>
+        <div className="kpi-foot">
+          <span className="kpi-delta">10 % с каждой подписки</span>
+          <span>· пожизненно</span>
+        </div>
+      </div>
+
+      <div className="kpi">
+        <div className="kpi-head">
+          <div className="kpi-ico"><Ic name="users" size={18} /></div>
+          <div className="kpi-lbl">L2 — под‑партнёры</div>
+        </div>
+        <div className="kpi-val">{stats.l2}<span className="unit">бизн.</span></div>
+        <div className="kpi-foot">
+          <span className="kpi-delta">+10 % их платежей</span>
+          <span>· второй уровень</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   FILTERS BAR
+============================================================ */
+function FiltersBar({ level, setLevel, status, setStatus, search, setSearch, dateRange, setDateRange, counts }) {
+  return (
+    <div className="filters ref-filters">
+      <div className="filter-group">
+        <span className="filter-lbl">Уровень</span>
+        <div className="level-tabs" role="tablist">
+          <button role="tab" aria-selected={level === "all"}
+                  className={level === "all" ? "active" : ""}
+                  onClick={() => setLevel("all")}>Все</button>
+          <button role="tab" aria-selected={level === "L1"}
+                  className={level === "L1" ? "active" : ""}
+                  onClick={() => setLevel("L1")}>
+            <span className="dot l1"></span>L1
+          </button>
+          <button role="tab" aria-selected={level === "L2"}
+                  className={level === "L2" ? "active" : ""}
+                  onClick={() => setLevel("L2")}>
+            <span className="dot l2"></span>L2
+          </button>
+        </div>
+      </div>
+
+      <div className="filter-group">
+        <span className="filter-lbl">Статус</span>
+        <div className="status-pills">
+          {[
+            { k: "all",          l: "Все",        c: counts.all },
+            { k: "trial",        l: "Триал",      c: counts.trial },
+            { k: "active",       l: "Активны",    c: counts.active },
+            { k: "unsubscribed", l: "Отписались", c: counts.unsubscribed },
+            { k: "paused",       l: "Пауза",      c: counts.paused },
+          ].map(s => (
+            <button key={s.k}
+              className={`status-pill ${status === s.k ? "active" : ""}`}
+              onClick={() => setStatus(s.k)}>
+              {s.l} <span className="count">{s.c}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="filter-group">
+        <span className="filter-lbl">Период регистрации</span>
+        <div className="period-select">
+          <select value={dateRange} onChange={(e) => setDateRange(e.target.value)}
+                  aria-label="Период регистрации">
+            <option value="all">За всё время</option>
+            <option value="30d">30 дней</option>
+            <option value="90d">90 дней</option>
+            <option value="year">2026 год</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="ref-search">
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Поиск по названию, контакту или @"
+          aria-label="Поиск по рефералам" />
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   REFERRALS TABLE
+============================================================ */
+function ReferralsTable({ rows, onSelect, selectedId }) {
+  return (
+    <div className="pd-card ref-card">
+      <div className="tx-h ref-th">
+        <h3>Список рефералов</h3>
+        <span className="meta">{fmt(rows.length)} из {fmt(REFERRALS.length)}</span>
+        <button className="btn-csv ref-csv">
+          <Ic name="icon-action-download" size={16} />
+          Скачать CSV
+        </button>
+      </div>
+
+      {rows.length === 0 ? (
+        <div className="tx-empty">
+          <div className="h">Рефералов не найдено</div>
+          Попробуйте сбросить фильтры или изменить поисковый запрос.
+        </div>
+      ) : (
+        <div className="tx-table-wrap">
+          <table className="tx-table ref-table">
+            <thead>
+              <tr>
+                <th>Бизнес</th>
+                <th>Контакт</th>
+                <th>Уровень</th>
+                <th>Зарегистрирован</th>
+                <th>Статус</th>
+                <th className="num">MRR&nbsp;₽</th>
+                <th className="num">Ваш доход&nbsp;₽</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => {
+                const st = STATUS_META[r.status];
+                return (
+                  <tr key={r.id}
+                      className={selectedId === r.id ? "selected" : ""}
+                      onClick={() => onSelect(r)}>
+                    <td data-l="Бизнес">
+                      <div className="ref-name">{r.name}</div>
+                      <div className="ref-handle">{r.handle}</div>
+                    </td>
+                    <td data-l="Контакт">
+                      <div className="ref-contact-name">{r.contact}</div>
+                      <div className="ref-contact-phone">{r.phone}</div>
+                    </td>
+                    <td data-l="Уровень">
+                      <span className={`lvl-chip ${r.level === "L1" ? "l1" : "l2"}`}>
+                        <span className="dot"></span>{r.level}
+                      </span>
+                    </td>
+                    <td data-l="Зарегистрирован" className="date">{r.registered}</td>
+                    <td data-l="Статус">
+                      <span className={`ref-st-badge ${st.cls}`}>
+                        <Ic name={st.icon} size={12} />{st.label}
+                      </span>
+                    </td>
+                    <td data-l="MRR" className="num">{r.mrr ? fmt(r.mrr) : "—"}</td>
+                    <td data-l="Ваш доход" className="num ref-income">
+                      {r.income ? `+${fmt(r.income)}` : "—"}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   DRAWER — referral details + payment history
+============================================================ */
+function Drawer({ item, onClose }) {
+  useEffect(() => {
+    if (!item) return;
+    function onKey(e) { if (e.key === "Escape") onClose(); }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [item, onClose]);
+
+  if (!item) return <div className="tx-drawer-bg"></div>;
+
+  const st = STATUS_META[item.status];
+  const payments = buildPayments(item);
+  const lifetimeIncome = payments.reduce((s, p) => s + p.amount, 0);
+  const lifetimePaid   = payments.filter(p => p.status === "paid").reduce((s, p) => s + p.amount, 0);
+
+  return (
+    <>
+      <div className="tx-drawer-bg open" onClick={onClose}></div>
+      <aside className="tx-drawer ref-drawer open" role="dialog" aria-label="Детали реферала">
+        <div className="tx-drawer-h">
+          <div>
+            <div className="crumb">Реферал · {item.id}</div>
+            <h3>{item.name}</h3>
+            <div className="meta">{item.handle} · {item.contact}</div>
+          </div>
+          <button className="tx-drawer-close" onClick={onClose} aria-label="Закрыть"></button>
+        </div>
+
+        <div className="tx-drawer-amount">
+          <div className="lbl">Доход за всё время</div>
+          <div className="val">+{fmt(lifetimeIncome)}<span className="unit">&nbsp;₽</span></div>
+          <div className="sub">
+            Выплачено <b>{fmt(lifetimePaid)}&nbsp;₽</b>
+            {lifetimeIncome - lifetimePaid > 0 && (
+              <> · ожидает выплату <b style={{color:"var(--warning-700)"}}>{fmt(lifetimeIncome - lifetimePaid)}&nbsp;₽</b></>
+            )}
+          </div>
+        </div>
+
+        <div className="tx-drawer-detail">
+          <div className="tx-row"><span className="k">Статус</span>
+            <span className="v">
+              <span className={`ref-st-badge ${st.cls}`} style={{verticalAlign:"middle"}}>
+                <Ic name={st.icon} size={12} />{st.label}
+              </span>
+            </span>
+          </div>
+          <div className="tx-row"><span className="k">Уровень</span>
+            <span className="v">
+              <span className={`lvl-chip ${item.level === "L1" ? "l1" : "l2"}`}>
+                <span className="dot"></span>{item.level}
+              </span>
+            </span>
+          </div>
+          <div className="tx-row"><span className="k">Зарегистрирован</span><span className="v mono">{item.registered}</span></div>
+          <div className="tx-row"><span className="k">Тариф</span><span className="v">Единый · 4 990 ₽/мес</span></div>
+          <div className="tx-row"><span className="k">Ваш процент</span><span className="v brand">10 % lifetime</span></div>
+          <div className="tx-row"><span className="k">Платящих месяцев</span><span className="v">{item.monthsActive}</span></div>
+
+          <div className="tx-drawer-sec">
+            <h4>История начислений</h4>
+            {payments.length === 0 ? (
+              <div className="ref-pay-empty">
+                {item.status === "trial"        && "Реферал на пробном периоде — начислений ещё не было."}
+                {item.status === "unsubscribed" && "Реферал отписался от подписки."}
+                {item.status === "paused"       && "Подписка на паузе — начисления приостановлены."}
+              </div>
+            ) : (
+              <div className="ref-pay-list">
+                {payments.map((p, i) => (
+                  <div key={i} className="ref-pay-row">
+                    <span className="ref-pay-period">{p.period}</span>
+                    <span className={`ref-pay-status ref-pay-${p.status}`}>
+                      {p.status === "paid" ? "Выплачено" : "К выплате"}
+                    </span>
+                    <span className="ref-pay-amount">+{fmt(p.amount)}&nbsp;₽</span>
+                  </div>
+                ))}
+                <div className="ref-pay-row ref-pay-total">
+                  <span className="ref-pay-period">Итого</span>
+                  <span></span>
+                  <span className="ref-pay-amount">+{fmt(lifetimeIncome)}&nbsp;₽</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="tx-drawer-foot">
+          <button>
+            <Ic name="message-circle" size={14} />
+            Написать
+          </button>
+          <button className="primary">
+            <Ic name="icon-action-external-link" size={14} style={{filter:"brightness(0) invert(1)"}} />
+            Профиль бизнеса
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+/* ============================================================
+   TOAST
+============================================================ */
+function Toast({ msg }) {
+  if (!msg) return null;
+  return <div className="ref-toast">{msg}</div>;
+}
+
+/* ============================================================
+   APP
+============================================================ */
+function App() {
+  const [level, setLevel]         = useState("all");
+  const [status, setStatus]       = useState("all");
+  const [search, setSearch]       = useState("");
+  const [dateRange, setDateRange] = useState("all");
+  const [selected, setSelected]   = useState(null);
+  const [toast, setToast]         = useState("");
+
+  function fireToast(m) {
+    setToast(m);
+    setTimeout(() => setToast(""), 2200);
+  }
+
+  const dateFilter = (r) => {
+    if (dateRange === "all")  return true;
+    if (dateRange === "30d")  return r.regTs >= 20260416;
+    if (dateRange === "90d")  return r.regTs >= 20260216;
+    if (dateRange === "year") return r.regTs >= 20260101;
+    return true;
+  };
+  const levelFilter  = (r) => level === "all" || r.level === level;
+  const searchFilter = (r) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return r.name.toLowerCase().includes(q)
+        || r.handle.toLowerCase().includes(q)
+        || r.contact.toLowerCase().includes(q);
+  };
+
+  // Apply level + date + search (without status) for pill counts
+  const noStatusList = REFERRALS.filter(r => levelFilter(r) && dateFilter(r) && searchFilter(r));
+  const counts = {
+    all:          noStatusList.length,
+    trial:        noStatusList.filter(r => r.status === "trial").length,
+    active:       noStatusList.filter(r => r.status === "active").length,
+    unsubscribed: noStatusList.filter(r => r.status === "unsubscribed").length,
+    paused:       noStatusList.filter(r => r.status === "paused").length,
+  };
+
+  const rows = noStatusList.filter(r => status === "all" || r.status === status);
+
+  // KPI stats — spec totals (organization-level — bigger than 12-row sample)
+  const stats = useMemo(() => ({
+    total:  47,
+    active: 38,
+    trial:  9,
+    l1:     32,
+    l2:     15,
+  }), []);
+
+  return (
+    <div className="pd" data-screen-label="03 Партнёры — Рефералы">
+      <Sidebar current="referrals" />
+
+      <div className="pd-work">
+        <TopBar onBurger={() => {}} />
+        <main className="pd-page">
+          <div className="pd-pgh">
+            <div>
+              <h2>Мои рефералы</h2>
+              <div className="sub">Бизнесы, которых вы привели в СММ АЙБРО. L1 — прямые приглашения, L2 — те, кого пригласили ваши L1.</div>
+            </div>
+          </div>
+
+          <ShareBlock onToast={fireToast} />
+
+          <KpiRow stats={stats} />
+
+          <FiltersBar
+            level={level}     setLevel={setLevel}
+            status={status}   setStatus={setStatus}
+            search={search}   setSearch={setSearch}
+            dateRange={dateRange} setDateRange={setDateRange}
+            counts={counts} />
+
+          <ReferralsTable
+            rows={rows}
+            onSelect={setSelected}
+            selectedId={selected?.id} />
+
+          <div className="ref-cta">
+            <div className="ref-cta-ico"><Ic name="megaphone" size={22} /></div>
+            <div className="ref-cta-body">
+              <b>Хотите больше рефералов?</b><br/>
+              Скачайте промо‑материалы — баннеры, шаблоны постов, готовые сценарии разговоров — и делитесь ими в чатах и соцсетях.
+            </div>
+            <a className="ref-cta-link" href="#materials">
+              Перейти в раздел «Материалы»
+              <Ic name="icon-action-external-link" size={14} />
+            </a>
+          </div>
+
+          <div style={{marginTop: 8, fontSize: 11, color: "var(--fg-3)", lineHeight: 1.6, maxWidth: 720}}>
+            Доход с подписки реферала начисляется ежемесячно — пока бизнес продолжает платить. Триал не приносит начислений; ИП Мальцев Валерий Валерьевич (ИНН 519041916737, Т‑Банк СПб) выступает налоговым агентом для партнёров без НПД — НДФЛ удерживается при выплате.
+          </div>
+        </main>
+      </div>
+
+      <Drawer item={selected} onClose={() => setSelected(null)} />
+      <Toast msg={toast} />
+
+      <nav className="pd-bottomnav" aria-label="Мобильная навигация">
+        {NAV_MAIN.slice(0, 5).map((it) => {
+          const cls = `pd-bottomnav-item ${it.id === "referrals" ? "active" : ""}`;
+          const body = <>
+            <span className="ico"><Ic name={it.icon} size={22} /></span>
+            <span>{it.label}</span>
+          </>;
+          return it.href
+            ? <a key={it.id} className={cls} href={it.href} style={{textDecoration:"none"}}>{body}</a>
+            : <button key={it.id} className={cls}>{body}</button>;
+        })}
+      </nav>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

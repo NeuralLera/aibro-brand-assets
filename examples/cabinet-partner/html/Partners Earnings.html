@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Партнёрский кабинет — Мой доход</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/colors_and_type.css">
+  <link rel="stylesheet" href="design/partners-dashboard.css">
+  <link rel="stylesheet" href="design/partners-earnings.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useRef, useEffect } = React;
+const ICO = "design/assets/icons/";
+
+function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "\u00A0"); }
+function fmtRub(n) { return fmt(n) + "\u00A0₽"; }
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+/* ---------- nav config ---------- */
+const NAV_MAIN = [
+  { id: "home",      label: "Главная",   icon: "icon-nav-home",      href: "Partners Dashboard.html" },
+  { id: "referrals", label: "Рефералы",  icon: "icon-nav-team",      badge: 47 },
+  { id: "income",    label: "Доход",     icon: "icon-nav-finance",   href: "Partners Earnings.html" },
+  { id: "payouts",   label: "Выплаты",   icon: "shield-check" },
+  { id: "materials", label: "Материалы", icon: "icon-nav-documents" },
+];
+const NAV_FOOT = [
+  { id: "settings", label: "Настройки", icon: "icon-nav-settings" },
+  { id: "help",     label: "Поддержка", icon: "icon-nav-help" },
+];
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+function Sidebar({ current }) {
+  return (
+    <aside className="pd-side" aria-label="Главная навигация">
+      <a className="pd-brand" href="Partners Dashboard.html">
+        <span className="pd-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+        <span>
+          <span className="pd-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="pd-brand-meta">Партнёры</div>
+        </span>
+      </a>
+
+      <div className="pd-biz">
+        <div className="pd-biz-ava">И</div>
+        <div>
+          <div className="pd-biz-name">Иван Петров</div>
+          <div className="pd-biz-handle">@ivan‑petrov · ФЛ</div>
+        </div>
+        <div className="pd-biz-pill">L2</div>
+      </div>
+
+      {NAV_MAIN.map((it) => {
+        const cls = `pd-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="pd-nav-caption">Аккаунт</div>
+      {NAV_FOOT.map((it) => (
+        <button key={it.id} className="pd-nav-item">
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+        </button>
+      ))}
+
+      <div className="pd-side-foot">
+        ИП Мальцев · единый тариф <b style={{color:"var(--fg-2)",fontWeight:600}}>4 990 ₽/мес</b><br/>
+        Партнёрская программа · <a href="#terms">правила</a>
+      </div>
+    </aside>
+  );
+}
+
+/* ---------- topbar reused ---------- */
+function TopBar({ onBurger }) {
+  return (
+    <header className="pd-top">
+      <button className="pd-burger" aria-label="Меню" onClick={onBurger}><span></span></button>
+      <div>
+        <div className="crumb">Партнёры / Доход</div>
+        <h1>Мой доход</h1>
+      </div>
+      <div className="pd-top-actions">
+        <button className="pd-iconbtn" aria-label="Уведомления">
+          <Ic name="icon-nav-notifications" size={20} />
+          <span className="dot"></span>
+        </button>
+        <div className="pd-profile" tabIndex="0">
+          <div className="ava">И</div>
+          <div className="meta">
+            <span className="name">Иван П.</span>
+            <span className="role">Партнёр · L2</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ============================================================
+   12-MONTH BAR-CHART DATA
+   Stable monthly L1 / L2 amounts for chart and KPIs.
+============================================================ */
+// Calibrated so totals land EXACTLY on user spec:
+//   pre-May sum (paid)   = 39 090 ₽
+//   May        (pending) =  8 230 ₽
+//   total annual         = 47 320 ₽
+const MONTHS = [
+  { m: "Июн 25", l1: 690,  l2: 0    },
+  { m: "Июл 25", l1: 1000, l2: 0    },
+  { m: "Авг 25", l1: 1300, l2: 0    },
+  { m: "Сен 25", l1: 1700, l2: 200  },
+  { m: "Окт 25", l1: 2100, l2: 500  },
+  { m: "Ноя 25", l1: 2600, l2: 700  },
+  { m: "Дек 25", l1: 3100, l2: 900  },
+  { m: "Янв 26", l1: 3700, l2: 1100 },
+  { m: "Фев 26", l1: 4400, l2: 1300 },
+  { m: "Мар 26", l1: 5100, l2: 1500 },
+  { m: "Апр 26", l1: 5500, l2: 1700 },
+  { m: "Май 26", l1: 6200, l2: 2030 },
+];
+const MAY_INDEX = MONTHS.length - 1;
+const MAY_TOTAL = MONTHS[MAY_INDEX].l1 + MONTHS[MAY_INDEX].l2;        //  8 230
+const PAID_TOTAL = MONTHS.slice(0, MAY_INDEX)
+                        .reduce((s, m) => s + m.l1 + m.l2, 0);        // 39 090
+const TOTAL_ALL  = PAID_TOTAL + MAY_TOTAL;                            // 47 320
+
+/* ============================================================
+   TRANSACTIONS — 25 entries
+============================================================ */
+const TX = [
+  { id: "TX-2026-0511-001", date: "16.05.2026", ts: 20260516, ref: "Пекарня «Уют»",     handle: "@pekarnya_uyut", level: "L1", plan: "Единый · 4 990 ₽",  period: "май 2026",     amount: 499, status: "accrued" },
+  { id: "TX-2026-0511-002", date: "14.05.2026", ts: 20260514, ref: "Пульс Фитнес",       handle: "@puls_fit",       level: "L1", plan: "Единый · 4 990 ₽",  period: "май 2026",     amount: 499, status: "accrued" },
+  { id: "TX-2026-0511-003", date: "12.05.2026", ts: 20260512, ref: "Смарт Тур",          handle: "@smart_tur",      level: "L2", plan: "Единый · 4 990 ₽",  period: "май 2026",     amount: 499, status: "accrued" },
+  { id: "TX-2026-0511-004", date: "09.05.2026", ts: 20260509, ref: "Цветы СПб",          handle: "@flowers_spb",    level: "L2", plan: "Единый · 4 990 ₽",  period: "май 2026",     amount: 499, status: "pending" },
+  { id: "TX-2026-0511-005", date: "07.05.2026", ts: 20260507, ref: "Грумминг Лап",       handle: "@lap_groom",      level: "L1", plan: "Единый · 4 990 ₽",  period: "май 2026",     amount: 499, status: "pending" },
+  { id: "TX-2026-0511-006", date: "05.05.2026", ts: 20260505, ref: "Этно — школа танцев", handle: "@etno_dance",     level: "L1", plan: "Единый · 4 990 ₽",  period: "май 2026",     amount: 499, status: "pending" },
+  { id: "TX-2026-0511-007", date: "03.05.2026", ts: 20260503, ref: "Шиномонтаж 24",      handle: "@shina24",        level: "L1", plan: "Единый · 4 990 ₽",  period: "май 2026",     amount: 499, status: "pending" },
+  { id: "TX-2026-0511-008", date: "01.05.2026", ts: 20260501, ref: "Кофейня У Лили",     handle: "@kofe_u_lily",    level: "L2", plan: "Единый · 4 990 ₽",  period: "май 2026",     amount: 499, status: "pending" },
+
+  { id: "TX-2026-0411-001", date: "30.04.2026", ts: 20260430, ref: "Пекарня «Уют»",     handle: "@pekarnya_uyut", level: "L1", plan: "Единый · 4 990 ₽",  period: "апрель 2026",   amount: 499, status: "paid" },
+  { id: "TX-2026-0411-002", date: "30.04.2026", ts: 20260430, ref: "Пульс Фитнес",       handle: "@puls_fit",       level: "L1", plan: "Единый · 4 990 ₽",  period: "апрель 2026",   amount: 499, status: "paid" },
+  { id: "TX-2026-0411-003", date: "28.04.2026", ts: 20260428, ref: "Антон С. — психолог", handle: "@anton_ps",      level: "L1", plan: "Единый · 4 990 ₽",  period: "апрель 2026",   amount: 499, status: "paid" },
+  { id: "TX-2026-0411-004", date: "26.04.2026", ts: 20260426, ref: "Смарт Тур",          handle: "@smart_tur",      level: "L2", plan: "Единый · 4 990 ₽",  period: "апрель 2026",   amount: 499, status: "paid" },
+  { id: "TX-2026-0411-005", date: "22.04.2026", ts: 20260422, ref: "Грумминг Лап",       handle: "@lap_groom",      level: "L1", plan: "Единый · 4 990 ₽",  period: "апрель 2026",   amount: 499, status: "paid" },
+  { id: "TX-2026-0411-006", date: "20.04.2026", ts: 20260420, ref: "Этно — школа танцев", handle: "@etno_dance",     level: "L1", plan: "Единый · 4 990 ₽",  period: "апрель 2026",   amount: 499, status: "paid" },
+  { id: "TX-2026-0411-007", date: "18.04.2026", ts: 20260418, ref: "Шиномонтаж 24",      handle: "@shina24",        level: "L1", plan: "Единый · 4 990 ₽",  period: "апрель 2026",   amount: 499, status: "paid" },
+  { id: "TX-2026-0411-008", date: "12.04.2026", ts: 20260412, ref: "Цветы СПб",          handle: "@flowers_spb",    level: "L2", plan: "Единый · 4 990 ₽",  period: "апрель 2026",   amount: 499, status: "paid" },
+
+  { id: "TX-2026-0311-001", date: "31.03.2026", ts: 20260331, ref: "Пекарня «Уют»",     handle: "@pekarnya_uyut", level: "L1", plan: "Единый · 4 990 ₽",  period: "март 2026",    amount: 499, status: "paid" },
+  { id: "TX-2026-0311-002", date: "28.03.2026", ts: 20260328, ref: "Пульс Фитнес",       handle: "@puls_fit",       level: "L1", plan: "Единый · 4 990 ₽",  period: "март 2026",    amount: 499, status: "paid" },
+  { id: "TX-2026-0311-003", date: "25.03.2026", ts: 20260325, ref: "Смарт Тур",          handle: "@smart_tur",      level: "L2", plan: "Единый · 4 990 ₽",  period: "март 2026",    amount: 499, status: "paid" },
+  { id: "TX-2026-0311-004", date: "20.03.2026", ts: 20260320, ref: "Этно — школа танцев", handle: "@etno_dance",     level: "L1", plan: "Единый · 4 990 ₽",  period: "март 2026",    amount: 499, status: "paid" },
+  { id: "TX-2026-0311-005", date: "14.03.2026", ts: 20260314, ref: "Грумминг Лап",       handle: "@lap_groom",      level: "L1", plan: "Единый · 4 990 ₽",  период: "март 2026",   amount: 499, status: "paid" },
+
+  { id: "TX-2026-0211-001", date: "27.02.2026", ts: 20260227, ref: "Пекарня «Уют»",     handle: "@pekarnya_uyut", level: "L1", plan: "Единый · 4 990 ₽",  period: "февраль 2026",  amount: 499, status: "paid" },
+  { id: "TX-2026-0211-002", date: "22.02.2026", ts: 20260222, ref: "Антон С. — психолог", handle: "@anton_ps",      level: "L1", plan: "Единый · 4 990 ₽",  period: "февраль 2026",  amount: 499, status: "paid" },
+  { id: "TX-2026-0111-001", date: "30.01.2026", ts: 20260130, ref: "Грумминг Лап",       handle: "@lap_groom",      level: "L1", plan: "Единый · 4 990 ₽",  period: "январь 2026",  amount: 499, status: "paid" },
+  { id: "TX-2026-0111-002", date: "11.01.2026", ts: 20260111, ref: "Пекарня «Уют»",     handle: "@pekarnya_uyut", level: "L1", plan: "Единый · 4 990 ₽",  period: "январь 2026",  amount: 499, status: "paid" },
+].map(t => ({ ...t, period: t.period || t["период"] || "" }));
+
+const STATUS_META = {
+  accrued: { label: "Начислено",  icon: "price-tag-ruble" },
+  pending: { label: "К выплате",  icon: "clock" },
+  paid:    { label: "Выплачено",  icon: "shield-check" },
+};
+
+/* ============================================================
+   PAGE HEADER + FILTERS BAR
+============================================================ */
+const PERIODS = [
+  { key: "month",  label: "Этот месяц" },
+  { key: "prev",   label: "Прошлый месяц" },
+  { key: "3mo",    label: "3 месяца" },
+  { key: "year",   label: "Год" },
+  { key: "custom", label: "Custom range…" },
+];
+
+function FiltersBar({ period, setPeriod, level, setLevel, status, setStatus, counts, onCSV }) {
+  return (
+    <div className="filters">
+      <div className="filter-group">
+        <span className="filter-lbl">Период</span>
+        <div className="period-select">
+          <select value={period} onChange={(e) => setPeriod(e.target.value)}
+                  aria-label="Выбор периода">
+            {PERIODS.map(p => <option key={p.key} value={p.key}>{p.label}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div className="filter-group">
+        <span className="filter-lbl">Уровень</span>
+        <div className="level-tabs" role="tablist">
+          <button role="tab" aria-selected={level === "all"}
+                  className={level === "all" ? "active" : ""}
+                  onClick={() => setLevel("all")}>Все</button>
+          <button role="tab" aria-selected={level === "L1"}
+                  className={level === "L1" ? "active" : ""}
+                  onClick={() => setLevel("L1")}>
+            <span className="dot l1"></span>L1 — прямые
+          </button>
+          <button role="tab" aria-selected={level === "L2"}
+                  className={level === "L2" ? "active" : ""}
+                  onClick={() => setLevel("L2")}>
+            <span className="dot l2"></span>L2 — под‑партнёры
+          </button>
+        </div>
+      </div>
+
+      <div className="filter-group">
+        <span className="filter-lbl">Статус</span>
+        <div className="status-pills">
+          {[
+            { k: "all",     l: "Все",        c: counts.all },
+            { k: "accrued", l: "Начислено",  c: counts.accrued },
+            { k: "pending", l: "К выплате",  c: counts.pending },
+            { k: "paid",    l: "Выплачено",  c: counts.paid },
+          ].map(s => (
+            <button key={s.k}
+              className={`status-pill ${status === s.k ? "active" : ""}`}
+              onClick={() => setStatus(s.k)}>
+              {s.l} <span className="count">{s.c}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <button className="btn-csv" onClick={onCSV}>
+        <Ic name="icon-action-download" size={16} />
+        Скачать CSV
+      </button>
+    </div>
+  );
+}
+
+/* ============================================================
+   KPI ROW (4 cards)
+============================================================ */
+function KpiCard({ icon, iconTone = "", lbl, val, unit, delta, deltaTone, foot }) {
+  return (
+    <div className="kpi">
+      <div className="kpi-head">
+        <div className={`kpi-ico ${iconTone}`}><Ic name={icon} size={18} /></div>
+        <div className="kpi-lbl">{lbl}</div>
+      </div>
+      <div className="kpi-val">{val}{unit && <span className="unit">{unit}</span>}</div>
+      <div className="kpi-foot">
+        {delta && <span className={`kpi-delta ${deltaTone || ""}`}>{delta}</span>}
+        <span>{foot}</span>
+      </div>
+    </div>
+  );
+}
+
+function KpiRow({ totals }) {
+  return (
+    <div className="pd-kpi">
+      <KpiCard icon="price-tag-ruble"
+               lbl="Всего начислено"
+               val={fmt(totals.accruedTotal)} unit="₽"
+               delta="за выбранный период" deltaTone="flat" foot="" />
+      <KpiCard icon="clock" iconTone="amber"
+               lbl="К выплате 01.06"
+               val={fmt(totals.pending)} unit="₽"
+               delta="готово к payout" deltaTone="flat" foot="" />
+      <KpiCard icon="shield-check" iconTone="blue"
+               lbl="Уже выплачено"
+               val={fmt(totals.paid)} unit="₽"
+               delta="2026 год · после НДФЛ" deltaTone="flat" foot="" />
+      <KpiCard icon="icon-nav-customers"
+               lbl="Активные рефералы"
+               val={String(totals.activeRefs)} unit="бизн."
+               delta="приносят доход в мае" deltaTone="flat" foot="" />
+    </div>
+  );
+}
+
+/* ============================================================
+   STACKED BAR CHART
+============================================================ */
+function BarsChart() {
+  const W = 760, H = 240, PAD_L = 48, PAD_R = 16, PAD_T = 18, PAD_B = 40;
+  const data = MONTHS;
+  const totals = data.map(d => d.l1 + d.l2);
+  const max = Math.max(...totals) * 1.18;
+  const yScale = (v) => PAD_T + (H - PAD_T - PAD_B) * (1 - v / max);
+  const innerW = W - PAD_L - PAD_R;
+  const slot = innerW / data.length;
+  const barW = Math.min(34, slot * 0.55);
+
+  const ticks = [0, 1, 2, 3, 4].map(i => max * (i / 4));
+
+  const [hover, setHover] = useState(null);
+  const wrapRef = useRef(null);
+
+  const totalL1 = data.reduce((s, d) => s + d.l1, 0);
+  const totalL2 = data.reduce((s, d) => s + d.l2, 0);
+
+  return (
+    <div className="pd-card bars-card">
+      <div className="pd-card-h">
+        <h3>Динамика дохода · 12 месяцев</h3>
+        <div className="legend">
+          <span><span className="swatch l1"></span>L1 — прямые</span>
+          <span><span className="swatch l2"></span>L2 — под‑партнёры</span>
+        </div>
+      </div>
+
+      <div className="bars-summary">
+        <div className="blk">
+          <div className="lbl">Всего</div>
+          <div className="val">{fmtRub(totalL1 + totalL2)}</div>
+        </div>
+        <div className="blk">
+          <div className="lbl">L1 · прямые</div>
+          <div className="val l1">{fmtRub(totalL1)}</div>
+        </div>
+        <div className="blk">
+          <div className="lbl">L2 · под‑партнёры</div>
+          <div className="val l2">{fmtRub(totalL2)}</div>
+        </div>
+      </div>
+
+      <div className="bars-wrap" ref={wrapRef}
+           onMouseLeave={() => setHover(null)}>
+        <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img"
+             aria-label="Bar chart — доход по месяцам">
+          {/* grid */}
+          {ticks.map((t, i) => (
+            <g key={i}>
+              <line x1={PAD_L} x2={W - PAD_R}
+                    y1={yScale(t)} y2={yScale(t)}
+                    stroke="rgba(15,23,42,0.06)" strokeDasharray={i === 0 ? "" : "3 4"} />
+              <text x={PAD_L - 8} y={yScale(t) + 3}
+                    textAnchor="end" fontSize="10"
+                    fontFamily="JetBrains Mono, monospace"
+                    fill="#6b7079"
+                    style={{fontVariantNumeric: "tabular-nums"}}>
+                {(t / 1000).toFixed(t === 0 ? 0 : 0)}к
+              </text>
+            </g>
+          ))}
+
+          {/* bars */}
+          {data.map((d, i) => {
+            const total = d.l1 + d.l2;
+            const xCenter = PAD_L + slot * (i + 0.5);
+            const x = xCenter - barW / 2;
+            const yTotal = yScale(total);
+            const yL1Top = yScale(d.l1);
+            const baseY = H - PAD_B;
+            const isHover = hover && hover.i === i;
+            return (
+              <g key={i}
+                 onMouseEnter={() => setHover({ i, x: ((xCenter) / W) * 100, y: (yTotal / H) * 100 })}
+                 style={{cursor: "pointer"}}>
+                {/* L1 (bottom) */}
+                <rect x={x} y={yL1Top}
+                      width={barW} height={Math.max(0, baseY - yL1Top)}
+                      fill="#10b981"
+                      opacity={isHover ? 1 : 0.92}
+                      rx="2" />
+                {/* L2 (top) */}
+                {d.l2 > 0 && (
+                  <rect x={x} y={yTotal}
+                        width={barW} height={Math.max(0, yL1Top - yTotal)}
+                        fill="#6ee7b7"
+                        opacity={isHover ? 1 : 0.95}
+                        rx="2" />
+                )}
+                {/* invisible hover hit area */}
+                <rect x={PAD_L + slot * i} y={PAD_T}
+                      width={slot} height={H - PAD_T - PAD_B}
+                      fill="transparent" />
+                {/* x label */}
+                <text x={xCenter} y={H - PAD_B + 20}
+                      textAnchor="middle" fontSize="11"
+                      fontFamily="Golos Text, sans-serif"
+                      fill={isHover ? "#0e0f12" : "#6b7079"}
+                      fontWeight={isHover ? 600 : 400}>
+                  {d.m}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+
+        {hover && (
+          <div className="bars-tooltip show"
+               style={{ left: `${hover.x}%`, top: `${hover.y}%` }}>
+            <div className="m">{data[hover.i].m}</div>
+            <div className="row">
+              <span className="k"><span className="sw" style={{background:"#10b981"}}></span>L1</span>
+              <span className="v">{fmtRub(data[hover.i].l1)}</span>
+            </div>
+            <div className="row">
+              <span className="k"><span className="sw" style={{background:"#6ee7b7"}}></span>L2</span>
+              <span className="v">{fmtRub(data[hover.i].l2)}</span>
+            </div>
+            <div className="row total">
+              <span className="k" style={{color:"white"}}>Итого</span>
+              <span className="v">{fmtRub(data[hover.i].l1 + data[hover.i].l2)}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   CRM-LIGHT INFO
+============================================================ */
+function CrmInfo() {
+  return (
+    <div className="crm-info">
+      <div className="ico"><Ic name="icon-status-info" size={22} /></div>
+      <div className="body">
+        <span className="lbl">08.06.2026</span>
+        <b>Реферал получает CRM‑light</b> — приём заказов и запись на услуги
+        прямо в MAX. На ваш доход это не влияет: тариф остаётся
+        <b> 4 990 ₽/мес</b>, комиссия — те же 10% + 10% lifetime.
+      </div>
+      <a href="#crm-pivot">Подробнее →</a>
+    </div>
+  );
+}
+
+/* ============================================================
+   TRANSACTIONS TABLE + DRAWER + PAGINATION
+============================================================ */
+const PAGE_SIZE = 20;
+
+function TransactionsTable({ rows, onSelect, selectedId, sort, setSort, search, setSearch, page, setPage }) {
+  const sorted = useMemo(() => {
+    const list = [...rows];
+    list.sort((a, b) => {
+      let av, bv;
+      if (sort.key === "date") { av = a.ts; bv = b.ts; }
+      else if (sort.key === "amount") { av = a.amount; bv = b.amount; }
+      else if (sort.key === "ref") { av = a.ref; bv = b.ref; }
+      else { av = a.ts; bv = b.ts; }
+      if (av < bv) return sort.dir === "asc" ? -1 : 1;
+      if (av > bv) return sort.dir === "asc" ? 1 : -1;
+      return 0;
+    });
+    return list;
+  }, [rows, sort]);
+
+  const total = sorted.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const start = (page - 1) * PAGE_SIZE;
+  const visible = sorted.slice(start, start + PAGE_SIZE);
+
+  function toggleSort(key) {
+    setSort(s => s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: "desc" });
+  }
+  function sortClass(key) {
+    if (sort.key !== key) return "sortable";
+    return "sortable " + (sort.dir === "asc" ? "sort-asc" : "sort-desc");
+  }
+
+  return (
+    <div className="pd-card tx-card">
+      <div className="tx-h">
+        <h3>Транзакции</h3>
+        <span className="meta">{fmt(total)} последних из {fmt(95)} в периоде</span>
+        <div className="tx-search">
+          <input value={search}
+                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                 placeholder="Поиск по рефералу или ID…"
+                 aria-label="Поиск по транзакциям" />
+        </div>
+      </div>
+
+      {total === 0 ? (
+        <div className="tx-empty">
+          <div className="h">Транзакций не найдено</div>
+          Попробуйте сбросить фильтры или изменить поисковый запрос.
+        </div>
+      ) : (
+        <>
+          <div className="tx-table-wrap">
+            <table className="tx-table">
+              <thead>
+                <tr>
+                  <th className={sortClass("date")} onClick={() => toggleSort("date")}>
+                    Дата<span className="sort"></span>
+                  </th>
+                  <th className={sortClass("ref")} onClick={() => toggleSort("ref")}>
+                    Реферал<span className="sort"></span>
+                  </th>
+                  <th>Уровень</th>
+                  <th>Подписка</th>
+                  <th>Период</th>
+                  <th className={"num " + sortClass("amount")} onClick={() => toggleSort("amount")}>
+                    Сумма<span className="sort"></span>
+                  </th>
+                  <th>Статус</th>
+                </tr>
+              </thead>
+              <tbody>
+                {visible.map((t) => {
+                  const st = STATUS_META[t.status];
+                  return (
+                    <tr key={t.id}
+                        className={selectedId === t.id ? "selected" : ""}
+                        onClick={() => onSelect(t)}>
+                      <td data-l="Дата" className="date">{t.date}</td>
+                      <td data-l="Реферал">
+                        <div className="ref-name">{t.ref}</div>
+                        <div className="ref-handle">{t.handle}</div>
+                      </td>
+                      <td data-l="Уровень">
+                        <span className={`lvl-chip ${t.level === "L1" ? "l1" : "l2"}`}>
+                          <span className="dot"></span>{t.level}
+                        </span>
+                      </td>
+                      <td data-l="Подписка" className="plan">{t.plan}</td>
+                      <td data-l="Период" className="period-cell">{t.period}</td>
+                      <td data-l="Сумма" className="num">+{fmt(t.amount)}&nbsp;₽</td>
+                      <td data-l="Статус">
+                        <span className={`st-badge ${t.status}`}>
+                          <Ic name={st.icon} size={12} />{st.label}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="pag">
+            <div className="pag-info">
+              Показано <b>{start + 1}–{Math.min(start + PAGE_SIZE, total)}</b> из <b>{fmt(total)}</b>
+            </div>
+            <div className="pag-buttons">
+              <button disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))}>‹</button>
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button key={i}
+                        className={page === i + 1 ? "active" : ""}
+                        onClick={() => setPage(i + 1)}>{i + 1}</button>
+              ))}
+              <button disabled={page === totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>›</button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   DRAWER
+============================================================ */
+function Drawer({ tx, onClose }) {
+  // Close on Esc
+  useEffect(() => {
+    if (!tx) return;
+    function onKey(e) { if (e.key === "Escape") onClose(); }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [tx, onClose]);
+
+  if (!tx) {
+    return <div className="tx-drawer-bg"></div>;
+  }
+  const st = STATUS_META[tx.status];
+  const ndfl = Math.round(tx.amount * 0.13);
+  const net = tx.amount - ndfl;
+  const payoutScheduled = tx.status === "paid"
+    ? "01.05.2026 · ****9912"
+    : tx.status === "pending"
+      ? "01.06.2026 · ****9912"
+      : "после конца периода";
+
+  return (
+    <>
+      <div className="tx-drawer-bg open" onClick={onClose}></div>
+      <aside className="tx-drawer open" role="dialog" aria-label="Детали транзакции">
+        <div className="tx-drawer-h">
+          <div>
+            <div className="crumb">Транзакция · {tx.id}</div>
+            <h3>{tx.ref}</h3>
+            <div className="meta">{tx.handle} · {tx.date}</div>
+          </div>
+          <button className="tx-drawer-close" onClick={onClose} aria-label="Закрыть"></button>
+        </div>
+
+        <div className="tx-drawer-amount">
+          <div className="lbl">Начислено</div>
+          <div className="val">+{fmt(tx.amount)}<span className="unit">&nbsp;₽</span></div>
+          <div className="sub">
+            НДФЛ 13% — −{fmt(ndfl)}&nbsp;₽ · к выплате <b style={{color:"var(--brand-700)"}}>{fmt(net)}&nbsp;₽</b>
+          </div>
+        </div>
+
+        <div className="tx-drawer-detail">
+          <div className="tx-row"><span className="k">Статус</span>
+            <span className="v"><span className={`st-badge ${tx.status}`} style={{verticalAlign:"middle"}}>
+              <Ic name={st.icon} size={12} />{st.label}
+            </span></span>
+          </div>
+          <div className="tx-row"><span className="k">Уровень</span>
+            <span className="v">
+              <span className={`lvl-chip ${tx.level === "L1" ? "l1" : "l2"}`}>
+                <span className="dot"></span>{tx.level}
+              </span>
+            </span>
+          </div>
+          <div className="tx-row"><span className="k">Подписка</span><span className="v">{tx.plan}</span></div>
+          <div className="tx-row"><span className="k">Расчётный период</span><span className="v">{tx.period}</span></div>
+          <div className="tx-row"><span className="k">Комиссия</span><span className="v brand">10% от 4 990 ₽</span></div>
+          <div className="tx-row"><span className="k">Выплата</span><span className="v mono">{payoutScheduled}</span></div>
+          <div className="tx-row"><span className="k">ID транзакции</span><span className="v mono">{tx.id}</span></div>
+
+          <div className="tx-drawer-sec">
+            <h4>Расчёт</h4>
+            <div className="tx-row"><span className="k">Тариф реферала</span><span className="v">4 990 ₽</span></div>
+            <div className="tx-row"><span className="k">Комиссия 10%</span><span className="v">+{fmt(tx.amount)} ₽</span></div>
+            <div className="tx-row"><span className="k">НДФЛ 13%</span><span className="v" style={{color:"var(--fg-3)"}}>−{fmt(ndfl)} ₽</span></div>
+            <div className="tx-row"><span className="k" style={{color:"var(--fg-1)"}}>Итого к выплате</span>
+              <span className="v" style={{color:"var(--brand-700)",fontWeight:700,fontSize:14}}>{fmt(net)}&nbsp;₽</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="tx-drawer-foot">
+          <button>
+            <Ic name="icon-action-download" size={14} />
+            Скачать чек
+          </button>
+          <button className="primary">
+            <Ic name="icon-action-external-link" size={14} style={{filter:"brightness(0) invert(1)"}} />
+            Профиль реферала
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+/* ============================================================
+   APP
+============================================================ */
+function App() {
+  const [period, setPeriod] = useState("year"); // default «Год» so KPIs match 12-mo total
+  const [level, setLevel] = useState("all");
+  const [status, setStatus] = useState("all");
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState({ key: "date", dir: "desc" });
+  const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState(null);
+
+  // Period filter — naive: for demo, "month" = May 2026 only; "prev" = April only; "3mo" = Mar/Apr/May; "year" = all
+  const periodFilter = (t) => {
+    if (period === "year" || period === "custom") return true;
+    if (period === "month") return t.ts >= 20260501;
+    if (period === "prev")  return t.ts >= 20260401 && t.ts < 20260501;
+    if (period === "3mo")   return t.ts >= 20260301;
+    return true;
+  };
+  const levelFilter  = (t) => level === "all" || t.level === level;
+  const searchFilter = (t) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return t.ref.toLowerCase().includes(q) || t.handle.toLowerCase().includes(q) || t.id.toLowerCase().includes(q);
+  };
+
+  // Filtered ignoring status (used for status pill counts)
+  const noStatusList = TX.filter(t => periodFilter(t) && levelFilter(t) && searchFilter(t));
+  const counts = {
+    all: noStatusList.length,
+    accrued: noStatusList.filter(t => t.status === "accrued").length,
+    pending: noStatusList.filter(t => t.status === "pending").length,
+    paid:    noStatusList.filter(t => t.status === "paid").length,
+  };
+
+  const rows = noStatusList.filter(t => status === "all" || t.status === status);
+
+  // KPI totals — derived from MONTHS aggregate, not from the sample TX rows.
+  // (Table shows only 25 recent transactions; aggregates come from the chart's source data.)
+  const totals = useMemo(() => {
+    // map period → which months to sum and whether May is included (= pending bucket)
+    let monthsSlice, includesMay;
+    if (period === "month") {
+      monthsSlice = MONTHS.slice(MAY_INDEX);              // May only
+      includesMay = true;
+    } else if (period === "prev") {
+      monthsSlice = MONTHS.slice(MAY_INDEX - 1, MAY_INDEX); // April only
+      includesMay = false;
+    } else if (period === "3mo") {
+      monthsSlice = MONTHS.slice(MAY_INDEX - 2);          // Mar, Apr, May
+      includesMay = true;
+    } else { // year + custom
+      monthsSlice = MONTHS;                                // all 12 months
+      includesMay = true;
+    }
+
+    // Apply level filter on the aggregate, too
+    const lvlSum = (m) =>
+      level === "L1" ? m.l1 :
+      level === "L2" ? m.l2 :
+                       m.l1 + m.l2;
+
+    const total   = monthsSlice.reduce((s, m) => s + lvlSum(m), 0);
+    const pending = includesMay ? lvlSum(MONTHS[MAY_INDEX]) : 0;
+    const paid    = total - pending;
+
+    return {
+      accruedTotal: total,
+      pending,
+      paid,
+      activeRefs: 38, // distinct paying referrals in current month
+    };
+  }, [period, level]);
+
+  // Reset page when filters change
+  useEffect(() => { setPage(1); }, [period, level, status]);
+
+  // CSV stub
+  function downloadCSV() {
+    const header = "Дата;Реферал;Хэндл;Уровень;Подписка;Период;Сумма;Статус\n";
+    const body = rows.map(t =>
+      [t.date, t.ref, t.handle, t.level, t.plan, t.period, t.amount + " ₽", STATUS_META[t.status].label]
+        .join(";")
+    ).join("\n");
+    const blob = new Blob([header + body], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `aibro-partner-earnings-${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  return (
+    <div className="pd" data-screen-label="02 Партнёры — Доход">
+      <Sidebar current="income" />
+
+      <div className="pd-work">
+        <TopBar onBurger={() => {}} />
+        <main className="pd-page">
+          <div className="pd-pgh">
+            <div>
+              <h2>Мой доход</h2>
+              <div className="sub">Все начисления с подписок ваших рефералов — L1 (прямые) и L2 (под‑партнёры). 10% от тарифа каждого активного реферала, lifetime.</div>
+            </div>
+          </div>
+
+          <FiltersBar period={period} setPeriod={setPeriod}
+                      level={level}   setLevel={setLevel}
+                      status={status} setStatus={setStatus}
+                      counts={counts} onCSV={downloadCSV} />
+
+          <KpiRow totals={totals} />
+
+          <BarsChart />
+
+          <div style={{height: 18}}></div>
+
+          <TransactionsTable rows={rows}
+                             onSelect={setSelected}
+                             selectedId={selected?.id}
+                             sort={sort} setSort={setSort}
+                             search={search} setSearch={setSearch}
+                             page={page} setPage={setPage} />
+
+          <CrmInfo />
+
+          <div style={{marginTop: 8, fontSize: 11, color: "var(--fg-3)", lineHeight: 1.6, maxWidth: 720}}>
+            Суммы указаны до удержания НДФЛ. Для партнёра без статуса
+            самозанятого ИП Мальцев Валерий Валерьевич (ИНН 519041916737, Т‑Банк СПб) выступает
+            налоговым агентом — удерживает и перечисляет НДФЛ по прогрессивной шкале
+            с 01.01.2026 (13/15/18/20/22%). Выплаты — ежемесячно 1‑го числа,
+            минимум 1 000 ₽, остаток переносится на следующий период.
+          </div>
+        </main>
+      </div>
+
+      <Drawer tx={selected} onClose={() => setSelected(null)} />
+
+      <nav className="pd-bottomnav" aria-label="Мобильная навигация">
+        {NAV_MAIN.slice(0, 5).map((it) => {
+          const cls = `pd-bottomnav-item ${it.id === "income" ? "active" : ""}`;
+          const body = <>
+            <span className="ico"><Ic name={it.icon} size={22} /></span>
+            <span>{it.label}</span>
+          </>;
+          return it.href
+            ? <a key={it.id} className={cls} href={it.href} style={{textDecoration:"none"}}>{body}</a>
+            : <button key={it.id} className={cls}>{body}</button>;
+        })}
+      </nav>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

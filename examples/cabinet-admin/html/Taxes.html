@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>СММ АЙБРО · admin · Налоги</title>
+<link rel="icon" href="logos/aibro/favicon-light.svg">
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="taxes.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+// admin.smmaibro.ru — Налоги (6-НДФЛ для партнёров без НПД)
+// ИП Мальцев Валерий Валерьевич — налоговый агент при выплатах ФЛ без НПД.
+// Удерживаем НДФЛ по прогрессивной шкале (с 01.01.2026, 5 ступеней).
+
+const { useState, useMemo } = React;
+
+// ============================================================
+// Icon helper — SVG via CSS mask
+// ============================================================
+function Icon({ name, size }) {
+  const style = { "--ic": `url(icons/${name}.svg)` };
+  if (size) style["--ic-size"] = typeof size === "number" ? `${size}px` : size;
+  return <span className="ic" style={style} aria-hidden="true" />;
+}
+
+// ============================================================
+// Sidebar (shared pattern)
+// ============================================================
+const NAV = [
+  { id: "home",        label: "Главная",      icon: "dashboard" },
+  { id: "users",       label: "Пользователи", icon: "icon-nav-customers", count: "247" },
+  { id: "finance",     label: "Финансы",      icon: "icon-nav-finance" },
+  { id: "taxes",       label: "Налоги",       icon: "icon-nav-taxes" },
+  { id: "partners",    label: "Партнёрка",    icon: "icon-nav-partners" },
+  { id: "ord",         label: "ОРД",          icon: "badge-erid", count: "1.2k" },
+  { id: "tickets",     label: "Поддержка",    icon: "icon-nav-messages", count: "6", countTone: "p0" },
+  { id: "health",      label: "Health",       icon: "health" },
+  { id: "audit",       label: "Аудит log",    icon: "audit-log" },
+];
+
+function Sidebar({ current, onNav }) {
+  return (
+    <aside className="side">
+      <div className="side-brand">
+        <span className="tile"><img src="icons/favicon-light.svg" alt="" onError={(e) => { e.target.style.display = 'none'; }} /></span>
+        <div>
+          <div className="wm">СММ <span className="em">АЙБРО</span></div>
+          <div className="sub">admin · v 2.4.1</div>
+        </div>
+      </div>
+
+      <div className="side-cap">Операции</div>
+      {NAV.map((it) => (
+        <button
+          key={it.id}
+          className={`nav-item ${current === it.id ? "is-active" : ""}`}
+          onClick={() => onNav(it.id)}
+        >
+          <Icon name={it.icon} />
+          <span>{it.label}</span>
+          {it.count && <span className={`badge ${it.countTone === "p0" ? "is-p0" : ""}`}>{it.count}</span>}
+        </button>
+      ))}
+
+      <div className="side-foot">
+        <span className="avatar">ВМ</span>
+        <div>
+          <div className="who">В. Мальцев</div>
+          <div className="meta">owner · мск 14:35</div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+// ============================================================
+// TopNav (shared pattern, with ADMIN role badge)
+// ============================================================
+function TopNav() {
+  return (
+    <div className="topnav">
+      <div className="crumbs">
+        <span className="role"><span className="dot"></span>ADMIN</span>
+        <span className="path">admin / финансы / <b>налоги</b></span>
+      </div>
+      <h1>Налоги · 6-НДФЛ</h1>
+
+      <div className="search">
+        <Icon name="icon-action-search" />
+        <input placeholder="Поиск по ИНН партнёра, периоду, № отчёта…" />
+        <kbd>⌘K</kbd>
+      </div>
+
+      <button className="icon-btn" title="Обновить">
+        <Icon name="icon-action-refresh" />
+      </button>
+      <button className="icon-btn" title="Уведомления">
+        <Icon name="icon-nav-notifications" />
+        <span className="pulse" />
+      </button>
+
+      <button className="user">
+        <span className="avatar">ВМ</span>
+        <div>
+          <div className="name">Валерий Мальцев</div>
+          <div className="role-sub">owner · ip‑мальцев</div>
+        </div>
+      </button>
+    </div>
+  );
+}
+
+// ============================================================
+// Page header (subtitle with deadline)
+// ============================================================
+function PageHeader() {
+  return (
+    <div className="page-hdr">
+      <div className="page-hdr__main">
+        <h2 className="page-hdr__h1">Налоги · 6-НДФЛ</h2>
+        <div className="page-hdr__sub">
+          <Icon name="calendar-clock" />
+          <span>Подаём в ФНС квартально</span>
+          <span className="dot-sep">·</span>
+          <span>следующий дедлайн <b>30.07.2026</b></span>
+          <span className="dot-sep">·</span>
+          <span className="page-hdr__ip">ИП Мальцев Валерий Валерьевич · ИНН 519041916737</span>
+        </div>
+      </div>
+      <div className="page-hdr__cta">
+        <button className="btn btn--secondary"><Icon name="icon-action-download" />Скачать как Excel</button>
+        <button className="btn btn--primary"><Icon name="icon-action-export" />Сгенерировать XML 6-НДФЛ</button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// KPI strip — 4 cards
+// ============================================================
+const KPI = [
+  {
+    lbl: "Удержано НДФЛ за квартал",
+    val: "47 280", unit: "₽",
+    foot: { dir: "up", delta: "+12 240", tail: "vs Q1 2026" },
+    icon: "percent", tone: "accent",
+  },
+  {
+    lbl: "Перечислено в ФНС",
+    val: "38 720", unit: "₽",
+    foot: { dir: "up", delta: "82%", tail: "от удержанного" },
+    icon: "shield-check", tone: "info",
+  },
+  {
+    lbl: "К перечислению",
+    val: "8 560", unit: "₽",
+    foot: { dir: "flat", delta: "до 30.07", tail: "осталось 14 дней" },
+    icon: "clock", tone: "warn",
+  },
+  {
+    lbl: "Партнёров с НДФЛ",
+    val: "12",
+    foot: { dir: "flat", delta: "из 47", tail: "остальные на НПД" },
+    icon: "user-check", tone: "accent",
+  },
+];
+
+function KpiRow() {
+  return (
+    <div className="kpi-row kpi-row--4">
+      {KPI.map((k) => (
+        <div key={k.lbl} className={`kpi kpi--${k.tone}`}>
+          <div className="head">
+            <span className="head-ic"><Icon name={k.icon} /></span>
+            <span className="lbl">{k.lbl}</span>
+          </div>
+          <div className="val">
+            {k.val}{k.unit && <span className="unit"> {k.unit}</span>}
+          </div>
+          <div className="foot">
+            <span className={`delta ${k.foot.dir}`}>
+              {k.foot.dir === "up" ? "▲" : k.foot.dir === "down" ? "▼" : "—"} {k.foot.delta}
+            </span>
+            <span>{k.foot.tail}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
+// Top tabs — [6-НДФЛ] (active) / [НПД-партнёры] / [Архив отчётов]
+// ============================================================
+function TopTabs({ tab, onTab }) {
+  const TABS = [
+    { id: "ndfl",   label: "6-НДФЛ",        count: "12" },
+    { id: "npd",    label: "НПД-партнёры",  count: "35" },
+    { id: "arch",   label: "Архив отчётов", count: "8"  },
+  ];
+  return (
+    <div className="tax-tabs">
+      {TABS.map((t) => (
+        <button
+          key={t.id}
+          className={`tax-tab ${tab === t.id ? "is-active" : ""}`}
+          onClick={() => onTab(t.id)}
+        >
+          {t.label}
+          <span className="tax-tab__count">{t.count}</span>
+        </button>
+      ))}
+      <div className="tax-tabs__legal">
+        <Icon name="shield" />
+        <span>Налоговый агент по ст. 226 НК РФ</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Quarter selector
+// ============================================================
+function QuarterSelector({ quarter, onQuarter }) {
+  const Q = ["Q1 2026", "Q2 2026", "Q3 2026", "Q4 2026", "Год"];
+  return (
+    <div className="quarter-sel">
+      <div className="quarter-sel__cap">
+        <Icon name="calendar" /> Период
+      </div>
+      <div className="quarter-sel__btns">
+        {Q.map((q) => (
+          <button
+            key={q}
+            className={`quarter-sel__btn ${quarter === q ? "is-active" : ""}`}
+            onClick={() => onQuarter(q)}
+          >
+            {q}
+          </button>
+        ))}
+      </div>
+      <div className="quarter-sel__meta">
+        <span>Дни в периоде:</span>
+        <b>01.04 — 30.06.2026</b>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Tax table — 12 партнёров без НПД
+// ============================================================
+const PARTNERS = [
+  { period: "01.04.2026", partner: "Иван Петров",         inn: "781234567890", payout: "12 000", ndfl: "1 560", rate: "13%", status: "Перечислено" },
+  { period: "01.04.2026", partner: "Анна Сидорова",       inn: "771234567891", payout: "8 320",  ndfl: "1 082", rate: "13%", status: "Перечислено" },
+  { period: "01.04.2026", partner: "Дмитрий Козлов",      inn: "501234567892", payout: "5 480",  ndfl: "712",   rate: "13%", status: "Перечислено" },
+  { period: "01.05.2026", partner: "Елена Морозова",      inn: "781234567893", payout: "15 200", ndfl: "1 976", rate: "13%", status: "Перечислено" },
+  { period: "01.05.2026", partner: "Сергей Волков",       inn: "501234567894", payout: "9 100",  ndfl: "1 183", rate: "13%", status: "Удержано" },
+  { period: "01.05.2026", partner: "Татьяна Зайцева",     inn: "771234567895", payout: "4 990",  ndfl: "649",   rate: "13%", status: "Удержано" },
+  { period: "01.05.2026", partner: "Михаил Орлов",        inn: "771234567896", payout: "11 280", ndfl: "1 466", rate: "13%", status: "Перечислено" },
+  { period: "01.06.2026", partner: "Ольга Никитина",      inn: "501234567897", payout: "7 640",  ndfl: "993",   rate: "13%", status: "Удержано" },
+  { period: "01.06.2026", partner: "Алексей Соколов",     inn: "781234567898", payout: "6 320",  ndfl: "822",   rate: "13%", status: "К перечислению" },
+  { period: "01.06.2026", partner: "Виктория Лебедева",   inn: "771234567899", payout: "13 480", ndfl: "1 752", rate: "13%", status: "Перечислено" },
+  { period: "01.06.2026", partner: "Артём Новиков",       inn: "501234567800", payout: "8 920",  ndfl: "1 160", rate: "13%", status: "К перечислению" },
+  { period: "01.06.2026", partner: "Кирилл Иванов",       inn: "771234567801", payout: "4 990",  ndfl: "649",   rate: "13%", status: "К перечислению" },
+];
+
+function statusChipClass(s) {
+  if (s === "Перечислено") return "chip--ok";
+  if (s === "Удержано") return "chip--trial";
+  if (s === "К перечислению") return "chip--warn";
+  return "chip--neutral";
+}
+
+function TaxTable() {
+  const total = useMemo(() => {
+    return PARTNERS.reduce((acc, p) => {
+      acc.payout += parseInt(p.payout.replace(/\s/g, ""), 10);
+      acc.ndfl += parseInt(p.ndfl.replace(/\s/g, ""), 10);
+      return acc;
+    }, { payout: 0, ndfl: 0 });
+  }, []);
+
+  return (
+    <div className="card">
+      <div className="card-h">
+        <h3>Удержания НДФЛ по партнёрам</h3>
+        <span className="meta">Q2 2026 · 12 партнёров без НПД · {PARTNERS.length} начислений</span>
+        <div className="right">
+          <button className="btn btn--ghost"><Icon name="icon-action-filter" />Фильтр</button>
+          <button className="btn btn--ghost"><Icon name="icon-action-sort" />Сортировка</button>
+        </div>
+      </div>
+      <table className="tbl tax-tbl">
+        <thead>
+          <tr>
+            <th style={{ width: 110 }}>Период</th>
+            <th>Партнёр</th>
+            <th style={{ width: 160 }}>ИНН</th>
+            <th className="num" style={{ width: 120 }}>Сумма выплаты</th>
+            <th className="num" style={{ width: 130 }}>Удержано НДФЛ</th>
+            <th style={{ width: 70 }}>Ставка</th>
+            <th style={{ width: 170 }}>Статус</th>
+          </tr>
+        </thead>
+        <tbody>
+          {PARTNERS.map((p, i) => (
+            <tr key={i}>
+              <td className="mono">{p.period}</td>
+              <td className="name">{p.partner}</td>
+              <td className="mono">{p.inn}</td>
+              <td className="num">{p.payout} ₽</td>
+              <td className="num">{p.ndfl} ₽</td>
+              <td>
+                <span className="rate-chip">{p.rate}</span>
+              </td>
+              <td>
+                <span className={`chip ${statusChipClass(p.status)}`}>
+                  <span className="dot"></span>{p.status}
+                </span>
+              </td>
+            </tr>
+          ))}
+          <tr className="tax-tbl__total">
+            <td colSpan="3" className="name">Итого за Q2 2026</td>
+            <td className="num">{total.payout.toLocaleString("ru-RU")} ₽</td>
+            <td className="num"><b>{total.ndfl.toLocaleString("ru-RU")} ₽</b></td>
+            <td colSpan="2" className="mono" style={{ color: "var(--fg-3)" }}>
+              ср. ставка 13%
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="card-foot">
+        <span>СУММ за Q2 · удержано 17 004 ₽ · перечислено 8 444 ₽ · к перечислению 8 560 ₽</span>
+        <a href="#">Платёжное поручение в ФНС →</a>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Progressive NDFL ladder — 5 ступеней с 01.01.2026
+// ============================================================
+const LADDER = [
+  { range: "до 2,4 млн ₽",          rate: "13%", base: "+ 0",           min: 0,         max: 2_400_000,    color: "g1" },
+  { range: "2,4 – 5 млн ₽",         rate: "15%", base: "+ 312 000 ₽",   min: 2_400_000, max: 5_000_000,    color: "g2" },
+  { range: "5 – 20 млн ₽",          rate: "18%", base: "+ 702 000 ₽",   min: 5_000_000, max: 20_000_000,   color: "g3" },
+  { range: "20 – 50 млн ₽",         rate: "20%", base: "+ 3 402 000 ₽", min: 20_000_000,max: 50_000_000,   color: "g4" },
+  { range: "свыше 50 млн ₽",        rate: "22%", base: "+ 9 402 000 ₽", min: 50_000_000,max: 999_999_999,  color: "g5" },
+];
+
+function NdflLadder() {
+  return (
+    <div className="card ndfl-ladder">
+      <div className="card-h">
+        <h3>Прогрессивная шкала НДФЛ — 5 ступеней</h3>
+        <span className="meta">с 01.01.2026 · 224-ФЗ от 12.07.2024</span>
+        <div className="right">
+          <button className="btn btn--ghost"><Icon name="help-circle" />Как считается</button>
+        </div>
+      </div>
+      <div className="ladder">
+        {LADDER.map((l, i) => (
+          <div key={i} className={`ladder__row ladder__row--${l.color}`}>
+            <div className="ladder__step">{i + 1}</div>
+            <div className="ladder__range">{l.range}</div>
+            <div className="ladder__bar">
+              <div className="ladder__bar-fill" style={{ width: `${20 + i * 16}%` }} />
+            </div>
+            <div className="ladder__rate">
+              <b>{l.rate}</b>
+              <span>{l.base}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="ndfl-ladder__note">
+        <Icon name="info" />
+        <div>
+          <div className="t1">Применяется к каждому партнёру индивидуально</div>
+          <div className="t2">Резиденты РФ · нерезиденты — фиксированная 30% (15% для ЕАЭС после 183 дней) · иноагенты — фиксированная 30%</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Quarterly deadlines timeline
+// ============================================================
+const DEADLINES = [
+  { q: "Q1", period: "01.01 – 31.03.2026", due: "30.04.2026", status: "submitted", amount: "35 040 ₽" },
+  { q: "Q2", period: "01.04 – 30.06.2026", due: "30.07.2026", status: "current",   amount: "47 280 ₽" },
+  { q: "Q3", period: "01.07 – 30.09.2026", due: "30.10.2026", status: "future",    amount: "—" },
+  { q: "Q4", period: "01.10 – 31.12.2026", due: "25.02.2027", status: "future",    amount: "—" },
+];
+
+function DeadlinesTimeline() {
+  return (
+    <div className="card deadlines">
+      <div className="card-h">
+        <h3>Дедлайны подачи 6-НДФЛ в ФНС</h3>
+        <span className="meta">2026 год · 4 квартала · форма КНД 1151100</span>
+        <div className="right">
+          <button className="btn btn--ghost"><Icon name="calendar" />Добавить в календарь</button>
+        </div>
+      </div>
+      <div className="deadlines__grid">
+        {DEADLINES.map((d, i) => (
+          <div key={i} className={`deadline deadline--${d.status}`}>
+            <div className="deadline__head">
+              <div className="deadline__q">{d.q}</div>
+              <div className={`deadline__status deadline__status--${d.status}`}>
+                {d.status === "submitted" && <><Icon name="status-checkmark-done" /> Сдано</>}
+                {d.status === "current"   && <><Icon name="status-hourglass-pending" /> Текущий</>}
+                {d.status === "future"    && <><Icon name="clock" /> Запланирован</>}
+              </div>
+            </div>
+            <div className="deadline__period">{d.period}</div>
+            <div className="deadline__due">
+              <span className="deadline__due-l">Срок:</span>
+              <b>{d.due}</b>
+            </div>
+            <div className="deadline__amt">{d.amount}</div>
+          </div>
+        ))}
+      </div>
+      <div className="deadlines__note">
+        <Icon name="shield-check" />
+        <span>За просрочку: 5% от суммы за каждый месяц (ст. 119 НК РФ) · пеня 1/300 ставки ЦБ за день</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// App
+// ============================================================
+function App() {
+  const [nav, setNav] = useState("taxes");
+  const [tab, setTab] = useState("ndfl");
+  const [quarter, setQuarter] = useState("Q2 2026");
+
+  return (
+    <div className="shell" data-screen-label="04 Admin — Налоги">
+      <Sidebar current={nav} onNav={setNav} />
+      <div className="workpane">
+        <TopNav />
+        <main className="main">
+          <PageHeader />
+          <KpiRow />
+          <TopTabs tab={tab} onTab={setTab} />
+          <QuarterSelector quarter={quarter} onQuarter={setQuarter} />
+          <TaxTable />
+          <div className="tax-bottom-grid">
+            <NdflLadder />
+            <DeadlinesTimeline />
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

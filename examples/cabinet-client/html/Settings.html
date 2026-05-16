@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Кабинет — Настройки CRM</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/atoms.css">
+  <link rel="stylesheet" href="design/cabinet.css">
+  <link rel="stylesheet" href="design/settings.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+const ICO = "design/assets/icons/";
+
+function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+function fmtRub(n) { return fmt(n) + " ₽"; }
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+const NAV = [
+  { id: "home",      label: "Главная",        icon: "icon-nav-home",       href: "Dashboard.html" },
+  { id: "orders",    label: "Заказы",         icon: "icon-crm-orders",     href: "Orders.html",    badge: 7 },
+  { id: "bookings",  label: "Записи",         icon: "icon-crm-bookings",   href: "Bookings.html",  badge: 12 },
+  { id: "customers", label: "Клиенты",        icon: "icon-crm-customers",  href: "Customers.html" },
+  { id: "products",  label: "Товары и услуги", icon: "icon-nav-products",   href: "Products.html" },
+  { id: "content",   label: "Контент",        icon: "icon-nav-content",    href: "Calendar.html" },
+  { id: "ai",        label: "ИИ-ассистент",   icon: "spark-ai" },
+  { id: "analytics", label: "Аналитика",      icon: "chart-line" },
+  { id: "marketing", label: "Маркетинг",      icon: "megaphone" },
+  { id: "billing",   label: "Подписка",       icon: "price-tag-ruble" },
+  { id: "settings",  label: "Настройки",      icon: "icon-nav-settings" },
+];
+
+function Sidebar({ current }) {
+  return (
+    <aside className="cab-side" aria-label="Главная навигация">
+      <a className="cab-brand" href="Dashboard.html">
+        <span className="cab-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+        <span>
+          <span className="cab-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="cab-brand-meta">Кабинет</div>
+        </span>
+      </a>
+
+      <button className="cab-biz">
+        <div className="cab-biz-ava" style={{background:"#fed7aa", color:"#9a3412"}}>У</div>
+        <div>
+          <div className="cab-biz-name">Пекарня «Уют»</div>
+          <div className="cab-biz-handle">@pekarnya_uyut · Бакалея</div>
+        </div>
+        <Ic name="icon-action-expand" size={14} style={{opacity:0.4}} />
+      </button>
+
+      {NAV.map((it) => {
+        const cls = `cab-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="cab-side-foot">
+        Тариф «Единый» · <b>4 990 ₽/мес</b><br/>
+        До 24.06.2026 · <a href="#billing">Продлить</a>
+      </div>
+    </aside>
+  );
+}
+
+function TopBar() {
+  return (
+    <header className="cab-top">
+      <div>
+        <div className="crumb">Кабинет / Настройки CRM</div>
+        <h1>Настройки CRM</h1>
+      </div>
+      <div className="cab-top-actions">
+        <button className="cab-iconbtn" aria-label="Уведомления">
+          <Ic name="notification-bell" size={20} />
+          <span className="dot"></span>
+        </button>
+        <div className="cab-profile" tabIndex="0">
+          <div className="ava">А</div>
+          <div className="meta">
+            <span className="name">Анна П.</span>
+            <span className="role">Владелец</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ============================================================
+   SECTION DATA
+============================================================ */
+const ZONES = [
+  { name: "СПб центр",        cost: 350, min: 1500, eta: "1–2 часа",  active: true },
+  { name: "СПб окраины",      cost: 500, min: 2000, eta: "2–3 часа",  active: true },
+  { name: "Ленобласть",       cost: 800, min: 3000, eta: "к указанному времени", active: true },
+  { name: "Курьер +регион",   cost: 1200, min: 5000, eta: "к указанному времени", active: false },
+];
+
+const MASTERS = [
+  { name: "Ирина Соколова",    role: "мастер маникюра",    schedule: "Пн–Сб 10:00–20:00", services: ["Маникюр", "Педикюр"], active: true },
+  { name: "Анна Кузьмина",     role: "мастер причёски",    schedule: "Вт–Вс 11:00–21:00", services: ["Стрижка", "Окрашивание", "Укладка"], active: true },
+  { name: "Игорь Беляев",      role: "барбер",             schedule: "Пн–Пт 09:00–19:00", services: ["Стрижка мужская", "Борода"], active: true },
+];
+
+const PROMOS = [
+  { code: "WELCOME10",   discount: "10%",       limit: "до 14.06.2026 · 47 / 100 использований", status: "active" },
+  { code: "MEDOVIK500",  discount: "500 ₽",     limit: "Бессрочно · 8 использований",            status: "active" },
+  { code: "MAY",         discount: "15%",       limit: "истёк 31.05.2026 · 142 использований",   status: "expired" },
+];
+
+/* ============================================================
+   TABS
+============================================================ */
+const TABS = [
+  { id: "orders",   label: "Заказы",   icon: "icon-crm-orders" },
+  { id: "bookings", label: "Записи",   icon: "icon-crm-bookings" },
+  { id: "customers", label: "Клиенты",  icon: "icon-crm-customers" },
+  { id: "notifications", label: "Push & уведомления", icon: "notification-bell" },
+];
+
+/* ============================================================
+   PANELS
+============================================================ */
+function ToggleSection({ title, hint, value, onChange, children }) {
+  return (
+    <section className="cab-section">
+      <div className="cab-section-head">
+        <div>
+          <h3>{title}</h3>
+          {hint && <p>{hint}</p>}
+        </div>
+        <label className="cab-switch">
+          <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} />
+          <span className="cab-switch-track"><span className="cab-switch-thumb"></span></span>
+        </label>
+      </div>
+      {value && children}
+    </section>
+  );
+}
+
+function OrdersPanel() {
+  const [enabled, setEnabled] = useState(true);
+  const [delivery, setDelivery] = useState(true);
+  const [pickup, setPickup] = useState(true);
+
+  return (
+    <>
+      <ToggleSection
+        title="Приём заказов"
+        hint="ИИ-ассистент в MAX будет принимать заказы автоматически"
+        value={enabled} onChange={setEnabled}>
+        <div className="cab-card">
+          <div className="cab-grid-2">
+            <ToggleSection
+              title="Доставка"
+              hint="С курьером или своими силами"
+              value={delivery} onChange={setDelivery}>
+              <div className="cab-zones">
+                <div className="cab-zones-head">
+                  <h4>Зоны доставки</h4>
+                  <button className="btn btn-ghost"><Ic name="icon-action-add" size={14} /> Добавить зону</button>
+                </div>
+                <table className="cab-tbl">
+                  <thead>
+                    <tr><th>Зона</th><th>Стоимость</th><th>От суммы</th><th>Срок</th><th>Статус</th></tr>
+                  </thead>
+                  <tbody>
+                    {ZONES.map(z => (
+                      <tr key={z.name}>
+                        <td><b>{z.name}</b></td>
+                        <td className="num">{fmtRub(z.cost)}</td>
+                        <td className="num">{fmtRub(z.min)}</td>
+                        <td>{z.eta}</td>
+                        <td>
+                          <span className={`cab-chip ${z.active ? "cab-chip-ok" : "cab-chip-mute"}`}>
+                            {z.active ? "Активна" : "Выкл"}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </ToggleSection>
+
+            <ToggleSection
+              title="Самовывоз"
+              hint="Клиент забирает заказ с точки"
+              value={pickup} onChange={setPickup}>
+              <div className="cab-pickup">
+                <div className="cab-field">
+                  <label>Адрес точки самовывоза</label>
+                  <input type="text" defaultValue="Санкт-Петербург, ул. Свободы, 14" />
+                </div>
+                <div className="cab-grid-2">
+                  <div className="cab-field">
+                    <label>Часы работы</label>
+                    <input type="text" defaultValue="Пн–Вс 08:00 – 21:00" />
+                  </div>
+                  <div className="cab-field">
+                    <label>Готовность через</label>
+                    <select defaultValue="2">
+                      <option value="1">1 час</option>
+                      <option value="2">2 часа</option>
+                      <option value="3">3 часа</option>
+                      <option value="next-day">К следующему дню</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </ToggleSection>
+          </div>
+        </div>
+
+        <div className="cab-card cab-promos">
+          <div className="cab-section-head">
+            <div>
+              <h3>Промокоды</h3>
+              <p>Активные промокоды и скидки</p>
+            </div>
+            <button className="btn btn-primary"><Ic name="icon-action-add" size={14} /> Создать промокод</button>
+          </div>
+          <table className="cab-tbl">
+            <thead>
+              <tr><th>Код</th><th>Скидка</th><th>Действие</th><th>Статус</th><th></th></tr>
+            </thead>
+            <tbody>
+              {PROMOS.map(p => (
+                <tr key={p.code}>
+                  <td><code>{p.code}</code></td>
+                  <td><b>{p.discount}</b></td>
+                  <td className="cab-mute">{p.limit}</td>
+                  <td>
+                    <span className={`cab-chip ${p.status === "active" ? "cab-chip-ok" : "cab-chip-mute"}`}>
+                      {p.status === "active" ? "Активен" : "Истёк"}
+                    </span>
+                  </td>
+                  <td>
+                    <button className="btn btn-ghost"><Ic name="icon-action-edit" size={14} /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="cab-callout cab-callout-emerald">
+          <Ic name="info" size={18} />
+          <div>
+            <b>Оплата клиентом — мимо нас.</b><br/>
+            Мы не платёжный агент. Клиент оплачивает напрямую через вашу кассу/банк
+            (СБП / карта / наличные курьеру). Так проще и без комиссий.
+          </div>
+        </div>
+      </ToggleSection>
+    </>
+  );
+}
+
+function BookingsPanel() {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <ToggleSection
+      title="Запись на услуги"
+      hint="ИИ-ассистент принимает запись к конкретному мастеру в конкретное время"
+      value={enabled} onChange={setEnabled}>
+
+      <div className="cab-card">
+        <div className="cab-section-head">
+          <div>
+            <h3>Мастера</h3>
+            <p>Список мастеров с расписанием</p>
+          </div>
+          <button className="btn btn-primary"><Ic name="icon-action-add" size={14} /> Добавить мастера</button>
+        </div>
+
+        <div className="cab-masters">
+          {MASTERS.map(m => (
+            <div key={m.name} className="cab-master-card">
+              <div className="cab-master-ava">{m.name[0]}</div>
+              <div className="cab-master-info">
+                <div className="cab-master-name">{m.name}</div>
+                <div className="cab-master-role">{m.role}</div>
+                <div className="cab-master-meta">
+                  <span><Ic name="calendar-clock" size={13} /> {m.schedule}</span>
+                  <span>·</span>
+                  <span>Услуги: {m.services.join(", ")}</span>
+                </div>
+              </div>
+              <div className="cab-master-actions">
+                <span className="cab-chip cab-chip-ok">Активен</span>
+                <button className="btn btn-ghost"><Ic name="icon-action-edit" size={14} /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="cab-card">
+        <h3>Слоты и расписание</h3>
+        <p className="cab-mute">Шаг слота и буфер между записями</p>
+        <div className="cab-grid-3">
+          <div className="cab-field">
+            <label>Шаг слота</label>
+            <select defaultValue="30">
+              <option value="15">15 минут</option>
+              <option value="30">30 минут</option>
+              <option value="60">1 час</option>
+            </select>
+          </div>
+          <div className="cab-field">
+            <label>Буфер между записями</label>
+            <select defaultValue="10">
+              <option value="0">Без буфера</option>
+              <option value="10">10 минут</option>
+              <option value="15">15 минут</option>
+              <option value="30">30 минут</option>
+            </select>
+          </div>
+          <div className="cab-field">
+            <label>Напоминания клиенту</label>
+            <select defaultValue="24h+1h">
+              <option value="off">Не напоминать</option>
+              <option value="1h">За 1 час</option>
+              <option value="24h">За 24 часа</option>
+              <option value="24h+1h">За 24ч и за 1ч</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </ToggleSection>
+  );
+}
+
+function CustomersPanel() {
+  const [autoTags, setAutoTags] = useState(true);
+  const [retention, setRetention] = useState("36");
+
+  return (
+    <>
+      <ToggleSection
+        title="Автоматические теги"
+        hint="Система сама присваивает теги по правилам"
+        value={autoTags} onChange={setAutoTags}>
+        <div className="cab-card">
+          <div className="cab-rule">
+            <span className="cab-rule-tag cab-chip cab-chip-emerald">Постоянный</span>
+            <span>через</span>
+            <input type="number" defaultValue="3" min="1" className="cab-num" />
+            <span>заказов за</span>
+            <input type="number" defaultValue="90" min="7" className="cab-num" />
+            <span>дней</span>
+          </div>
+          <div className="cab-rule">
+            <span className="cab-rule-tag cab-chip cab-chip-warn">Спящий</span>
+            <span>если</span>
+            <span><b>0</b> заказов за</span>
+            <input type="number" defaultValue="30" min="7" className="cab-num" />
+            <span>дней</span>
+          </div>
+          <div className="cab-rule">
+            <span className="cab-rule-tag cab-chip cab-chip-info">Новый</span>
+            <span>при первом заказе (auto)</span>
+          </div>
+        </div>
+      </ToggleSection>
+
+      <section className="cab-section">
+        <div className="cab-section-head">
+          <div>
+            <h3>152-ФЗ · защита персональных данных</h3>
+            <p>Срок хранения данных клиентов и правила удаления</p>
+          </div>
+        </div>
+        <div className="cab-card">
+          <div className="cab-grid-2">
+            <div className="cab-field">
+              <label>Срок хранения после последней активности</label>
+              <select value={retention} onChange={(e) => setRetention(e.target.value)}>
+                <option value="12">12 месяцев</option>
+                <option value="24">24 месяца</option>
+                <option value="36">36 месяцев (рекомендовано)</option>
+                <option value="60">60 месяцев</option>
+              </select>
+              <span className="cab-field-hint">После этого срока данные анонимизируются автоматически</span>
+            </div>
+            <div className="cab-field">
+              <label>Email для запросов клиентов 152-ФЗ</label>
+              <input type="email" defaultValue="privacy@pekarnya-uyut.ru" />
+              <span className="cab-field-hint">Куда клиент пишет для запроса своих данных или удаления</span>
+            </div>
+          </div>
+          <div className="cab-callout cab-callout-info">
+            <Ic name="shield-check" size={18} />
+            <div>
+              <b>Aibro — processor для ваших клиентских ПДн.</b><br/>
+              Вы — controller. DPA (Data Processing Agreement) подписан автоматически при подписке.
+              <a href="/legal/dpa">Прочитать DPA →</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function NotificationsPanel() {
+  return (
+    <section className="cab-section">
+      <div className="cab-section-head">
+        <div>
+          <h3>Push & уведомления</h3>
+          <p>Когда и кому отправлять уведомления</p>
+        </div>
+      </div>
+      <div className="cab-card">
+        <div className="cab-notif-row">
+          <div>
+            <b>Новый заказ</b>
+            <div className="cab-mute">Push владельцу + email</div>
+          </div>
+          <div className="cab-notif-toggles">
+            <label className="cab-check"><input type="checkbox" defaultChecked /> Push в MAX</label>
+            <label className="cab-check"><input type="checkbox" defaultChecked /> Email</label>
+            <label className="cab-check"><input type="checkbox" /> SMS</label>
+          </div>
+        </div>
+        <div className="cab-notif-row">
+          <div>
+            <b>Новая запись</b>
+            <div className="cab-mute">Push мастеру + владельцу</div>
+          </div>
+          <div className="cab-notif-toggles">
+            <label className="cab-check"><input type="checkbox" defaultChecked /> Push в MAX</label>
+            <label className="cab-check"><input type="checkbox" /> Email</label>
+          </div>
+        </div>
+        <div className="cab-notif-row">
+          <div>
+            <b>Отмена / перенос</b>
+            <div className="cab-mute">Push владельцу + мастеру</div>
+          </div>
+          <div className="cab-notif-toggles">
+            <label className="cab-check"><input type="checkbox" defaultChecked /> Push в MAX</label>
+            <label className="cab-check"><input type="checkbox" defaultChecked /> Email</label>
+          </div>
+        </div>
+        <div className="cab-notif-row">
+          <div>
+            <b>Тон уведомлений</b>
+            <div className="cab-mute">Как ИИ обращается к клиентам</div>
+          </div>
+          <div>
+            <select defaultValue="friendly">
+              <option value="formal">Формальный (на «Вы»)</option>
+              <option value="friendly">Дружелюбный (рекомендовано)</option>
+              <option value="casual">Неформальный</option>
+            </select>
+          </div>
+        </div>
+        <div className="cab-notif-row">
+          <div>
+            <b>Тихие часы</b>
+            <div className="cab-mute">Не беспокоить уведомлениями</div>
+          </div>
+          <div className="cab-notif-quiet">
+            <input type="time" defaultValue="23:00" /> – <input type="time" defaultValue="09:00" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   ROOT
+============================================================ */
+function App() {
+  const [tab, setTab] = useState("orders");
+
+  return (
+    <div className="cab-shell">
+      <Sidebar current="settings" />
+      <main className="cab-main">
+        <TopBar />
+        <div className="cab-content">
+          <div className="cab-tabs" role="tablist">
+            {TABS.map(t => (
+              <button key={t.id}
+                      role="tab"
+                      aria-selected={tab === t.id}
+                      className={`cab-tab ${tab === t.id ? "active" : ""}`}
+                      onClick={() => setTab(t.id)}>
+                <Ic name={t.icon} size={16} />
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="cab-tab-content">
+            {tab === "orders"        && <OrdersPanel />}
+            {tab === "bookings"      && <BookingsPanel />}
+            {tab === "customers"     && <CustomersPanel />}
+            {tab === "notifications" && <NotificationsPanel />}
+          </div>
+
+          <div className="cab-save-bar">
+            <span className="cab-save-status"><Ic name="status-checkmark-done" size={14} /> Все изменения сохраняются автоматически</span>
+            <button className="btn btn-ghost"><Ic name="icon-action-export" size={14} /> Экспорт настроек JSON</button>
+            <button className="btn btn-ghost"><Ic name="icon-action-import" size={14} /> Импорт</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

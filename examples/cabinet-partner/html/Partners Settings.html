@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Партнёрский кабинет — Настройки</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/colors_and_type.css">
+  <link rel="stylesheet" href="design/partners-dashboard.css">
+  <link rel="stylesheet" href="design/partners-earnings.css">
+  <link rel="stylesheet" href="design/partners-referrals.css">
+  <link rel="stylesheet" href="design/partners-settings.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useEffect, useRef } = React;
+const ICO = "design/assets/icons/";
+
+function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+const NAV_MAIN = [
+  { id: "home",      label: "Главная",   icon: "icon-nav-home",      href: "Partners Dashboard.html" },
+  { id: "referrals", label: "Рефералы",  icon: "icon-nav-team",      badge: 47, href: "Partners Referrals.html" },
+  { id: "income",    label: "Доход",     icon: "icon-nav-finance",   href: "Partners Earnings.html" },
+  { id: "payouts",   label: "Выплаты",   icon: "shield-check",       href: "Partners Payouts.html" },
+  { id: "materials", label: "Материалы", icon: "icon-nav-documents", href: "Partners Materials.html" },
+];
+const NAV_FOOT = [
+  { id: "settings", label: "Настройки", icon: "icon-nav-settings", href: "Partners Settings.html" },
+  { id: "help",     label: "Поддержка", icon: "icon-nav-help" },
+];
+
+function Sidebar({ current }) {
+  return (
+    <aside className="pd-side" aria-label="Главная навигация">
+      <a className="pd-brand" href="Partners Dashboard.html">
+        <span className="pd-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+        <span>
+          <span className="pd-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="pd-brand-meta">Партнёры</div>
+        </span>
+      </a>
+
+      <div className="pd-biz">
+        <div className="pd-biz-ava">И</div>
+        <div>
+          <div className="pd-biz-name">Иван Петров</div>
+          <div className="pd-biz-handle">@ivan‑petrov · ФЛ</div>
+        </div>
+        <div className="pd-biz-pill">L2</div>
+      </div>
+
+      {NAV_MAIN.map((it) => {
+        const cls = `pd-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="pd-nav-caption">Аккаунт</div>
+      {NAV_FOOT.map((it) => {
+        const cls = `pd-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="pd-side-foot">
+        ИП Мальцев · единый тариф <b style={{color:"var(--fg-2)",fontWeight:600}}>4 990 ₽/мес</b><br/>
+        Партнёрская программа · <a href="#terms">правила</a>
+      </div>
+    </aside>
+  );
+}
+
+function TopBar({ onBurger }) {
+  return (
+    <header className="pd-top">
+      <button className="pd-burger" aria-label="Меню" onClick={onBurger}><span></span></button>
+      <div>
+        <div className="crumb">Партнёры / Настройки</div>
+        <h1>Настройки партнёра</h1>
+      </div>
+      <div className="pd-top-actions">
+        <button className="pd-iconbtn" aria-label="Уведомления">
+          <Ic name="icon-nav-notifications" size={20} />
+          <span className="dot"></span>
+        </button>
+        <div className="pd-profile" tabIndex="0">
+          <div className="ava">И</div>
+          <div className="meta">
+            <span className="name">Иван П.</span>
+            <span className="role">Партнёр · L2</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ============================================================
+   TAB BAR
+============================================================ */
+const TABS = [
+  { id: "profile",  label: "Профиль",            icon: "user" },
+  { id: "tax",      label: "Налоговый статус",   icon: "icon-nav-taxes" },
+  { id: "payout",   label: "Реквизиты выплат",   icon: "credit-card" },
+  { id: "security", label: "Безопасность",       icon: "shield" },
+  { id: "notif",    label: "Уведомления",        icon: "notification-bell" },
+];
+
+function TabBar({ tab, setTab }) {
+  return (
+    <div className="st-tabs" role="tablist" aria-label="Разделы настроек">
+      {TABS.map((t) => (
+        <button
+          key={t.id}
+          role="tab"
+          aria-selected={tab === t.id}
+          className={`st-tab ${tab === t.id ? "active" : ""}`}
+          onClick={() => setTab(t.id)}
+        >
+          <span className="st-tab-ico"><Ic name={t.icon} size={18} /></span>
+          <span className="st-tab-lbl">{t.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   Reusable: Section Card
+============================================================ */
+function SectionCard({ title, subtitle, children, foot }) {
+  return (
+    <section className="st-card">
+      {(title || subtitle) && (
+        <header className="st-card-h">
+          {title && <h3>{title}</h3>}
+          {subtitle && <p>{subtitle}</p>}
+        </header>
+      )}
+      <div className="st-card-body">{children}</div>
+      {foot && <footer className="st-card-foot">{foot}</footer>}
+    </section>
+  );
+}
+
+/* ============================================================
+   TAB 1 — PROFILE
+============================================================ */
+function ProfileTab({ onToast }) {
+  const [bio, setBio] = useState("Управляю каналом про малый бизнес в MAX, рекомендую инструменты для предпринимателей.");
+  return (
+    <>
+      <SectionCard
+        title="Фото профиля"
+        subtitle="Появляется рядом с вашим именем в кабинете и на странице партнёра."
+        foot={
+          <div className="st-foot-row">
+            <button className="st-btn-ghost">Удалить</button>
+            <button className="ref-btn-primary">
+              <Ic name="icon-action-upload" size={14} style={{filter:"brightness(0) invert(1)"}} />
+              <span>Загрузить фото</span>
+            </button>
+          </div>
+        }
+      >
+        <div className="st-avatar-row">
+          <div className="st-avatar-big">И</div>
+          <div className="st-avatar-meta">
+            <div className="st-avatar-name">Иван Иванович Петров</div>
+            <div className="st-avatar-sub">JPG, PNG · до 4 МБ · 400×400 px и больше</div>
+          </div>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="Личные данные"
+        subtitle="Используются для договора оферты и для удержания налогов при выплате."
+        foot={
+          <div className="st-foot-row">
+            <span className="st-foot-note">Изменения сохраняются автоматически</span>
+            <button className="ref-btn-primary">
+              <Ic name="status-checkmark-done" size={14} style={{filter:"brightness(0) invert(1)"}} />
+              <span>Сохранить</span>
+            </button>
+          </div>
+        }
+      >
+        <div className="st-grid-2">
+          <div className="st-field">
+            <label className="st-lbl">ФИО</label>
+            <input className="st-input" type="text" defaultValue="Иван Иванович Петров" />
+          </div>
+
+          <div className="st-field">
+            <label className="st-lbl">
+              Email
+              <span className="st-verify st-verify-ok">
+                <Ic name="status-checkmark-done" size={11} />
+                подтверждён
+              </span>
+            </label>
+            <input className="st-input" type="email" defaultValue="ivan@example.ru" />
+          </div>
+
+          <div className="st-field">
+            <label className="st-lbl">
+              Телефон
+              <span className="st-verify st-verify-ok">
+                <Ic name="status-checkmark-done" size={11} />
+                подтверждён
+              </span>
+            </label>
+            <input className="st-input st-input-mono" type="tel" defaultValue="+7 921 ••• 14‑72" />
+          </div>
+
+          <div className="st-field">
+            <label className="st-lbl">Дата рождения</label>
+            <input className="st-input st-input-mono" type="text" defaultValue="14.03.1989" />
+            <span className="st-hint">Нужна для расчёта НДФЛ (резиденство РФ)</span>
+          </div>
+
+          <div className="st-field st-field-full">
+            <label className="st-lbl">Адрес регистрации</label>
+            <input className="st-input" type="text" defaultValue="г. Санкт-Петербург, ул. Большая Морская, д. 12, кв. 47" />
+            <span className="st-hint">Используется для оформления налоговых документов</span>
+          </div>
+
+          <div className="st-field">
+            <label className="st-lbl">Уровень в партнёрке</label>
+            <div className="st-readonly">
+              <span className="st-lvl-chip">L2</span>
+              <span className="st-readonly-meta">под партнёром <b>Дмитрий К.</b> (@dmitry_k)</span>
+            </div>
+          </div>
+
+          <div className="st-field">
+            <label className="st-lbl">Дата присоединения</label>
+            <div className="st-readonly">
+              <Ic name="calendar-clock" size={14} />
+              <span className="st-readonly-meta mono">14.03.2025</span>
+              <span className="st-readonly-aside">(1 год 2 мес)</span>
+            </div>
+          </div>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="О себе"
+        subtitle="Расскажите, кому и почему рекомендуете СММ АЙБРО — увидят бизнесы по вашей реферальной ссылке."
+      >
+        <textarea
+          className="st-textarea"
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          maxLength={280}
+          placeholder="Например: «Веду канал про малый бизнес в MAX, помогаю предпринимателям подбирать инструменты»"
+        />
+        <div className="st-textarea-meta">
+          <span>{bio.length} / 280</span>
+        </div>
+      </SectionCard>
+    </>
+  );
+}
+
+/* ============================================================
+   TAB 2 — TAX STATUS
+============================================================ */
+function TaxTab() {
+  return (
+    <>
+      <section className="st-tax-status">
+        <div className="st-tax-status-h">
+          <span className="st-chip st-chip-warn">
+            <Ic name="toast-warning" size={11} />
+            НПД не оформлен
+          </span>
+        </div>
+        <h3>Сейчас удерживаем НДФЛ — <span style={{color:"var(--warning-700)"}}>13 %</span></h3>
+        <p>
+          Вы получаете выплаты как физическое лицо. По закону мы (<b>ИП Мальцев Валерий Валерьевич</b>, ИНН 519041916737) — налоговый агент: удерживаем НДФЛ при каждой выплате и сами перечисляем в ФНС.
+        </p>
+        <p className="st-tax-rec">
+          <Ic name="bolt" size={14} />
+          <span>Рекомендуем оформить <b>НПД</b> через «Мой Налог» — самозанятые платят 6 % сами, мы перестанем удерживать НДФЛ и выплата к вам приходит целиком.</span>
+        </p>
+      </section>
+
+      <SectionCard
+        title="Как оформить НПД за 5 минут"
+        subtitle="Самозанятость через «Мой Налог» — бесплатно, без визита в ФНС, без отчётности."
+      >
+        <ol className="st-steps">
+          <li className="st-step">
+            <span className="st-step-num">1</span>
+            <div className="st-step-body">
+              <h5>Зарегистрируйтесь в «Мой Налог»</h5>
+              <p>Скачайте приложение «Мой налог» или зайдите через <a href="#">lkfl2.nalog.ru</a> по Госуслугам. Регистрация занимает 3 минуты.</p>
+            </div>
+          </li>
+          <li className="st-step">
+            <span className="st-step-num">2</span>
+            <div className="st-step-body">
+              <h5>Добавьте «СММ АЙБРО» как партнёра</h5>
+              <p>Раздел «Партнёры» → «Добавить» → введите ИНН <b className="mono">519041916737</b> и подтвердите. Это разрешает нам видеть статус вашего НПД автоматически.</p>
+            </div>
+          </li>
+          <li className="st-step">
+            <span className="st-step-num">3</span>
+            <div className="st-step-body">
+              <h5>Готово — мы видим статус и перестаём удерживать НДФЛ</h5>
+              <p>Статус обновляется автоматически в течение 24 часов. Со следующей выплаты получите доход целиком — налог 6 % платите сами через «Мой Налог».</p>
+            </div>
+          </li>
+        </ol>
+
+        <div className="st-foot-row">
+          <button className="st-btn-secondary">
+            <Ic name="icon-action-external-link" size={14} />
+            <span>Открыть инструкцию</span>
+          </button>
+          <button className="ref-btn-primary">
+            <Ic name="icon-action-external-link" size={14} style={{filter:"brightness(0) invert(1)"}} />
+            <span>Перейти в «Мой Налог»</span>
+          </button>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="Сравнение: ФЛ без НПД vs самозанятый"
+        subtitle="Расчёт за один месяц при доходе с партнёрки 47 320 ₽ (10 % с 9 рефералов × 4 990 + L2)."
+      >
+        <div className="st-compare">
+          <div className="st-compare-card st-compare-now">
+            <div className="st-compare-h">
+              <span className="st-compare-tag st-compare-tag-warn">Сейчас</span>
+              <h4>ФЛ без НПД</h4>
+            </div>
+            <div className="st-compare-row"><span>Начислено</span><b>47 320 ₽</b></div>
+            <div className="st-compare-row st-compare-row-minus"><span>НДФЛ 13 % (удержим мы)</span><b>−6 152 ₽</b></div>
+            <div className="st-compare-row st-compare-row-total"><span>К выплате</span><b>41 168 ₽</b></div>
+            <div className="st-compare-note">Платите 0 ₽ налогов сами — мы за вас. Никакой отчётности.</div>
+          </div>
+
+          <div className="st-compare-card st-compare-best">
+            <div className="st-compare-h">
+              <span className="st-compare-tag st-compare-tag-ok">
+                <Ic name="status-checkmark-done" size={11} />
+                рекомендуем
+              </span>
+              <h4>Самозанятый (НПД)</h4>
+            </div>
+            <div className="st-compare-row"><span>Начислено</span><b>47 320 ₽</b></div>
+            <div className="st-compare-row st-compare-row-plus"><span>НДФЛ не удерживаем</span><b>0 ₽</b></div>
+            <div className="st-compare-row st-compare-row-total"><span>К выплате</span><b>47 320 ₽</b></div>
+            <div className="st-compare-row st-compare-row-self"><span>НПД 6 % платите сами</span><b>−2 839 ₽</b></div>
+            <div className="st-compare-row st-compare-row-net"><span>Чистая прибыль</span><b>44 481 ₽</b></div>
+            <div className="st-compare-note st-compare-note-ok">Через «Мой Налог»: чек сформирует автоматом, отчётности нет.</div>
+          </div>
+        </div>
+
+        <div className="st-compare-diff">
+          <Ic name="percent" size={18} />
+          <div>
+            <b>+3 313 ₽ в месяц</b> если оформите НПД — это <b>+39 756 ₽</b> в год при стабильном объёме.
+            <div className="st-compare-diff-sub">При больших оборотах разница больше — НДФЛ прогрессивный (13 → 15 → 18 → 20 → 22 % с 01.01.2026), НПД остаётся 6 %.</div>
+          </div>
+        </div>
+      </SectionCard>
+    </>
+  );
+}
+
+/* ============================================================
+   TAB 3 — PAYOUT DETAILS
+============================================================ */
+function PayoutTab({ onToast }) {
+  return (
+    <>
+      <SectionCard
+        title="Активные реквизиты"
+        subtitle="Выплаты автоматически уходят на этот счёт 10-го числа каждого месяца."
+      >
+        <div className="st-bank-card">
+          <div className="st-bank-card-head">
+            <div className="st-bank-card-logo">Т</div>
+            <div>
+              <div className="st-bank-card-name">Тинькофф · Дебетовая</div>
+              <div className="st-bank-card-meta">Активна с 14.03.2025</div>
+            </div>
+            <span className="st-chip st-chip-ok">
+              <Ic name="shield-check" size={11} />
+              основной счёт
+            </span>
+          </div>
+
+          <div className="st-bank-card-row">
+            <div className="st-bank-card-no">
+              <span>•••• •••• ••••</span>
+              <span className="mono">4521</span>
+            </div>
+          </div>
+
+          <div className="st-bank-card-foot">
+            <div>
+              <div className="st-bank-card-lbl">ФИО получателя</div>
+              <div className="st-bank-card-val">Иван Иванович Петров</div>
+            </div>
+            <div>
+              <div className="st-bank-card-lbl">ИНН</div>
+              <div className="st-bank-card-val mono">771707083893</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="st-foot-row" style={{paddingTop: 14}}>
+          <button className="st-btn-secondary">
+            <Ic name="icon-action-edit" size={14} />
+            <span>Изменить реквизиты</span>
+          </button>
+          <button className="st-btn-ghost">
+            <Ic name="icon-action-add" size={14} />
+            <span>Добавить запасной счёт</span>
+          </button>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="Способы выплат"
+        subtitle="Можно подключить дополнительные счета и переключаться между ними."
+      >
+        <div className="st-methods">
+          <article className="st-method st-method-active">
+            <div className="st-method-ico"><Ic name="credit-card" size={20} /></div>
+            <div className="st-method-body">
+              <h5>Карта Тинькофф •••• 4521</h5>
+              <p>Зачисление в течение 1 банковского дня. Комиссия 0 ₽.</p>
+            </div>
+            <span className="st-chip st-chip-ok">используется</span>
+          </article>
+
+          <article className="st-method">
+            <div className="st-method-ico"><Ic name="credit-card" size={20} /></div>
+            <div className="st-method-body">
+              <h5>Карта другого банка</h5>
+              <p>Сбер, Альфа, ВТБ, любой банк по номеру карты. Зачисление до 3 дней.</p>
+            </div>
+            <button className="st-btn-ghost">Добавить</button>
+          </article>
+
+          <article className="st-method">
+            <div className="st-method-ico"><Ic name="briefcase" size={20} /></div>
+            <div className="st-method-body">
+              <h5>Расчётный счёт (для НПД / ИП)</h5>
+              <p>Платёжка по реквизитам. Для НПД — выплата приходит целиком, без удержания НДФЛ.</p>
+            </div>
+            <button className="st-btn-ghost">Добавить</button>
+          </article>
+
+          <article className="st-method">
+            <div className="st-method-ico"><Ic name="payout" size={20} /></div>
+            <div className="st-method-body">
+              <h5>Кошелёк ЮMoney</h5>
+              <p>Мгновенное зачисление. Лимит — 60 000 ₽ за раз для не-идентифицированных.</p>
+            </div>
+            <button className="st-btn-ghost">Добавить</button>
+          </article>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="Автоматическая выплата"
+        subtitle="Когда и при каком пороге автоматически отправлять накопленный доход."
+      >
+        <div className="st-toggle-row">
+          <label className="st-toggle">
+            <input type="checkbox" defaultChecked />
+            <span className="st-toggle-track"><span className="st-toggle-knob"></span></span>
+          </label>
+          <div>
+            <div className="st-toggle-title">Автовыплата 10-го числа каждого месяца</div>
+            <div className="st-toggle-sub">Если 10-е выпадает на выходной — переносим на ближайший рабочий день.</div>
+          </div>
+        </div>
+
+        <div className="st-grid-2" style={{marginTop: 14}}>
+          <div className="st-field">
+            <label className="st-lbl">Минимальная сумма для выплаты</label>
+            <div className="st-input-with-suffix">
+              <input className="st-input mono" type="text" defaultValue="1 000" />
+              <span className="st-input-suffix">₽</span>
+            </div>
+            <span className="st-hint">Если накопленный доход меньше — переносим на следующий месяц</span>
+          </div>
+
+          <div className="st-field">
+            <label className="st-lbl">Способ при автовыплате</label>
+            <select className="st-input" defaultValue="card">
+              <option value="card">Карта Тинькофф •••• 4521 (по умолчанию)</option>
+              <option value="other">Карта другого банка</option>
+              <option value="rs">Расчётный счёт</option>
+            </select>
+          </div>
+        </div>
+      </SectionCard>
+    </>
+  );
+}
+
+/* ============================================================
+   TAB 4 — SECURITY
+============================================================ */
+function SecurityTab() {
+  const sessions = [
+    { ico: "icon-status-success", browser: "Chrome 132 · Windows 11", loc: "Санкт-Петербург, РФ", ip: "85.143.•••.42", current: true,  last: "сейчас" },
+    { ico: "icon-status-info",    browser: "Safari · iPhone 15",      loc: "Санкт-Петербург, РФ", ip: "31.180.•••.18",                  last: "2 часа назад" },
+    { ico: "icon-status-warning", browser: "Edge 131 · Windows 10",   loc: "Москва, РФ",          ip: "188.243.•••.77",                 last: "вчера, 18:42" },
+  ];
+
+  return (
+    <>
+      <SectionCard
+        title="Двухфакторная аутентификация (2FA)"
+        subtitle="Защищает кабинет даже если пароль украдут — на входе спросят код из приложения."
+      >
+        <div className="st-2fa">
+          <div className="st-2fa-state">
+            <div className="st-2fa-ico st-2fa-ico-off"><Ic name="shield" size={22} /></div>
+            <div>
+              <div className="st-2fa-title">2FA не включена</div>
+              <div className="st-2fa-sub">Рекомендуем включить — особенно если вы получаете выплаты &gt; 10 000 ₽/мес.</div>
+            </div>
+            <span className="st-chip st-chip-warn">
+              <Ic name="toast-warning" size={11} />
+              рекомендуется
+            </span>
+          </div>
+
+          <div className="st-2fa-actions">
+            <button className="ref-btn-primary">
+              <Ic name="shield-check" size={14} style={{filter:"brightness(0) invert(1)"}} />
+              <span>Включить 2FA через приложение</span>
+            </button>
+            <button className="st-btn-ghost">Подробнее</button>
+          </div>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="Пароль"
+        subtitle="Используется только для входа в партнёрский кабинет."
+      >
+        <div className="st-pass-row">
+          <div className="st-pass-meta">
+            <div className="st-pass-h">Сложный пароль · 12+ символов</div>
+            <div className="st-pass-sub">Последний раз менялся <b>14.03.2025</b> (год назад)</div>
+          </div>
+          <button className="st-btn-secondary">
+            <Ic name="lock" size={14} />
+            <span>Изменить пароль</span>
+          </button>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="Активные сессии"
+        subtitle="Устройства, с которых сейчас открыт ваш кабинет. Закройте незнакомые."
+        foot={
+          <div className="st-foot-row">
+            <span className="st-foot-note">3 активные сессии</span>
+            <button className="st-btn-secondary st-btn-danger">
+              <Ic name="icon-action-delete" size={14} />
+              <span>Завершить все, кроме текущей</span>
+            </button>
+          </div>
+        }
+      >
+        <div className="st-sessions">
+          {sessions.map((s, i) => (
+            <article key={i} className={`st-session ${s.current ? "current" : ""}`}>
+              <div className="st-session-ico"><Ic name={s.ico} size={18} /></div>
+              <div className="st-session-body">
+                <div className="st-session-browser">
+                  {s.browser}
+                  {s.current && <span className="st-chip st-chip-ok st-session-chip">текущая</span>}
+                </div>
+                <div className="st-session-meta">
+                  <span>{s.loc}</span>
+                  <span className="dot-sep">·</span>
+                  <span className="mono">{s.ip}</span>
+                  <span className="dot-sep">·</span>
+                  <span>{s.last}</span>
+                </div>
+              </div>
+              {!s.current && <button className="st-btn-ghost st-btn-small">Завершить</button>}
+            </article>
+          ))}
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="Резервные коды для 2FA"
+        subtitle="10 одноразовых кодов на случай если потеряете доступ к приложению-генератору."
+        foot={
+          <div className="st-foot-row">
+            <span className="st-foot-note">Коды ещё не сгенерированы</span>
+            <button className="st-btn-secondary">
+              <Ic name="icon-action-refresh" size={14} />
+              <span>Сгенерировать backup-коды</span>
+            </button>
+          </div>
+        }
+      >
+        <div className="st-backup-empty">
+          <Ic name="icon-status-info" size={18} />
+          <span>Сначала включите 2FA — после этого появится возможность скачать резервные коды.</span>
+        </div>
+      </SectionCard>
+    </>
+  );
+}
+
+/* ============================================================
+   TAB 5 — NOTIFICATIONS
+============================================================ */
+function NotifTab() {
+  const events = [
+    { id: "new-ref",     title: "Новый реферал",          sub: "Кто-то зарегистрировался по вашей ссылке",                              on: true },
+    { id: "new-pay",     title: "Новое начисление",       sub: "Реферал оплатил подписку — деньги добавлены к выплате",                 on: true },
+    { id: "payout-sent", title: "Выплата отправлена",     sub: "Деньги ушли на ваш банковский счёт",                                    on: true },
+    { id: "ref-off",     title: "Реферал отписался",      sub: "Важно знать — поток дохода с него закончился",                          on: true },
+    { id: "marketing",   title: "Marketing newsletter",   sub: "Новости продукта, кейсы топ-партнёров, советы — 1-2 письма в месяц",   on: false },
+  ];
+
+  return (
+    <>
+      <SectionCard
+        title="Каналы уведомлений"
+        subtitle="Куда отправлять важные события партнёрки."
+      >
+        <div className="st-channels">
+          <article className="st-channel st-channel-on">
+            <div className="st-channel-ico"><Ic name="icon-nav-messages" size={20} /></div>
+            <div className="st-channel-body">
+              <div className="st-channel-h">
+                Email
+                <span className="st-chip st-chip-ok">включён</span>
+              </div>
+              <div className="st-channel-meta mono">ivan@example.ru</div>
+            </div>
+            <button className="st-btn-ghost">Изменить</button>
+          </article>
+
+          <article className="st-channel st-channel-on">
+            <div className="st-channel-ico"><Ic name="icon-max-channel" size={20} /></div>
+            <div className="st-channel-body">
+              <div className="st-channel-h">
+                MAX push
+                <span className="st-chip st-chip-ok">включён</span>
+              </div>
+              <div className="st-channel-meta">через бот <span className="mono">@aibro_partner</span></div>
+            </div>
+            <button className="st-btn-ghost">Отключить</button>
+          </article>
+
+          <article className="st-channel">
+            <div className="st-channel-ico"><Ic name="message-circle" size={20} /></div>
+            <div className="st-channel-body">
+              <div className="st-channel-h">
+                SMS
+                <span className="st-chip st-chip-off">не подключён</span>
+              </div>
+              <div className="st-channel-meta">Для критичных событий (выплата, смена пароля). Платно — 3 ₽/SMS.</div>
+            </div>
+            <button className="st-btn-ghost">+ Добавить номер</button>
+          </article>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="События"
+        subtitle="Какие события присылать. По умолчанию — все, кроме рассылки."
+      >
+        <div className="st-events">
+          {events.map((e) => (
+            <article key={e.id} className="st-event">
+              <label className="st-check">
+                <input type="checkbox" defaultChecked={e.on} />
+                <span className="st-check-box"></span>
+              </label>
+              <div className="st-event-body">
+                <div className="st-event-title">{e.title}</div>
+                <div className="st-event-sub">{e.sub}</div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="Тихие часы"
+        subtitle="В этот промежуток не присылаем push и SMS. Email приходит обычным образом — без звука."
+      >
+        <div className="st-toggle-row">
+          <label className="st-toggle">
+            <input type="checkbox" defaultChecked />
+            <span className="st-toggle-track"><span className="st-toggle-knob"></span></span>
+          </label>
+          <div>
+            <div className="st-toggle-title">Не беспокоить ночью</div>
+            <div className="st-toggle-sub">Часовой пояс: МСК (UTC+3) · по серверному UTC начисления и выплаты идут круглосуточно.</div>
+          </div>
+        </div>
+
+        <div className="st-grid-2" style={{marginTop: 14}}>
+          <div className="st-field">
+            <label className="st-lbl">С</label>
+            <input className="st-input mono" type="text" defaultValue="22:00" />
+          </div>
+          <div className="st-field">
+            <label className="st-lbl">До</label>
+            <input className="st-input mono" type="text" defaultValue="09:00" />
+          </div>
+        </div>
+      </SectionCard>
+    </>
+  );
+}
+
+/* ============================================================
+   TOAST
+============================================================ */
+function Toast({ msg }) {
+  if (!msg) return null;
+  return <div className="ref-toast">{msg}</div>;
+}
+
+/* ============================================================
+   APP
+============================================================ */
+function App() {
+  const [tab, setTab] = useState("profile");
+  const [toast, setToast] = useState("");
+
+  function fireToast(m) {
+    setToast(m);
+    setTimeout(() => setToast(""), 2200);
+  }
+
+  return (
+    <div className="pd" data-screen-label="06 Партнёры — Настройки">
+      <Sidebar current="settings" />
+
+      <div className="pd-work">
+        <TopBar onBurger={() => {}} />
+        <main className="pd-page">
+          <div className="pd-pgh">
+            <div>
+              <h2>Настройки партнёра</h2>
+              <div className="sub">Профиль · налоговый статус · банковские реквизиты · безопасность · уведомления.</div>
+            </div>
+          </div>
+
+          <TabBar tab={tab} setTab={setTab} />
+
+          <div className="st-pane">
+            {tab === "profile"  && <ProfileTab  onToast={fireToast} />}
+            {tab === "tax"      && <TaxTab />}
+            {tab === "payout"   && <PayoutTab   onToast={fireToast} />}
+            {tab === "security" && <SecurityTab />}
+            {tab === "notif"    && <NotifTab />}
+          </div>
+
+          <div style={{marginTop: 8, fontSize: 11, color: "var(--fg-3)", lineHeight: 1.6, maxWidth: 720}}>
+            <b>ИП Мальцев Валерий Валерьевич</b>, ИНН <span className="mono">519041916737</span>, Т-Банк СПб — единственный налоговый агент партнёрской программы СММ АЙБРО. Для партнёров без НПД НДФЛ удерживается по прогрессивной шкале (13/15/18/20/22 % с 01.01.2026). Резиденты ЕАЭС — прогрессивная шкала. Нерезиденты — 30 %.
+          </div>
+        </main>
+      </div>
+
+      <Toast msg={toast} />
+
+      <nav className="pd-bottomnav" aria-label="Мобильная навигация">
+        {NAV_MAIN.slice(0, 5).map((it) => {
+          const cls = `pd-bottomnav-item`;
+          const body = <>
+            <span className="ico"><Ic name={it.icon} size={22} /></span>
+            <span>{it.label}</span>
+          </>;
+          return it.href
+            ? <a key={it.id} className={cls} href={it.href} style={{textDecoration:"none"}}>{body}</a>
+            : <button key={it.id} className={cls}>{body}</button>;
+        })}
+      </nav>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

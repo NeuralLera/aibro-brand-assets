@@ -1,0 +1,1409 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Настройка CRM-модуля — Справка СММ АЙБРО</title>
+<link rel="icon" href="assets/logos/favicon-light.svg">
+<link rel="stylesheet" href="assets/colors_and_type.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────
+     CRM Settings article — long-form layout.
+     Tokens only from colors_and_type.css; no new colors invented.
+     Layout: 240px sticky sidebar + 760px article column.
+     ───────────────────────────────────────────────────────────── */
+
+  body {
+    background: var(--bg-base);
+    background-image: var(--tile-bg-light);
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-size: 240px 240px;
+  }
+  @media (max-width: 768px) {
+    body { background-attachment: scroll; background-size: 200px 200px; }
+  }
+
+  .skip {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--fg-1); color: var(--fg-inverse);
+    padding: 10px 14px; border-radius: 8px; z-index: 200;
+  }
+  .skip:focus { left: 16px; top: 12px; }
+
+  /* ───── Header (canon — same on every help page) ───── */
+  .pub-header {
+    position: sticky; top: 0; z-index: 60;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    background: rgba(250, 250, 250, 0.82);
+    border-bottom: 1px solid var(--border-1);
+  }
+  .pub-header-inner {
+    max-width: 1280px; margin: 0 auto;
+    height: 64px; padding: 0 24px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .pub-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .pub-brand-tile {
+    width: 32px; height: 32px; border-radius: 9px; overflow: hidden;
+    background: var(--bg-elevated); border: 1px solid var(--border-1);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pub-brand-tile img { width: 26px; height: 26px; display: block; }
+  .pub-brand-word {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 17px;
+    letter-spacing: -0.02em; color: var(--fg-1); white-space: nowrap;
+  }
+  .pub-brand-word em { font-style: normal; color: var(--brand-700); }
+  .pub-nav { display: flex; align-items: center; gap: 22px; margin-left: 14px; }
+  .pub-nav a {
+    font-family: var(--font-body); font-size: 14px; color: var(--fg-2);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+  .pub-nav a:hover { color: var(--fg-1); text-decoration: none; }
+  .pub-nav a.is-current { color: var(--fg-1); font-weight: 500; }
+  .pub-header-actions {
+    margin-left: auto; display: flex; align-items: center; gap: 10px;
+  }
+  @media (max-width: 720px) { .pub-nav { display: none; } }
+
+  /* ───── Buttons (canon) ───── */
+  .pub-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border-radius: 12px;
+    font-family: var(--font-display); font-weight: 600;
+    cursor: pointer; border: 1px solid transparent;
+    transition: background var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard);
+    text-decoration: none; white-space: nowrap;
+  }
+  .pub-btn--sm { height: 36px; padding: 0 14px; font-size: 14px; }
+  .pub-btn--primary { background: var(--brand-500); color: white; }
+  .pub-btn--primary:hover { background: var(--brand-600); text-decoration: none; }
+  .pub-btn--ghost { background: transparent; color: var(--fg-1); }
+  .pub-btn--ghost:hover { background: var(--bg-subtle); text-decoration: none; }
+  .pub-btn:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }
+
+  /* ───── Page wrapper / 2-column grid ───── */
+  main { padding-bottom: 64px; }
+  .layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+  }
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; gap: 24px; }
+  }
+
+  /* ───── Sidebar ───── */
+  .side {
+    position: sticky;
+    top: 88px;
+    align-self: start;
+    padding: 24px 0 0;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-3) transparent;
+  }
+  .side::-webkit-scrollbar { width: 4px; }
+  .side::-webkit-scrollbar-thumb { background: var(--border-3); border-radius: 4px; }
+  @media (max-width: 960px) {
+    .side { position: static; max-height: none; overflow: visible; padding-top: 12px; }
+  }
+
+  .side-back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--fg-3);
+    margin-bottom: 18px;
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+  .side-back:hover { color: var(--fg-1); text-decoration: none; }
+  .side-back svg { width: 14px; height: 14px; }
+
+  .side-group { margin-bottom: 22px; }
+  .side-group-label {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--fg-3);
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+  .side-list { list-style: none; padding: 0; margin: 0; }
+  .side-list li { margin: 0; }
+  .side-list a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-family: var(--font-body); font-size: 14px;
+    color: var(--fg-2);
+    text-decoration: none;
+    transition: background var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard);
+    border-left: 2px solid transparent;
+    margin-left: -2px;
+  }
+  .side-list a:hover { background: var(--bg-subtle); color: var(--fg-1); text-decoration: none; }
+  .side-list a.is-current {
+    color: var(--brand-700);
+    font-weight: 600;
+    background: rgba(16, 185, 129, 0.07);
+    border-left-color: var(--brand-500);
+  }
+  .side-list a svg {
+    flex-shrink: 0;
+    width: 16px; height: 16px;
+    color: var(--fg-4);
+  }
+  .side-list a.is-current svg { color: var(--brand-700); }
+  .side-list a:hover svg { color: var(--fg-2); }
+
+  .side-hub {
+    margin-top: 28px;
+    padding: 14px 14px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 12px;
+    box-shadow: var(--shadow-1);
+  }
+  .side-hub-title {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 13px; color: var(--fg-1);
+    margin: 0 0 4px;
+  }
+  .side-hub-title svg { width: 16px; height: 16px; color: var(--brand-700); }
+  .side-hub p {
+    margin: 0 0 10px;
+    font-size: 12px; line-height: 1.5;
+    color: var(--fg-3);
+  }
+  .side-hub a {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 12px; color: var(--brand-700);
+  }
+  .side-hub a svg { width: 12px; height: 12px; }
+
+  /* ───── Article column ───── */
+  .article { padding: 24px 0 0; max-width: 760px; }
+
+  /* Breadcrumbs */
+  .crumbs {
+    font-size: 13px; color: var(--fg-3);
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .crumbs a { color: var(--fg-3); text-decoration: none; }
+  .crumbs a:hover { color: var(--fg-1); text-decoration: none; }
+  .crumbs .sep {
+    width: 4px; height: 4px; border-radius: 999px;
+    background: var(--fg-4); display: inline-block;
+  }
+  .crumbs .current { color: var(--fg-1); font-weight: 500; }
+
+  /* Article header */
+  .article-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-display);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--brand-700);
+    margin-bottom: 12px;
+  }
+  .article-eyebrow .dot {
+    width: 5px; height: 5px; border-radius: 999px;
+    background: var(--brand-500);
+  }
+  .article h1 {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(30px, 3.6vw, 40px);
+    line-height: 1.1; letter-spacing: -0.02em;
+    color: var(--fg-1); margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .article-meta {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    margin-bottom: 28px;
+    font-size: 13px; color: var(--fg-3);
+  }
+  .article-meta .pip {
+    width: 3px; height: 3px; border-radius: 999px; background: var(--fg-4);
+  }
+  .article-meta svg { width: 14px; height: 14px; }
+  .article-meta span { display: inline-flex; align-items: center; gap: 6px; }
+
+  .article-lead {
+    font-family: var(--font-body);
+    font-size: 17px; line-height: 1.55;
+    color: var(--fg-2);
+    margin: 0 0 36px;
+    padding: 18px 20px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 14px;
+    border-left: 3px solid var(--brand-500);
+    box-shadow: var(--shadow-1);
+    text-wrap: pretty;
+  }
+  .article-lead b { color: var(--fg-1); font-weight: 600; }
+
+  /* Article body typography */
+  .article h2 {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 26px; line-height: 1.18; letter-spacing: -0.01em;
+    color: var(--fg-1);
+    margin: 48px 0 16px;
+    scroll-margin-top: 88px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .article h2 .h2-ico {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: rgba(16, 185, 129, 0.10);
+    color: var(--brand-700);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .article h2 .h2-ico svg { width: 20px; height: 20px; }
+
+  .article h3 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 19px; line-height: 1.3; letter-spacing: -0.01em;
+    color: var(--fg-1);
+    margin: 30px 0 10px;
+    scroll-margin-top: 88px;
+  }
+
+  .article p {
+    font-family: var(--font-body);
+    font-size: 16px; line-height: 1.65;
+    color: var(--fg-2);
+    margin: 0 0 14px;
+    text-wrap: pretty;
+  }
+  .article p b, .article li b { color: var(--fg-1); font-weight: 600; }
+  .article a {
+    color: var(--brand-700); font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(16, 185, 129, 0.30);
+    transition: border-color var(--dur-fast) var(--ease-standard);
+  }
+  .article a:hover { border-bottom-color: var(--brand-500); }
+
+  .article ul {
+    margin: 0 0 18px;
+    padding: 0;
+    list-style: none;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .article ul li {
+    padding-left: 22px;
+    position: relative;
+    font-family: var(--font-body);
+    font-size: 16px; line-height: 1.6;
+    color: var(--fg-2);
+  }
+  .article ul li::before {
+    content: "";
+    position: absolute;
+    left: 6px; top: 11px;
+    width: 5px; height: 5px;
+    border-radius: 999px;
+    background: var(--brand-500);
+  }
+  .article ul ul {
+    margin: 8px 0 0;
+    gap: 6px;
+  }
+  .article ul ul li { font-size: 15px; }
+  .article ul ul li::before {
+    background: var(--fg-4); width: 4px; height: 4px; top: 12px;
+  }
+
+  /* Path hint — Кабинет → CRM → Настройки */
+  .path {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-1);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--fg-1);
+  }
+
+  /* Callouts */
+  .callout {
+    margin: 18px 0;
+    padding: 14px 16px;
+    background: var(--bg-subtle);
+    border-radius: 10px;
+    border-left: 3px solid var(--brand-500);
+    font-size: 15px; line-height: 1.55;
+    color: var(--fg-2);
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .callout .ico {
+    flex-shrink: 0; color: var(--brand-700);
+    width: 18px; height: 18px;
+    display: inline-flex; align-items: center;
+    margin-top: 2px;
+  }
+  .callout b { color: var(--fg-1); font-weight: 600; }
+  .callout p { margin: 0 0 6px; font-size: 15px; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .callout--warn { border-left-color: var(--warning-500); }
+  .callout--warn .ico { color: var(--warning-700); }
+  .callout--info { border-left-color: var(--info-500); }
+  .callout--info .ico { color: var(--info-700); }
+
+  /* Settings cards (collapsible-style preview blocks) */
+  .setting-card {
+    margin: 14px 0 18px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 14px;
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+  }
+  .setting-card-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-1);
+    background: var(--bg-base);
+  }
+  .setting-card-head .ico {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--brand-700);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .setting-card-head .ico svg { width: 16px; height: 16px; }
+  .setting-card-head h4 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 15px; color: var(--fg-1); margin: 0;
+    flex: 1;
+  }
+  .setting-card-head .badge {
+    display: inline-flex; align-items: center;
+    height: 22px; padding: 0 9px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--brand-700);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .setting-card-body { padding: 16px 18px; }
+  .setting-card-body p:last-child { margin-bottom: 0; }
+  .setting-card-body ul { margin-bottom: 0; }
+
+  /* Mock — zones table */
+  .mock-table {
+    margin: 12px 0;
+    background: var(--bg-base);
+    border: 1px solid var(--border-2);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  .mock-table .row {
+    display: grid;
+    grid-template-columns: 1.4fr 0.9fr 1fr;
+    gap: 12px;
+    padding: 10px 14px;
+    align-items: center;
+    border-bottom: 1px solid var(--border-1);
+  }
+  .mock-table .row:last-child { border-bottom: 0; }
+  .mock-table .row.head {
+    background: var(--bg-subtle);
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 12px; letter-spacing: 0.02em;
+    color: var(--fg-3);
+    text-transform: uppercase;
+  }
+  .mock-table .row .price {
+    font-family: var(--font-display); font-weight: 600;
+    color: var(--fg-1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tabs of settings (Tab 1..4 — visual chips, not interactive) */
+  .tabs-chips {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 20px 0 8px;
+    padding: 12px;
+    background: var(--bg-subtle);
+    border-radius: 12px;
+    border: 1px solid var(--border-1);
+  }
+  .tabs-chips .tab-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 32px; padding: 0 12px;
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    color: var(--fg-2);
+    font-family: var(--font-display); font-weight: 500;
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .tabs-chips .tab-chip svg { width: 14px; height: 14px; }
+  .tabs-chips .tab-chip:hover {
+    border-color: var(--border-3);
+    background: var(--bg-base);
+    text-decoration: none;
+  }
+
+  /* Q&A accordion (smaller, inline-style for article end) */
+  .qa {
+    margin: 12px 0 0;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 14px;
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+  }
+  .qa-item { border-bottom: 1px solid var(--border-1); }
+  .qa-item:last-child { border-bottom: 0; }
+  .qa-q {
+    width: 100%;
+    background: transparent; border: 0;
+    text-align: left;
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 15px; line-height: 1.4;
+    color: var(--fg-1);
+    transition: background var(--dur-fast) var(--ease-standard);
+  }
+  .qa-q:hover { background: var(--bg-subtle); }
+  .qa-q:focus-visible { outline: 2px solid var(--brand-500); outline-offset: -2px; }
+  .qa-q .caret {
+    flex-shrink: 0; color: var(--fg-3); margin-top: 2px;
+    transition: transform var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard);
+  }
+  .qa-item[aria-expanded="true"] .qa-q .caret {
+    transform: rotate(180deg); color: var(--brand-700);
+  }
+  .qa-a { max-height: 0; overflow: hidden; transition: max-height var(--dur-base) var(--ease-standard); }
+  .qa-a-inner {
+    padding: 0 20px 18px;
+    font-family: var(--font-body);
+    font-size: 15px; line-height: 1.6;
+    color: var(--fg-2);
+  }
+  .qa-a-inner p { margin: 0 0 10px; font-size: 15px; }
+  .qa-a-inner p:last-child { margin-bottom: 0; }
+
+  /* Article footer — feedback + related */
+  .article-foot {
+    margin-top: 56px;
+    padding: 22px 24px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .article-foot .left {
+    font-size: 14px; color: var(--fg-2);
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .feedback-btns { display: flex; gap: 8px; }
+  .feedback-btns button {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--bg-base);
+    border: 1px solid var(--border-2);
+    color: var(--fg-2);
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard);
+  }
+  .feedback-btns button:hover {
+    background: var(--bg-subtle);
+    color: var(--brand-700);
+    border-color: var(--border-3);
+  }
+  .feedback-btns button svg { width: 18px; height: 18px; }
+  .article-foot .updated {
+    font-size: 13px; color: var(--fg-3);
+  }
+
+  .related-block {
+    margin-top: 28px;
+    padding: 22px 24px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 14px;
+  }
+  .related-block .label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--fg-3);
+    margin: 0 0 14px;
+  }
+  .related-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    list-style: none; padding: 0; margin: 0;
+  }
+  @media (max-width: 560px) { .related-list { grid-template-columns: 1fr; } }
+  .related-list li { padding: 0; }
+  .related-list li::before { display: none; }
+  .related-list a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg-base);
+    border: 1px solid var(--border-1);
+    border-radius: 10px;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-1);
+    transition: background var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard);
+  }
+  .related-list a:hover {
+    background: var(--bg-subtle);
+    border-color: var(--border-3);
+  }
+  .related-list a .ico {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--brand-700);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .related-list a .ico svg { width: 14px; height: 14px; }
+  .related-list a .meta { display: flex; flex-direction: column; gap: 2px; }
+  .related-list a .meta .t {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 14px; color: var(--fg-1);
+  }
+  .related-list a .meta .s {
+    font-size: 12px; color: var(--fg-3);
+  }
+
+  /* ───── Footer ───── */
+  .pub-footer {
+    background: var(--bg-subtle);
+    padding: 48px 24px 28px;
+    border-top: 1px solid var(--border-1);
+    margin-top: 64px;
+  }
+  .pub-footer-inner { max-width: 1200px; margin: 0 auto; }
+  .footer-cols {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 720px) { .footer-cols { grid-template-columns: 1fr 1fr; } }
+  .footer-brand { display: flex; flex-direction: column; gap: 12px; max-width: 280px; }
+  .footer-brand p { font-size: 13px; line-height: 1.55; color: var(--fg-3); margin: 0; }
+  .pub-footer h5 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 14px; margin: 0 0 14px; color: var(--fg-1);
+  }
+  .pub-footer ul {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .pub-footer ul li::before { display: none; }
+  .pub-footer ul li { padding-left: 0; }
+  .pub-footer a {
+    color: var(--fg-2); font-size: 14px;
+    border-bottom: 0;
+  }
+  .pub-footer a:hover { color: var(--fg-1); text-decoration: none; }
+  .footer-legal {
+    margin-top: 36px; padding-top: 20px;
+    border-top: 1px solid var(--border-1);
+    display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+    font-size: 12px; color: var(--fg-3); line-height: 1.6;
+  }
+  .footer-legal p { margin: 0; max-width: 640px; }
+
+  /* ───── Mobile tweaks ───── */
+  @media (max-width: 720px) {
+    .article h1 { font-size: 26px; }
+    .article h2 { font-size: 22px; }
+    .article h2 .h2-ico { width: 32px; height: 32px; }
+    .article-lead { font-size: 15px; padding: 14px 16px; }
+    .article p, .article ul li { font-size: 15px; }
+    .layout { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip">К содержимому</a>
+
+<!-- ───────────────────────── HEADER ───────────────────────── -->
+<header class="pub-header">
+  <div class="pub-header-inner">
+    <a href="index.html" class="pub-brand" aria-label="СММ АЙБРО — на главную">
+      <span class="pub-brand-tile" aria-hidden="true">
+        <img src="assets/logos/robot-icon-light.svg" alt="">
+      </span>
+      <span class="pub-brand-word">СММ <em>АЙБРО</em></span>
+    </a>
+    <nav class="pub-nav" aria-label="Основная навигация">
+      <a href="#">Возможности</a>
+      <a href="#">Примеры</a>
+      <a href="#">Тариф</a>
+      <a href="#">Партнёрам</a>
+      <a href="index.html" class="is-current" aria-current="page">Справка</a>
+    </nav>
+    <div class="pub-header-actions">
+      <a href="#" class="pub-btn pub-btn--ghost pub-btn--sm">Войти</a>
+      <a href="#" class="pub-btn pub-btn--primary pub-btn--sm">Пробный период</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <div class="layout">
+
+    <!-- ───────────────────────── SIDEBAR ───────────────────────── -->
+    <aside class="side" aria-label="Навигация по разделу CRM">
+
+      <a class="side-back" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Все разделы справки
+      </a>
+
+      <div class="side-group">
+        <div class="side-group-label">Раздел CRM</div>
+        <ul class="side-list">
+          <li>
+            <a href="#">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.73l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+              Обзор CRM
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.1A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.9L5 8z"/><path d="M8.5 8V6a3.5 3.5 0 0 1 7 0v2"/></svg>
+              Заказы
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+              Записи на услуги
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Клиенты
+            </a>
+          </li>
+          <li>
+            <a href="#" class="is-current" aria-current="page">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Настройки
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="side-group">
+        <div class="side-group-label">На этой странице</div>
+        <ul class="side-list">
+          <li><a href="#schedule">Расписание</a></li>
+          <li><a href="#resources">Ресурсы</a></li>
+          <li><a href="#services">Услуги</a></li>
+          <li><a href="#delivery">Доставка и&nbsp;самовывоз</a></li>
+          <li><a href="#push">Push-уведомления</a></li>
+          <li><a href="#privacy">Данные и&nbsp;152-ФЗ</a></li>
+          <li><a href="#backup">Бэкап настроек</a></li>
+          <li><a href="#checklist">Чек-лист запуска</a></li>
+          <li><a href="#qa">Частые вопросы</a></li>
+        </ul>
+      </div>
+
+      <div class="side-hub">
+        <div class="side-hub-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+          Релиз CRM
+        </div>
+        <p>CRM-light открывается всем бизнесам <b>08.06.2026</b> в&nbsp;едином тарифе 4&nbsp;990&nbsp;₽/мес.</p>
+        <a href="#">
+          Подробнее
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+
+    </aside>
+
+    <!-- ───────────────────────── ARTICLE ───────────────────────── -->
+    <article class="article">
+
+      <!-- Breadcrumbs -->
+      <nav class="crumbs" aria-label="Хлебные крошки">
+        <a href="#">Главная</a>
+        <span class="sep" aria-hidden="true"></span>
+        <a href="index.html">Справка</a>
+        <span class="sep" aria-hidden="true"></span>
+        <a href="#">Бизнес</a>
+        <span class="sep" aria-hidden="true"></span>
+        <a href="#">CRM</a>
+        <span class="sep" aria-hidden="true"></span>
+        <span class="current" aria-current="page">Настройки</span>
+      </nav>
+
+      <div class="article-eyebrow">
+        <span class="dot" aria-hidden="true"></span>
+        Бизнес · CRM
+      </div>
+
+      <h1>Настройка CRM-модуля</h1>
+
+      <div class="article-meta">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          8&nbsp;мин чтения
+        </span>
+        <span class="pip" aria-hidden="true"></span>
+        <span>Обновлено 14.05.2026</span>
+        <span class="pip" aria-hidden="true"></span>
+        <span>Релиз модуля&nbsp;— 08.06.2026</span>
+      </div>
+
+      <p class="article-lead">
+        CRM-light состоит из&nbsp;четырёх модулей: <b>заказы</b>, <b>записи на&nbsp;услуги</b>, <b>карточки клиентов</b> и&nbsp;<b>push-уведомления</b>. У&nbsp;каждого&nbsp;— свои настройки, но&nbsp;собраны они в&nbsp;одном месте.
+        Откройте: <span class="path">Кабинет → CRM → Настройки</span>. Настройки изолированы по&nbsp;бизнесу: если в&nbsp;кабинете несколько бизнесов, каждый настраивается отдельно.
+      </p>
+
+      <!-- ──────────── Что настраиваем ──────────── -->
+      <h2 id="what">
+        <span class="h2-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+        </span>
+        Что настраиваем
+      </h2>
+      <p>
+        Внутри страницы&nbsp;«Настройки» 4&nbsp;вкладки. Можете заполнять только&nbsp;то, что вам реально нужно: салон красоты сразу идёт во&nbsp;вкладку «Записи», пекарня&nbsp;— во&nbsp;«Заказы».
+      </p>
+      <div class="tabs-chips" role="navigation" aria-label="Вкладки настроек CRM">
+        <a class="tab-chip" href="#delivery">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.1A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.9L5 8z"/><path d="M8.5 8V6a3.5 3.5 0 0 1 7 0v2"/></svg>
+          Вкладка&nbsp;1&nbsp;· Заказы
+        </a>
+        <a class="tab-chip" href="#schedule">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+          Вкладка&nbsp;2&nbsp;· Записи
+        </a>
+        <a class="tab-chip" href="#privacy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Вкладка&nbsp;3&nbsp;· Клиенты
+        </a>
+        <a class="tab-chip" href="#push">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+          Вкладка&nbsp;4&nbsp;· Уведомления
+        </a>
+      </div>
+
+      <!-- ──────────── 1. Записи / Расписание ──────────── -->
+      <h2 id="schedule">
+        <span class="h2-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+        </span>
+        Расписание (для записей)
+      </h2>
+      <p>
+        Главный блок для бизнесов с&nbsp;услугами&nbsp;— фитнес, барбершоп, салон красоты, мастерская, врач, юрист, репетитор. Без расписания ИИ-ассистент не&nbsp;сможет показать клиенту свободные слоты.
+      </p>
+
+      <div class="setting-card">
+        <div class="setting-card-head">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <h4>Рабочие часы</h4>
+        </div>
+        <div class="setting-card-body">
+          <ul>
+            <li><b>Дни недели:</b> отмечаете рабочие дни (пн&nbsp;– вс).</li>
+            <li><b>Часы работы:</b> время начала и&nbsp;окончания (например, 10:00&nbsp;– 21:00).</li>
+            <li><b>Перерывы:</b> обед, технические окна (например, 14:00&nbsp;– 15:00). В&nbsp;это время бот клиентов не&nbsp;запишет.</li>
+            <li><b>Длительность слота по&nbsp;умолчанию:</b> 15&nbsp;/ 30&nbsp;/ 45&nbsp;/ 60&nbsp;/ 90&nbsp;/ 120&nbsp;минут. Можно переопределить отдельно для каждой услуги.</li>
+            <li><b>Шаг сетки слотов:</b> с&nbsp;каким интервалом ИИ предлагает свободное время&nbsp;— каждые 15&nbsp;/ 30&nbsp;/ 60&nbsp;минут.</li>
+          </ul>
+        </div>
+      </div>
+
+      <p>
+        ИИ-ассистент берёт расписание, вычитает уже занятые записи, праздничные дни и&nbsp;перерывы&nbsp;— и&nbsp;показывает клиенту только реально доступное время. Никакой ручной&nbsp;«сверки» от&nbsp;вас не&nbsp;требуется.
+      </p>
+
+      <h3>Праздники и&nbsp;выходные</h3>
+      <p>
+        В&nbsp;отдельном подразделе указываете нерабочие даты&nbsp;— праздники, отпуск, технический день. В&nbsp;эти дни клиент не&nbsp;сможет записаться, даже если день недели рабочий.
+      </p>
+
+      <h3>Буфер между записями</h3>
+      <p>
+        Если между приёмами нужен запас на&nbsp;уборку, проветривание, переоборудование&nbsp;— укажите буфер (например, 10&nbsp;минут). ИИ автоматически добавит его к&nbsp;длительности слота при расчёте свободного времени.
+      </p>
+
+      <h3>Напоминания клиенту</h3>
+      <p>
+        Push в&nbsp;MAX за&nbsp;24&nbsp;часа и&nbsp;за&nbsp;1&nbsp;час до&nbsp;записи&nbsp;— включаются галочкой. Текст напоминания формируется автоматически: услуга, время, мастер, адрес. Перенастраивать сам текст в&nbsp;MVP нельзя.
+      </p>
+
+      <!-- ──────────── Ресурсы ──────────── -->
+      <h2 id="resources">
+        <span class="h2-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+        Ресурсы (мастера, кабинеты, столы)
+      </h2>
+      <p>
+        Ресурс&nbsp;— это «кто или что» принимает запись. Настраивать обязательно, если у&nbsp;вас несколько мастеров или несколько точек приёма одновременно.
+      </p>
+      <ul>
+        <li><b>Мастер</b> — Иван, Анна, Светлана; каждый со&nbsp;своим расписанием и&nbsp;фото.</li>
+        <li><b>Кабинет или комната</b> — Кабинет&nbsp;1, Зал йоги, СПА-комната.</li>
+        <li><b>Стол или зона</b> — Стол&nbsp;№3, Терраса, VIP-зона.</li>
+        <li><b>Единица оборудования</b> — массажный стол, кресло, тренажёр.</li>
+      </ul>
+
+      <p>Зачем нужны ресурсы:</p>
+      <ul>
+        <li><b>Параллельные записи</b> — два клиента могут прийти в&nbsp;одно и&nbsp;то&nbsp;же время к&nbsp;разным мастерам.</li>
+        <li><b>Выбор мастера через бота</b> — ИИ предложит клиенту: «к&nbsp;Анне», «к&nbsp;Светлане» или «не&nbsp;важно».</li>
+        <li><b>Индивидуальное расписание</b> — один мастер работает в&nbsp;среду, другой нет.</li>
+      </ul>
+
+      <div class="callout">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </span>
+        <span><b>Один мастер или одна точка?</b> Ресурсы можно не&nbsp;настраивать. Всё будет работать на&nbsp;общем расписании бизнеса.</span>
+      </div>
+
+      <h3>Фото и&nbsp;описание мастера</h3>
+      <p>
+        К&nbsp;каждому ресурсу прикрепляете фото (квадратное, минимум 400×400) и&nbsp;короткое описание&nbsp;— специализация, опыт, языки. Эти данные ИИ показывает клиенту, когда тот выбирает мастера.
+      </p>
+
+      <!-- ──────────── Услуги ──────────── -->
+      <h2 id="services">
+        <span class="h2-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg>
+        </span>
+        Услуги (длительность каждой)
+      </h2>
+      <p>
+        Сами услуги вы&nbsp;добавляете в&nbsp;<a href="#">Бизнес → Услуги</a>, но&nbsp;в&nbsp;настройках CRM проверьте три вещи:
+      </p>
+      <ul>
+        <li>у&nbsp;каждой услуги указана <b>длительность</b>&nbsp;— обязательно для записи;</li>
+        <li>к&nbsp;услуге привязан <b>ресурс</b> (если важно, кто её&nbsp;оказывает);</li>
+        <li>цена в&nbsp;каталоге актуальна&nbsp;— она попадает в&nbsp;push-уведомление и&nbsp;историю клиента.</li>
+      </ul>
+
+      <!-- ──────────── Доставка ──────────── -->
+      <h2 id="delivery">
+        <span class="h2-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.1A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.9L5 8z"/><path d="M8.5 8V6a3.5 3.5 0 0 1 7 0v2"/></svg>
+        </span>
+        Доставка и&nbsp;самовывоз (для заказов)
+      </h2>
+      <p>
+        Если вы&nbsp;принимаете заказы товаров&nbsp;— настройте, как клиент будет их&nbsp;получать.
+      </p>
+
+      <h3>Способы получения</h3>
+      <ul>
+        <li><b>Доставка</b> — курьер привозит, считаем стоимость по&nbsp;зонам.</li>
+        <li><b>Самовывоз</b> — клиент забирает сам с&nbsp;адреса, который вы&nbsp;укажете.</li>
+      </ul>
+      <p>
+        Можно включить оба варианта&nbsp;— ИИ спросит клиента,&nbsp;что удобнее. Можно оставить только&nbsp;самовывоз&nbsp;— тогда бот не&nbsp;будет запрашивать адрес.
+      </p>
+
+      <h3>Зоны доставки</h3>
+      <p>
+        Для доставки задаёте список ценовых поясов. Каждая зона&nbsp;— это название, стоимость и&nbsp;минимальная сумма заказа.
+      </p>
+
+      <div class="mock-table" role="table" aria-label="Пример настройки зон доставки">
+        <div class="row head" role="row">
+          <span role="columnheader">Зона</span>
+          <span role="columnheader">Доставка</span>
+          <span role="columnheader">Мин.&nbsp;заказ</span>
+        </div>
+        <div class="row" role="row">
+          <span role="cell">СПб&nbsp;— центр</span>
+          <span class="price" role="cell">350&nbsp;₽</span>
+          <span role="cell">от&nbsp;1&nbsp;500&nbsp;₽</span>
+        </div>
+        <div class="row" role="row">
+          <span role="cell">СПб&nbsp;— окраины</span>
+          <span class="price" role="cell">500&nbsp;₽</span>
+          <span role="cell">от&nbsp;2&nbsp;000&nbsp;₽</span>
+        </div>
+        <div class="row" role="row">
+          <span role="cell">Ленобласть до&nbsp;30&nbsp;км</span>
+          <span class="price" role="cell">800&nbsp;₽</span>
+          <span role="cell">от&nbsp;3&nbsp;000&nbsp;₽</span>
+        </div>
+      </div>
+
+      <p>
+        <b>Время доставки</b>: выбираете либо «1&nbsp;– 2&nbsp;часа», либо «к&nbsp;указанному времени». Во&nbsp;втором случае бот спросит, на&nbsp;какое время клиенту нужна доставка.
+      </p>
+
+      <h3>Самовывоз</h3>
+      <ul>
+        <li><b>Адрес точки</b>&nbsp;— текст и&nbsp;ссылка на&nbsp;карту.</li>
+        <li><b>Часы работы</b>&nbsp;— когда клиент может забрать.</li>
+        <li><b>Готовность через&nbsp;N часов</b>&nbsp;— через сколько после оформления заказ будет упакован.</li>
+      </ul>
+
+      <h3>Промокоды</h3>
+      <p>
+        Создаёте промокоды и&nbsp;даёте их&nbsp;клиентам через посты, рассылки, наклейки на&nbsp;витрину. Бот применяет код к&nbsp;корзине, владельцу заказ приходит уже с&nbsp;учётом скидки.
+      </p>
+      <ul>
+        <li><b>Название</b>&nbsp;— короткий код, например <b>SPRING25</b>.</li>
+        <li><b>Скидка</b>&nbsp;— процент (5%, 10%, 20%) или фиксированная сумма (100&nbsp;₽, 300&nbsp;₽).</li>
+        <li><b>Срок действия</b>&nbsp;— до&nbsp;даты включительно.</li>
+        <li><b>Лимит использований</b>&nbsp;— сколько раз промокод можно применить (например, первые 50&nbsp;клиентов).</li>
+      </ul>
+
+      <div class="callout callout--info">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </span>
+        <span><b>Чего нет в&nbsp;этом релизе:</b> геокодинга адреса (бот не&nbsp;проверяет, действительно&nbsp;ли адрес внутри зоны), расчёта по&nbsp;километражу, интеграций с&nbsp;курьерскими службами (СДЭК, Boxberry, Яндекс.Доставка). Появится в&nbsp;следующих обновлениях.</span>
+      </div>
+
+      <!-- ──────────── Push ──────────── -->
+      <h2 id="push">
+        <span class="h2-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+        </span>
+        Push-уведомления
+      </h2>
+      <p>
+        Когда приходит новый заказ или новая запись&nbsp;— вы&nbsp;получаете push в&nbsp;MAX (личное сообщение от&nbsp;вашего&nbsp;же бизнес-бота). Push дедуплицируются: один заказ&nbsp;= один push, даже если ИИ повторно сохранил данные.
+      </p>
+
+      <div class="setting-card">
+        <div class="setting-card-head">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.1A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.9L5 8z"/><path d="M8.5 8V6a3.5 3.5 0 0 1 7 0v2"/></svg>
+          </span>
+          <h4>Пример push при&nbsp;новом заказе</h4>
+        </div>
+        <div class="setting-card-body">
+          <p style="font-family: var(--font-mono); font-size: 14px; color: var(--fg-1); background: var(--bg-base); padding: 12px 14px; border-radius: 8px; margin: 0;">
+            Новый заказ&nbsp;#142&nbsp;— Анна, +7&nbsp;___ | Доставка | 1&nbsp;240&nbsp;₽ | 2&nbsp;позиции
+          </p>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <div class="setting-card-head">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+          </span>
+          <h4>Пример push при&nbsp;новой записи</h4>
+        </div>
+        <div class="setting-card-body">
+          <p style="font-family: var(--font-mono); font-size: 14px; color: var(--fg-1); background: var(--bg-base); padding: 12px 14px; border-radius: 8px; margin: 0;">
+            Новая запись&nbsp;— Стрижка | 27&nbsp;мая 15:30 – 16:00 | Илья, +7&nbsp;___
+          </p>
+        </div>
+      </div>
+
+      <h3>Кому отправлять</h3>
+      <ul>
+        <li><b>Владелец</b>&nbsp;— по&nbsp;умолчанию.</li>
+        <li><b>Мастера</b>&nbsp;— каждому свой push при&nbsp;записи к&nbsp;нему (опция).</li>
+        <li><b>Клиент</b>&nbsp;— при подтверждении и&nbsp;напоминаниях (опция).</li>
+      </ul>
+
+      <h3>По каким событиям</h3>
+      <ul>
+        <li>Новый заказ&nbsp;/ новая запись&nbsp;— всегда.</li>
+        <li>Смена статуса (принят&nbsp;/ в&nbsp;работе&nbsp;/ готов&nbsp;/ выдан)&nbsp;— опционально, появится после MVP.</li>
+        <li>Отмена клиентом&nbsp;— всегда.</li>
+      </ul>
+
+      <h3>Quiet hours</h3>
+      <p>
+        Не&nbsp;беспокоить с&nbsp;23:00 до&nbsp;09:00&nbsp;— push в&nbsp;этот промежуток сохраняются и&nbsp;приходят первым уведомлением утром. Аварийные события (отмена записи на&nbsp;сегодня) приходят сразу.
+      </p>
+
+      <h3>Тон уведомлений</h3>
+      <p>
+        Два варианта&nbsp;— <b>формальный</b> («Новый заказ&nbsp;#142») и&nbsp;<b>дружелюбный</b> («Новый заказ&nbsp;— Анна оформила корзину на&nbsp;1&nbsp;240&nbsp;₽»). Выбираете для всего бизнеса один раз.
+      </p>
+
+      <!-- ──────────── Privacy / 152-ФЗ ──────────── -->
+      <h2 id="privacy">
+        <span class="h2-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        Клиенты и&nbsp;соответствие 152-ФЗ
+      </h2>
+      <p>
+        Мини-CRM хранит имя, телефон, историю заказов и&nbsp;тэги клиентов&nbsp;— это персональные данные. Мы&nbsp;выступаем <b>обработчиком</b> (процессором), <b>оператором данных является ваш бизнес</b>. Часть настроек 152-ФЗ&nbsp;— на&nbsp;вашей стороне.
+      </p>
+
+      <h3>Автоматические теги</h3>
+      <ul>
+        <li><b>«Постоянный»</b>&nbsp;— клиент сделал не&nbsp;меньше&nbsp;X&nbsp;заказов за&nbsp;последние&nbsp;Y&nbsp;дней. По&nbsp;умолчанию: 3&nbsp;заказа за&nbsp;90&nbsp;дней.</li>
+        <li><b>«Спящий»</b>&nbsp;— ноль заказов за&nbsp;последние&nbsp;N&nbsp;дней. По&nbsp;умолчанию: 30&nbsp;дней.</li>
+        <li>Пороги можно изменить под свою нишу&nbsp;— у&nbsp;пекарни «постоянный» это 3&nbsp;заказа в&nbsp;месяц, у&nbsp;юриста&nbsp;— 1&nbsp;в&nbsp;квартал.</li>
+      </ul>
+
+      <h3>Свои теги</h3>
+      <p>
+        Помимо авто-тегов вы&nbsp;создаёте свой список&nbsp;— «VIP», «Аллергия», «Только самовывоз», «Договорной счёт». Тег&nbsp;ставите вручную в&nbsp;карточке клиента; ИИ-ассистент учитывает его в&nbsp;ответах.
+      </p>
+
+      <h3>Хранение данных и&nbsp;152-ФЗ</h3>
+      <ul>
+        <li><b>Период хранения данных</b>&nbsp;— по&nbsp;умолчанию 36&nbsp;месяцев от&nbsp;последней активности клиента.</li>
+        <li><b>Авто-анонимизация</b>&nbsp;— после истечения срока имя и&nbsp;телефон автоматически заменяются на&nbsp;маску, история заказов остаётся в&nbsp;агрегированном виде.</li>
+        <li><b>Контакт для запросов клиентов</b>&nbsp;— укажите адрес, на&nbsp;который клиенты могут писать запросы по&nbsp;своим данным (право на&nbsp;удаление, копию, исправление). Например: <b>privacy@вашбизнес.ru</b>.</li>
+      </ul>
+
+      <div class="callout callout--warn">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </span>
+        <span><b>Важно по&nbsp;152-ФЗ:</b> мы&nbsp;<b>не&nbsp;храним персональные данные клиентов в&nbsp;промоматериалах</b>&nbsp;— ни&nbsp;в&nbsp;промокодах, ни&nbsp;в&nbsp;акциях, ни&nbsp;в&nbsp;постах. Любые персональные данные&nbsp;— только внутри карточки клиента в&nbsp;кабинете вашего бизнеса.</span>
+      </div>
+
+      <!-- ──────────── Backup ──────────── -->
+      <h2 id="backup">
+        <span class="h2-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </span>
+        Бэкап настроек
+      </h2>
+      <p>
+        Чтобы не&nbsp;потерять часы кропотливой настройки&nbsp;— все настройки CRM можно выгрузить и&nbsp;загрузить обратно.
+      </p>
+      <ul>
+        <li><b>Экспорт в&nbsp;JSON</b>&nbsp;— одним кликом скачиваете файл со&nbsp;всеми настройками: расписание, ресурсы, зоны, промокоды, теги.</li>
+        <li><b>Импорт</b>&nbsp;— при&nbsp;переезде, тестировании или восстановлении загружаете JSON обратно. Текущие настройки заменяются.</li>
+        <li><b>Авто-бэкап</b>&nbsp;— каждые 7&nbsp;дней система сохраняет копию на&nbsp;своей стороне; последние 4&nbsp;снимка доступны на&nbsp;вкладке «История настроек».</li>
+      </ul>
+
+      <!-- ──────────── Checklist ──────────── -->
+      <h2 id="checklist">
+        <span class="h2-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </span>
+        Чек-лист перед запуском
+      </h2>
+
+      <div class="setting-card">
+        <div class="setting-card-head">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.1A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.9L5 8z"/><path d="M8.5 8V6a3.5 3.5 0 0 1 7 0v2"/></svg>
+          </span>
+          <h4>Для бизнеса с&nbsp;заказами</h4>
+          <span class="badge">Товары</span>
+        </div>
+        <div class="setting-card-body">
+          <ul>
+            <li>MAX-бот подключён и&nbsp;имеет права администратора.</li>
+            <li>В&nbsp;каталоге есть товары с&nbsp;ценами и&nbsp;фото.</li>
+            <li>Настроены зоны доставки или включён самовывоз.</li>
+            <li>Включён ИИ-ассистент, проверен тон ответов.</li>
+            <li>Вы&nbsp;знаете, как принимаете оплату на&nbsp;своей стороне (касса, банк, наличные).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <div class="setting-card-head">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+          </span>
+          <h4>Для бизнеса с&nbsp;записями</h4>
+          <span class="badge">Услуги</span>
+        </div>
+        <div class="setting-card-body">
+          <ul>
+            <li>MAX-бот подключён и&nbsp;имеет права администратора.</li>
+            <li>В&nbsp;каталоге есть услуги с&nbsp;указанной длительностью.</li>
+            <li>Настроено расписание (дни, часы, перерывы).</li>
+            <li>Опционально&nbsp;— добавлены ресурсы, если у&nbsp;вас несколько мастеров.</li>
+            <li>Включён ИИ-ассистент, проверен тон ответов.</li>
+          </ul>
+        </div>
+      </div>
+
+      <p>
+        После сохранения настроек&nbsp;— попросите знакомого написать в&nbsp;бота тестовое сообщение. Проверьте, что заказ&nbsp;/ запись доходит до&nbsp;кабинета и&nbsp;приходит push в&nbsp;MAX. Если что-то идёт не&nbsp;так&nbsp;— напишите в&nbsp;поддержку, разберёмся.
+      </p>
+
+      <!-- ──────────── Q&A ──────────── -->
+      <h2 id="qa">
+        <span class="h2-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </span>
+        Частые вопросы
+      </h2>
+
+      <div class="qa" id="qa-list">
+
+        <div class="qa-item" aria-expanded="false">
+          <button class="qa-q" type="button" aria-expanded="false">
+            <span>Можно ли иметь несколько точек самовывоза?</span>
+            <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+          </button>
+          <div class="qa-a"><div class="qa-a-inner">
+            <p>В&nbsp;MVP&nbsp;— одна точка на&nbsp;бизнес. Если у&nbsp;вас две&nbsp;– три физических точки, заведите их&nbsp;как отдельные бизнесы в&nbsp;кабинете (это бесплатно, тариф один на&nbsp;аккаунт). Тогда у&nbsp;каждой точки будет свой адрес, своё расписание, свой бот.</p>
+            <p>Поддержка нескольких точек в&nbsp;рамках одного бизнеса появится после релиза.</p>
+          </div></div>
+        </div>
+
+        <div class="qa-item" aria-expanded="false">
+          <button class="qa-q" type="button" aria-expanded="false">
+            <span>Что если мастер заболел&nbsp;— как быстро снять записи?</span>
+            <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+          </button>
+          <div class="qa-a"><div class="qa-a-inner">
+            <p>Откройте карточку ресурса, нажмите «Закрыть на&nbsp;период»&nbsp;— укажите даты. Все будущие записи к&nbsp;этому мастеру в&nbsp;указанный промежуток получают статус «отменено», клиентам уходит push в&nbsp;MAX с&nbsp;извинениями и&nbsp;предложением перенести.</p>
+            <p>Если в&nbsp;бизнесе несколько мастеров&nbsp;— бот предложит клиенту записаться к&nbsp;другому.</p>
+          </div></div>
+        </div>
+
+        <div class="qa-item" aria-expanded="false">
+          <button class="qa-q" type="button" aria-expanded="false">
+            <span>Как удалить данные ушедшего клиента?</span>
+            <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+          </button>
+          <div class="qa-a"><div class="qa-a-inner">
+            <p>Откройте карточку клиента&nbsp;— меню «···» в&nbsp;правом верхнем углу&nbsp;— «Анонимизировать». Имя и&nbsp;телефон будут заменены на&nbsp;маску («Клиент&nbsp;#142»), история заказов сохранится в&nbsp;агрегированном виде (для&nbsp;бухгалтерии и&nbsp;аналитики), личных данных в&nbsp;системе не&nbsp;останется.</p>
+            <p>По&nbsp;152-ФЗ это считается удалением персональных данных по&nbsp;запросу субъекта.</p>
+          </div></div>
+        </div>
+
+        <div class="qa-item" aria-expanded="false">
+          <button class="qa-q" type="button" aria-expanded="false">
+            <span>Можно ли отключить CRM временно?</span>
+            <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+          </button>
+          <div class="qa-a"><div class="qa-a-inner">
+            <p>Да. В&nbsp;каждой из&nbsp;четырёх вкладок настроек есть тумблер «Включить модуль». Если выключите «Заказы»&nbsp;— ИИ не&nbsp;будет принимать заказы товаров (но&nbsp;ответы по&nbsp;ассортименту останутся). Если выключите «Записи»&nbsp;— бот перестанет предлагать слоты на&nbsp;услуги.</p>
+            <p>Данные клиентов и&nbsp;история заказов при&nbsp;выключении модулей не&nbsp;удаляются&nbsp;— они подхватятся обратно, как только вы&nbsp;включите модуль снова.</p>
+          </div></div>
+        </div>
+
+      </div>
+
+      <!-- ──────────── Footer of article ──────────── -->
+      <div class="article-foot">
+        <div class="left">
+          Была&nbsp;ли статья полезной?
+          <span class="feedback-btns">
+            <button type="button" aria-label="Полезно">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H7"/></svg>
+            </button>
+            <button type="button" aria-label="Не полезно">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H17"/></svg>
+            </button>
+          </span>
+        </div>
+        <div class="updated">Обновлено 14.05.2026</div>
+      </div>
+
+      <!-- ──────────── Related articles ──────────── -->
+      <div class="related-block">
+        <div class="label">Связанные статьи</div>
+        <ul class="related-list">
+          <li>
+            <a href="#">
+              <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.1A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.9L5 8z"/><path d="M8.5 8V6a3.5 3.5 0 0 1 7 0v2"/></svg></span>
+              <span class="meta">
+                <span class="t">Приём заказов</span>
+                <span class="s">Как ИИ оформляет заказ через MAX</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
+              <span class="meta">
+                <span class="t">Запись на&nbsp;услуги</span>
+                <span class="s">Слоты, мастера, подтверждения</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+              <span class="meta">
+                <span class="t">Клиенты и&nbsp;теги</span>
+                <span class="s">Сегментация, история, заметки</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+              <span class="meta">
+                <span class="t">152-ФЗ и&nbsp;данные клиентов</span>
+                <span class="s">Согласия, хранение, удаление</span>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </article>
+
+  </div>
+
+</main>
+
+<!-- ───────────────────────── FOOTER ───────────────────────── -->
+<footer class="pub-footer">
+  <div class="pub-footer-inner">
+    <div class="footer-cols">
+      <div class="footer-brand">
+        <a href="index.html" class="pub-brand" aria-label="СММ АЙБРО — на главную">
+          <span class="pub-brand-tile" aria-hidden="true">
+            <img src="assets/logos/robot-icon-light.svg" alt="">
+          </span>
+          <span class="pub-brand-word">СММ <em>АЙБРО</em></span>
+        </a>
+        <p>ИИ-автоматизация бизнеса в&nbsp;мессенджере MAX: ассистент клиентам 24/7, автопостинг, приём заказов и&nbsp;мини-CRM.</p>
+      </div>
+      <div>
+        <h5>Продукт</h5>
+        <ul>
+          <li><a href="#">Возможности</a></li>
+          <li><a href="#">Демо по&nbsp;нишам</a></li>
+          <li><a href="#">Тариф</a></li>
+          <li><a href="#">Пробный период</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Помощь</h5>
+        <ul>
+          <li><a href="index.html">Все статьи</a></li>
+          <li><a href="help-faq.html">Частые вопросы</a></li>
+          <li><a href="#">Канал поддержки</a></li>
+          <li><a href="#">Статус сервиса</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Компания</h5>
+        <ul>
+          <li><a href="#">Партнёрам</a></li>
+          <li><a href="#">Реквизиты</a></li>
+          <li><a href="#">Договор-оферта</a></li>
+          <li><a href="#">Политика данных</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>ИП&nbsp;Мальцев Валерий Валерьевич&nbsp;· ИНН&nbsp;519041916737&nbsp;· УСН&nbsp;6%&nbsp;· Т-Банк Санкт-Петербург. Услуги оказываются на&nbsp;территории Российской Федерации.</p>
+      <p>© 2026 СММ АЙБРО</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ───── Q&A accordion ───── */
+  (function () {
+    const items = document.querySelectorAll('#qa-list .qa-item');
+    items.forEach((item) => {
+      const btn = item.querySelector('.qa-q');
+      const ans = item.querySelector('.qa-a');
+      btn.addEventListener('click', () => {
+        const open = item.getAttribute('aria-expanded') === 'true';
+        if (open) {
+          item.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-expanded', 'false');
+          ans.style.maxHeight = '0px';
+        } else {
+          item.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-expanded', 'true');
+          ans.style.maxHeight = ans.scrollHeight + 'px';
+        }
+      });
+    });
+  })();
+
+  /* ───── Sidebar TOC: highlight section in view ───── */
+  (function () {
+    const links = document.querySelectorAll('.side-list a[href^="#"]');
+    if (!('IntersectionObserver' in window) || !links.length) return;
+
+    const linkBySection = new Map();
+    links.forEach((a) => {
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) linkBySection.set(id, a);
+    });
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          links.forEach((a) => {
+            if (a.classList.contains('is-current') && a.getAttribute('href') !== '#') return;
+          });
+        }
+      });
+    }, { rootMargin: '-100px 0px -70% 0px', threshold: 0 });
+
+    linkBySection.forEach((_, id) => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+  })();
+
+  /* ───── Smooth scroll for in-page anchors ───── */
+  (function () {
+    document.querySelectorAll('a[href^="#"]').forEach((a) => {
+      const id = a.getAttribute('href');
+      if (!id || id === '#' || id === '#main') return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const rect = target.getBoundingClientRect();
+        const offset = window.scrollY + rect.top - 88;
+        window.scrollTo({ top: offset, behavior: 'smooth' });
+        if (history.pushState) history.pushState(null, '', id);
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Партнёрский кабинет — Главная</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/colors_and_type.css">
+  <link rel="stylesheet" href="design/partners-dashboard.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useRef } = React;
+
+const ICO = "design/assets/icons/";
+
+/* ---------- helpers ---------- */
+function fmt(n) {
+  // 14320 → "14 320"
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "\u00A0");
+}
+function fmtRub(n) { return fmt(n) + "\u00A0₽"; }
+
+/* ---------- icon helper ---------- */
+function Ic({ name, size = 18, style }) {
+  return (
+    <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+         style={{ width: size, height: size, display: "block", ...style }} />
+  );
+}
+
+/* ---------- data ---------- */
+const NAV_MAIN = [
+  { id: "home",      label: "Главная",   icon: "icon-nav-home",    href: "Partners Dashboard.html" },
+  { id: "referrals", label: "Рефералы",  icon: "icon-nav-team",    badge: 47 },
+  { id: "income",    label: "Доход",     icon: "icon-nav-finance", href: "Partners Earnings.html" },
+  { id: "payouts",   label: "Выплаты",   icon: "shield-check" },
+  { id: "materials", label: "Материалы", icon: "icon-nav-documents" },
+];
+const NAV_FOOT = [
+  { id: "settings", label: "Настройки", icon: "icon-nav-settings" },
+  { id: "help",     label: "Поддержка", icon: "icon-nav-help" },
+];
+
+const PERIODS = ["Май", "Апр", "Мар", "Год"];
+
+// 6-month income series → corresponds to selected period 'Май'
+const SERIES = {
+  "Май": [
+    { m: "Дек 25", v: 4200 },
+    { m: "Янв 26", v: 5800 },
+    { m: "Фев 26", v: 7100 },
+    { m: "Мар 26", v: 9400 },
+    { m: "Апр 26", v: 12100 },
+    { m: "Май 26", v: 14320 },
+  ],
+  "Апр": [
+    { m: "Ноя 25", v: 3500 },
+    { m: "Дек 25", v: 4200 },
+    { m: "Янв 26", v: 5800 },
+    { m: "Фев 26", v: 7100 },
+    { m: "Мар 26", v: 9400 },
+    { m: "Апр 26", v: 12100 },
+  ],
+  "Мар": [
+    { m: "Окт 25", v: 2700 },
+    { m: "Ноя 25", v: 3500 },
+    { m: "Дек 25", v: 4200 },
+    { m: "Янв 26", v: 5800 },
+    { m: "Фев 26", v: 7100 },
+    { m: "Мар 26", v: 9400 },
+  ],
+  "Год": [
+    { m: "Июн 25", v: 0 },
+    { m: "Авг 25", v: 1100 },
+    { m: "Окт 25", v: 2700 },
+    { m: "Дек 25", v: 4200 },
+    { m: "Фев 26", v: 7100 },
+    { m: "Май 26", v: 14320 },
+  ],
+};
+
+const TOP_REFS = [
+  { rank: 1, name: "Пекарня «Уют»",        niche: "Пекарня",     handle: "@pekarnya_uyut",  level: "L1", paid: 7, amt: 3200 },
+  { rank: 2, name: "Пульс Фитнес",          niche: "Фитнес",      handle: "@puls_fit",       level: "L1", paid: 5, amt: 2100 },
+  { rank: 3, name: "Смарт Тур",             niche: "Турагентство", handle: "@smart_tur",      level: "L2", paid: 6, amt: 1800 },
+  { rank: 4, name: "Этно — школа танцев",   niche: "Услуги",       handle: "@etno_dance",     level: "L1", paid: 4, amt: 1540 },
+  { rank: 5, name: "Грумминг Лап",          niche: "Услуги",       handle: "@lap_groom",      level: "L1", paid: 3, amt: 1220 },
+];
+
+const ACTIVITY = [
+  { kind: "new",       d: "16.05", t: "12:30", title: <>Новый реферал — <b>Пекарня «Уют»</b></>, meta: "L1 · через MAX‑канал", amt: null },
+  { kind: "accrued",   d: "14.05", t: "09:15", title: <>Начислено за апрель — <b>Пульс Фитнес</b></>, meta: "10% от 4 990 ₽", amt: "+499 ₽" },
+  { kind: "payout",    d: "12.05", t: "18:42", title: <>Выплата на счёт · <b>****9912</b></>, meta: "за апрель, после удержания НДФЛ 13%", amt: "+12 000 ₽" },
+  { kind: "new",       d: "09.05", t: "14:20", title: <>Новый реферал — <b>Цветы СПб</b></>, meta: "L2 · через Смарт Тур", amt: null },
+  { kind: "accrued",   d: "05.05", t: "11:08", title: <>Начислено за апрель — <b>Грумминг Лап</b></>, meta: "10% от 4 990 ₽", amt: "+499 ₽" },
+  { kind: "tier",      d: "01.05", t: "00:00", title: <>Новый расчётный период · <b>май 2026</b></>, meta: "выплата 01.06 — баланс ≥ 1 000 ₽", amt: null },
+];
+
+const REF_URL = "smmaibro.ru/?ref=ivan-petrov";
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+function Sidebar({ active, onNavigate }) {
+  return (
+    <aside className="pd-side" aria-label="Главная навигация">
+      <a className="pd-brand" href="#" onClick={(e)=>{e.preventDefault(); onNavigate("home");}}>
+        <span className="pd-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+        <span>
+          <span className="pd-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="pd-brand-meta">Партнёры</div>
+        </span>
+      </a>
+
+      <div className="pd-biz">
+        <div className="pd-biz-ava">И</div>
+        <div>
+          <div className="pd-biz-name">Иван Петров</div>
+          <div className="pd-biz-handle">@ivan‑petrov · ФЛ</div>
+        </div>
+        <div className="pd-biz-pill">L2</div>
+      </div>
+
+      {NAV_MAIN.map((it) => {
+        const cls = `pd-nav-item ${active === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls} onClick={() => onNavigate(it.id)}>{body}</button>;
+      })}
+
+      <div className="pd-nav-caption">Аккаунт</div>
+      {NAV_FOOT.map((it) => (
+        <button key={it.id}
+          className={`pd-nav-item ${active === it.id ? "active" : ""}`}
+          onClick={() => onNavigate(it.id)}>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+        </button>
+      ))}
+
+      <div className="pd-side-foot">
+        ИП Мальцев · единый тариф <b style={{color:"var(--fg-2)",fontWeight:600}}>4 990 ₽/мес</b><br/>
+        Партнёрская программа · <a href="#terms">правила</a>
+      </div>
+    </aside>
+  );
+}
+
+/* ============================================================
+   TOP BAR
+============================================================ */
+function TopBar({ onBurger }) {
+  return (
+    <header className="pd-top">
+      <button className="pd-burger" aria-label="Меню" onClick={onBurger}><span></span></button>
+      <div>
+        <div className="crumb">Партнёры / Главная</div>
+        <h1>Главная</h1>
+      </div>
+      <div className="pd-top-actions">
+        <button className="pd-iconbtn" aria-label="Уведомления">
+          <Ic name="icon-nav-notifications" size={20} />
+          <span className="dot"></span>
+        </button>
+        <div className="pd-profile" tabIndex="0">
+          <div className="ava">И</div>
+          <div className="meta">
+            <span className="name">Иван П.</span>
+            <span className="role">Партнёр · L2</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ============================================================
+   HELLO + PERIOD
+============================================================ */
+function Hello({ period, setPeriod }) {
+  return (
+    <div className="pd-hello">
+      <div>
+        <h2>Здравствуйте, Иван</h2>
+        <div className="sub">Текущий месяц — <b>май 2026</b>. Следующая выплата — 01.06.2026.</div>
+      </div>
+      <div className="pd-period" role="tablist" aria-label="Период">
+        {PERIODS.map((p) => (
+          <button key={p}
+            role="tab"
+            aria-selected={period === p}
+            className={period === p ? "active" : ""}
+            onClick={() => setPeriod(p)}>{p}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   KPI ROW
+============================================================ */
+function KpiCard({ icon, iconTone = "", lbl, val, unit, delta, deltaTone, foot }) {
+  return (
+    <div className="kpi">
+      <div className="kpi-head">
+        <div className={`kpi-ico ${iconTone}`}><Ic name={icon} size={18} /></div>
+        <div className="kpi-lbl">{lbl}</div>
+      </div>
+      <div className="kpi-val">{val}{unit && <span className="unit">{unit}</span>}</div>
+      <div className="kpi-foot">
+        {delta && <span className={`kpi-delta ${deltaTone || ""}`}>{delta}</span>}
+        <span>{foot}</span>
+      </div>
+    </div>
+  );
+}
+
+function KpiRow() {
+  return (
+    <div className="pd-kpi">
+      <KpiCard
+        icon="icon-nav-customers" iconTone=""
+        lbl="Активные рефералы"
+        val="47" unit="бизн."
+        delta="+5" deltaTone=""
+        foot="в мае" />
+      <KpiCard
+        icon="price-tag-ruble" iconTone=""
+        lbl="Доход · май"
+        val={fmt(14320)} unit="₽"
+        delta="+18%" deltaTone=""
+        foot="к апрелю" />
+      <KpiCard
+        icon="shield-check" iconTone="blue"
+        lbl="Выплачено за 2026"
+        val={fmt(44931)} unit="₽"
+        delta="к выплате 2 320 ₽" deltaTone="flat"
+        foot="" />
+      <KpiCard
+        icon="percent" iconTone="amber"
+        lbl="Lifetime MRR"
+        val={fmt(23460)} unit="₽/мес"
+        delta="≈ 281 520 ₽/год" deltaTone="flat"
+        foot="" />
+    </div>
+  );
+}
+
+/* ============================================================
+   PAYOUT BAR
+============================================================ */
+function PayoutBar() {
+  return (
+    <div className="payout-bar">
+      <div className="payout-bar-text">
+        <span className="pill"><Ic name="gift-trial" size={12} />Готово к выплате</span>
+        К выплате <b>2 320&nbsp;₽</b> + май будет начислен 01.06.
+        Зачислим на счёт <b>****9912</b> в Т‑Банке после удержания НДФЛ — без вашего участия.
+      </div>
+      <button>
+        <Ic name="credit-card" size={16} />
+        Реквизиты выплат
+      </button>
+    </div>
+  );
+}
+
+/* ============================================================
+   INCOME CHART
+============================================================ */
+function IncomeChart({ period }) {
+  const data = SERIES[period] || SERIES["Май"];
+  const W = 720, H = 240, PAD_L = 48, PAD_R = 16, PAD_T = 18, PAD_B = 36;
+  const max = Math.max(...data.map(d => d.v)) * 1.15;
+  const min = 0;
+  const yScale = (v) => PAD_T + (H - PAD_T - PAD_B) * (1 - (v - min) / (max - min));
+  const xScale = (i) => PAD_L + (W - PAD_L - PAD_R) * (i / (data.length - 1));
+  const pts = data.map((d, i) => [xScale(i), yScale(d.v)]);
+
+  // Smooth path (catmull-rom-ish using cubic Bezier with mid-point control)
+  const path = pts.reduce((p, [x, y], i, arr) => {
+    if (i === 0) return `M ${x} ${y}`;
+    const [px, py] = arr[i - 1];
+    const cx = (px + x) / 2;
+    return p + ` C ${cx} ${py}, ${cx} ${y}, ${x} ${y}`;
+  }, "");
+
+  const fillPath = path + ` L ${pts[pts.length - 1][0]} ${H - PAD_B} L ${pts[0][0]} ${H - PAD_B} Z`;
+
+  // y-axis ticks (4)
+  const ticks = [0, 1, 2, 3, 4].map(i => min + (max - min) * (i / 4));
+
+  // hover state
+  const [hover, setHover] = useState(null);
+  const wrapRef = useRef(null);
+
+  function onMove(e) {
+    const rect = wrapRef.current.getBoundingClientRect();
+    const xRatio = (e.clientX - rect.left) / rect.width;
+    const idx = Math.round(xRatio * (data.length - 1));
+    if (idx >= 0 && idx < data.length) {
+      setHover({
+        i: idx,
+        x: (xScale(idx) / W) * 100, // %
+        y: (yScale(data[idx].v) / H) * 100,
+      });
+    }
+  }
+
+  return (
+    <div className="pd-card chart-card">
+      <div className="pd-card-h">
+        <h3>Динамика дохода</h3>
+        <span className="meta">6 месяцев · сглаживание</span>
+      </div>
+
+      <div className="chart-summary">
+        <div className="chart-sum-block">
+          <div className="lbl">Доход · период</div>
+          <div className="val">{fmtRub(data[data.length - 1].v)}</div>
+        </div>
+        <div className="chart-sum-block">
+          <div className="lbl">Среднее за 6 мес</div>
+          <div className="val dim">{fmtRub(Math.round(data.reduce((s, d) => s + d.v, 0) / data.length))}</div>
+        </div>
+        <div className="chart-legend">
+          <span className="legend-swatch"><span className="swatch brand"></span>L1 + L2</span>
+          <span className="legend-swatch"><span className="swatch muted"></span>средняя</span>
+        </div>
+      </div>
+
+      <div className="chart-wrap" ref={wrapRef}
+           onMouseMove={onMove}
+           onMouseLeave={() => setHover(null)}>
+        <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img"
+             aria-label="График дохода — 6 месяцев">
+          <defs>
+            <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#10b981" stopOpacity="0.20" />
+              <stop offset="1" stopColor="#10b981" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+
+          {/* horizontal grid */}
+          {ticks.map((t, i) => (
+            <g key={i}>
+              <line x1={PAD_L} x2={W - PAD_R}
+                    y1={yScale(t)} y2={yScale(t)}
+                    stroke="rgba(15,23,42,0.06)" strokeDasharray={i === 0 ? "" : "3 4"} />
+              <text x={PAD_L - 8} y={yScale(t) + 3}
+                    textAnchor="end" fontSize="10"
+                    fontFamily="JetBrains Mono, monospace"
+                    fill="#6b7079"
+                    style={{fontVariantNumeric: "tabular-nums"}}>
+                {Math.round(t / 1000)}к ₽
+              </text>
+            </g>
+          ))}
+
+          {/* x labels */}
+          {data.map((d, i) => (
+            <text key={i} x={xScale(i)} y={H - PAD_B + 18}
+                  textAnchor="middle" fontSize="11"
+                  fontFamily="Golos Text, sans-serif"
+                  fill="#6b7079">
+              {d.m}
+            </text>
+          ))}
+
+          {/* average dashed line */}
+          {(() => {
+            const avg = data.reduce((s, d) => s + d.v, 0) / data.length;
+            const y = yScale(avg);
+            return (
+              <line x1={PAD_L} x2={W - PAD_R} y1={y} y2={y}
+                    stroke="rgba(15,23,42,0.35)" strokeDasharray="4 4" />
+            );
+          })()}
+
+          {/* fill */}
+          <path d={fillPath} fill="url(#chart-fill)" />
+          {/* line */}
+          <path d={path} fill="none" stroke="#10b981" strokeWidth="2.2"
+                strokeLinecap="round" strokeLinejoin="round" />
+
+          {/* points */}
+          {pts.map(([x, y], i) => (
+            <g key={i}>
+              <circle cx={x} cy={y} r="4.5" fill="#ffffff" stroke="#10b981" strokeWidth="2" />
+              {hover && hover.i === i &&
+                <circle cx={x} cy={y} r="8" fill="rgba(16,185,129,0.18)" />
+              }
+            </g>
+          ))}
+
+          {/* vertical hover guide */}
+          {hover && (
+            <line x1={xScale(hover.i)} x2={xScale(hover.i)}
+                  y1={PAD_T} y2={H - PAD_B}
+                  stroke="rgba(16,185,129,0.30)" />
+          )}
+        </svg>
+
+        {hover && (
+          <div className="chart-tooltip show"
+               style={{ left: `${hover.x}%`, top: `${hover.y}%` }}>
+            <div className="v">{fmtRub(data[hover.i].v)}</div>
+            <div className="m">{data[hover.i].m}</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   TOP REFERRALS
+============================================================ */
+function TopReferrals() {
+  return (
+    <div className="pd-card">
+      <div className="pd-card-h">
+        <h3>Топ‑5 рефералов</h3>
+        <a className="more" href="#refs">Все 47 →</a>
+      </div>
+      <div className="top-list">
+        {TOP_REFS.map((r) => (
+          <div className="top-row" key={r.rank} tabIndex="0">
+            <div className="top-rank">{r.rank}</div>
+            <div>
+              <div className="top-name">{r.name}</div>
+              <div className="top-meta">
+                <span className="niche">{r.niche}</span>
+                {r.handle} · {r.level}
+              </div>
+            </div>
+            <div className="top-amt">
+              {fmtRub(r.amt)}
+              <span className="sub">{r.paid} мес. платит</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   REFERRAL LINK + QR
+============================================================ */
+
+// Deterministic-looking QR placeholder (21×21 modules, with finder squares)
+function QrSvg() {
+  const N = 21;
+  // Generate a stable pseudo-random matrix
+  const seed = 137;
+  const m = [];
+  let s = seed;
+  for (let y = 0; y < N; y++) {
+    m[y] = [];
+    for (let x = 0; x < N; x++) {
+      s = (s * 9301 + 49297) % 233280;
+      m[y][x] = s / 233280 > 0.52 ? 1 : 0;
+    }
+  }
+  // Finder squares (7x7) at top-left, top-right, bottom-left
+  const setFinder = (ox, oy) => {
+    for (let y = 0; y < 7; y++) for (let x = 0; x < 7; x++) {
+      const isBorder = x === 0 || x === 6 || y === 0 || y === 6;
+      const isInner = x >= 2 && x <= 4 && y >= 2 && y <= 4;
+      m[oy + y][ox + x] = (isBorder || isInner) ? 1 : 0;
+    }
+    // separator row/col
+    for (let i = -1; i <= 7; i++) {
+      if (oy - 1 >= 0 && ox + i >= 0 && ox + i < N) m[oy - 1][ox + i] = 0;
+      if (oy + 7 < N && ox + i >= 0 && ox + i < N) m[oy + 7][ox + i] = 0;
+      if (ox - 1 >= 0 && oy + i >= 0 && oy + i < N) m[oy + i] && (m[oy + i][ox - 1] = 0);
+      if (ox + 7 < N && oy + i >= 0 && oy + i < N) m[oy + i] && (m[oy + i][ox + 7] = 0);
+    }
+  };
+  setFinder(0, 0);
+  setFinder(N - 7, 0);
+  setFinder(0, N - 7);
+  // Clear center for logo (5x5)
+  const cs = Math.floor(N / 2) - 2;
+  for (let y = cs; y < cs + 5; y++) for (let x = cs; x < cs + 5; x++) m[y][x] = 0;
+
+  const size = 21;
+  const rects = [];
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    if (m[y][x]) rects.push(<rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" fill="#0e0f12" />);
+  }
+  return (
+    <svg viewBox={`0 0 ${size} ${size}`} shapeRendering="crispEdges" aria-hidden="true">
+      {rects}
+    </svg>
+  );
+}
+
+function ReferralCard() {
+  const [copied, setCopied] = useState(false);
+  function copy() {
+    if (navigator.clipboard) navigator.clipboard.writeText("https://" + REF_URL);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  }
+  return (
+    <div className="pd-card referral-card">
+      <div className="referral-main">
+        <div className="referral-h">
+          <h3>Ваша реферальная ссылка</h3>
+          <span className="pill">10% + 10% lifetime</span>
+        </div>
+
+        <div className="referral-link">
+          <input className="url" readOnly value={"https://" + REF_URL} aria-label="Реферальная ссылка" />
+          <button className={copied ? "ok" : ""} onClick={copy}>
+            <Ic name="icon-action-copy" size={16} />
+            {copied ? "Скопировано" : "Скопировать"}
+          </button>
+        </div>
+
+        <div className="referral-stats">
+          <div className="referral-stat">
+            <div className="lbl">Переходы · май</div>
+            <div className="val">412</div>
+            <div className="delta">+38 за неделю</div>
+          </div>
+          <div className="referral-stat">
+            <div className="lbl">Регистрации</div>
+            <div className="val">23</div>
+            <div className="delta">конверсия 5,6%</div>
+          </div>
+          <div className="referral-stat">
+            <div className="lbl">Платящие</div>
+            <div className="val">47</div>
+            <div className="delta">+4 за месяц</div>
+          </div>
+        </div>
+
+        <div className="referral-share">
+          <button className="share-btn">
+            <span className="max-glyph"><img src="design/assets/logos/max-glyph.svg" alt="" style={{width:"100%",height:"100%",display:"block"}} /></span>
+            Поделиться в MAX
+          </button>
+          <button className="share-btn">
+            <Ic name="icon-action-share-link" size={14} />
+            UTM‑конструктор
+          </button>
+          <button className="share-btn">
+            <Ic name="icon-action-download" size={14} />
+            Скачать QR (PNG)
+          </button>
+        </div>
+      </div>
+
+      <div className="referral-qr">
+        <div className="qr-tile">
+          <QrSvg />
+          <div className="qr-logo"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></div>
+        </div>
+        <div className="qr-caption">QR · ref=ivan‑petrov</div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   ACTIVITY
+============================================================ */
+function ActivityCard() {
+  const map = {
+    new:     { tone: "brand",   icon: "icon-status-new" },
+    accrued: { tone: "amber",   icon: "price-tag-ruble" },
+    payout:  { tone: "success", icon: "shield-check" },
+    tier:    { tone: "blue",    icon: "icon-status-info" },
+  };
+  return (
+    <div className="pd-card">
+      <div className="pd-card-h">
+        <h3>Последние события</h3>
+        <a className="more" href="#log">Журнал →</a>
+      </div>
+      <div className="activity">
+        {ACTIVITY.map((a, i) => {
+          const cfg = map[a.kind];
+          return (
+            <div className="activity-row" key={i}>
+              <div className={`activity-ico ${cfg.tone}`}><Ic name={cfg.icon} size={18} /></div>
+              <div className="activity-body">
+                <div className="activity-title">
+                  {a.title}{" "}
+                  {a.amt && <span className={`activity-amt ${a.amt.startsWith("−") ? "neg" : ""}`}>{a.amt.replace("+","+\u00A0").replace(/(\d) /g,"$1\u00A0")}</span>}
+                </div>
+                <div className="activity-meta" style={{fontSize: 12, color: "var(--fg-3)", fontFamily:"var(--font-body)", letterSpacing:0, textTransform:"none"}}>{a.meta}</div>
+              </div>
+              <div className="activity-meta">{a.d} · {a.t}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   BOTTOM NAV (mobile) + DRAWER
+============================================================ */
+function BottomNav({ active, onNavigate }) {
+  const items = NAV_MAIN.slice(0, 5);
+  return (
+    <nav className="pd-bottomnav" aria-label="Мобильная навигация">
+      {items.map((it) => {
+        const cls = `pd-bottomnav-item ${active === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={22} /></span>
+          <span>{it.label}</span>
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href} style={{textDecoration:"none"}}>{body}</a>
+          : <button key={it.id} className={cls} onClick={() => onNavigate(it.id)}>{body}</button>;
+      })}
+    </nav>
+  );
+}
+
+function Drawer({ open, onClose, active, onNavigate }) {
+  return (
+    <>
+      <div className={`pd-drawer-bg ${open ? "open" : ""}`} onClick={onClose}></div>
+      <aside className={`pd-drawer ${open ? "open" : ""}`}>
+        <a className="pd-brand" href="#">
+          <span className="pd-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+          <span>
+            <span className="pd-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+            <div className="pd-brand-meta">Партнёры</div>
+          </span>
+        </a>
+        <div className="pd-biz">
+          <div className="pd-biz-ava">И</div>
+          <div>
+            <div className="pd-biz-name">Иван Петров</div>
+            <div className="pd-biz-handle">@ivan‑petrov · ФЛ</div>
+          </div>
+          <div className="pd-biz-pill">L2</div>
+        </div>
+        {NAV_MAIN.map((it) => {
+          const cls = `pd-nav-item ${active === it.id ? "active" : ""}`;
+          const body = <>
+            <span className="ico"><Ic name={it.icon} size={20} /></span>
+            <span>{it.label}</span>
+            {it.badge ? <span className="badge">{it.badge}</span> : null}
+          </>;
+          return it.href
+            ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+            : <button key={it.id} className={cls} onClick={() => { onNavigate(it.id); onClose(); }}>{body}</button>;
+        })}
+        <div className="pd-nav-caption">Аккаунт</div>
+        {NAV_FOOT.map((it) => (
+          <button key={it.id}
+            className={`pd-nav-item ${active === it.id ? "active" : ""}`}
+            onClick={() => { onNavigate(it.id); onClose(); }}>
+            <span className="ico"><Ic name={it.icon} size={20} /></span>
+            <span>{it.label}</span>
+          </button>
+        ))}
+        <div className="pd-side-foot">
+          ИП Мальцев · 4 990 ₽/мес<br/>
+          <a href="#terms">Правила программы</a>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+/* ============================================================
+   APP
+============================================================ */
+function App() {
+  const [active, setActive] = useState("home");
+  const [period, setPeriod] = useState("Май");
+  const [drawer, setDrawer] = useState(false);
+
+  return (
+    <div className="pd" data-screen-label="01 Партнёры — Главная">
+      <Sidebar active={active} onNavigate={setActive} />
+      <Drawer open={drawer} onClose={() => setDrawer(false)}
+              active={active} onNavigate={setActive} />
+
+      <div className="pd-work">
+        <TopBar onBurger={() => setDrawer(true)} />
+        <main className="pd-page">
+          <Hello period={period} setPeriod={setPeriod} />
+
+          <KpiRow />
+
+          <PayoutBar />
+
+          <div className="pd-grid-2">
+            <IncomeChart period={period} />
+            <TopReferrals />
+          </div>
+
+          <div style={{marginBottom: 18}}>
+            <ReferralCard />
+          </div>
+
+          <ActivityCard />
+
+          <div style={{marginTop: 22, fontSize: 11, color: "var(--fg-3)", lineHeight: 1.6, maxWidth: 720}}>
+            Все суммы указаны после удержания НДФЛ. Партнёрская программа действует
+            бессрочно при условии действующего тарифа реферала. Партнёр — физическое
+            лицо РФ. Налоговый агент по 168‑ФЗ — ИП Мальцев Валерий Валерьевич,
+            ИНН 519041916737, Т‑Банк СПб.
+          </div>
+        </main>
+      </div>
+
+      <BottomNav active={active} onNavigate={setActive} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

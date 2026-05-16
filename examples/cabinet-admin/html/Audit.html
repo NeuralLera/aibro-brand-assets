@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>СММ АЙБРО · admin · Аудит log</title>
+<link rel="icon" href="logos/aibro/favicon-light.svg">
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="audit.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+// admin.smmaibro.ru — Аудит log
+// WORM-режим хранения 5 лет (write-once-read-many).
+// Соответствует 152-ФЗ и финмониторингу (ст. 6 115-ФЗ).
+
+const { useState, useMemo } = React;
+
+// ============================================================
+// Icon helper
+// ============================================================
+function Icon({ name, size }) {
+  const style = { "--ic": `url(icons/${name}.svg)` };
+  if (size) style["--ic-size"] = typeof size === "number" ? `${size}px` : size;
+  return <span className="ic" style={style} aria-hidden="true" />;
+}
+
+// ============================================================
+// Sidebar
+// ============================================================
+const NAV = [
+  { id: "home",        label: "Главная",      icon: "dashboard" },
+  { id: "users",       label: "Пользователи", icon: "icon-nav-customers", count: "247" },
+  { id: "finance",     label: "Финансы",      icon: "icon-nav-finance" },
+  { id: "taxes",       label: "Налоги",       icon: "icon-nav-taxes" },
+  { id: "partners",    label: "Партнёрка",    icon: "icon-nav-partners" },
+  { id: "ord",         label: "ОРД",          icon: "badge-erid", count: "1.2k" },
+  { id: "tickets",     label: "Поддержка",    icon: "icon-nav-messages", count: "6", countTone: "p0" },
+  { id: "health",      label: "Health",       icon: "health" },
+  { id: "audit",       label: "Аудит log",    icon: "audit-log" },
+];
+
+function Sidebar({ current, onNav }) {
+  return (
+    <aside className="side">
+      <div className="side-brand">
+        <span className="tile"><img src="icons/favicon-light.svg" alt="" onError={(e) => { e.target.style.display = 'none'; }} /></span>
+        <div>
+          <div className="wm">СММ <span className="em">АЙБРО</span></div>
+          <div className="sub">admin · v 2.4.1</div>
+        </div>
+      </div>
+
+      <div className="side-cap">Операции</div>
+      {NAV.map((it) => (
+        <button
+          key={it.id}
+          className={`nav-item ${current === it.id ? "is-active" : ""}`}
+          onClick={() => onNav(it.id)}
+        >
+          <Icon name={it.icon} />
+          <span>{it.label}</span>
+          {it.count && <span className={`badge ${it.countTone === "p0" ? "is-p0" : ""}`}>{it.count}</span>}
+        </button>
+      ))}
+
+      <div className="side-foot">
+        <span className="avatar">ВМ</span>
+        <div>
+          <div className="who">В. Мальцев</div>
+          <div className="meta">owner · мск 14:35</div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+// ============================================================
+// TopNav
+// ============================================================
+function TopNav() {
+  return (
+    <div className="topnav">
+      <div className="crumbs">
+        <span className="role"><span className="dot"></span>ADMIN</span>
+        <span className="path">admin / безопасность / <b>аудит log</b></span>
+      </div>
+      <h1>Аудит log</h1>
+
+      <div className="search">
+        <Icon name="icon-action-search" />
+        <input placeholder="Поиск по actor, action, target, IP, request_id…" />
+        <kbd>⌘K</kbd>
+      </div>
+
+      <button className="icon-btn" title="Обновить">
+        <Icon name="icon-action-refresh" />
+      </button>
+      <button className="icon-btn" title="Уведомления">
+        <Icon name="icon-nav-notifications" />
+        <span className="pulse" />
+      </button>
+
+      <button className="user">
+        <span className="avatar">ВМ</span>
+        <div>
+          <div className="name">Валерий Мальцев</div>
+          <div className="role-sub">owner · ip‑мальцев</div>
+        </div>
+      </button>
+    </div>
+  );
+}
+
+// ============================================================
+// Page header
+// ============================================================
+function PageHeader() {
+  return (
+    <div className="page-hdr">
+      <div className="page-hdr__main">
+        <h2 className="page-hdr__h1">Аудит log</h2>
+        <div className="page-hdr__sub">
+          <Icon name="shield-check" />
+          <span>Все admin actions с timestamps</span>
+          <span className="dot-sep">·</span>
+          <span><b>WORM-режим</b> хранения 5 лет</span>
+          <span className="dot-sep">·</span>
+          <span className="page-hdr__ip">152-ФЗ · ст. 6 115-ФЗ</span>
+        </div>
+      </div>
+      <div className="page-hdr__cta">
+        <button className="btn btn--secondary"><Icon name="icon-action-export" />Экспорт CSV</button>
+        <button className="btn btn--secondary"><Icon name="icon-action-download" />Экспорт JSON</button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Filters bar
+// ============================================================
+const PERIODS = ["Сегодня", "Неделя", "Месяц", "Custom"];
+const ACTION_TYPES = ["Все", "CREATE", "UPDATE", "DELETE", "EXPORT", "LOGIN"];
+const SEVERITIES  = ["Все", "Low", "Medium", "High", "Critical"];
+
+function Filters({ period, onPeriod, action, onAction, severity, onSeverity }) {
+  return (
+    <div className="filters">
+      <div className="filter">
+        <div className="filter__cap">
+          <Icon name="calendar" />Период
+        </div>
+        <div className="seg">
+          {PERIODS.map((p) => (
+            <button key={p}
+              className={`seg__btn ${period === p ? "is-active" : ""}`}
+              onClick={() => onPeriod(p)}>
+              {p}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="filter">
+        <div className="filter__cap">
+          <Icon name="bolt" />Action
+        </div>
+        <div className="seg seg--scroll">
+          {ACTION_TYPES.map((a) => (
+            <button key={a}
+              className={`seg__btn ${action === a ? "is-active" : ""} ${a !== "Все" ? `seg__btn--${a.toLowerCase()}` : ""}`}
+              onClick={() => onAction(a)}>
+              {a}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="filter filter--search">
+        <div className="filter__cap">
+          <Icon name="user" />Actor
+        </div>
+        <div className="dd">
+          <Icon name="icon-action-search" />
+          <input placeholder="ВМ, support, system…" />
+          <Icon name="icon-action-sort" />
+        </div>
+      </div>
+
+      <div className="filter">
+        <div className="filter__cap">
+          <Icon name="shield" />Severity
+        </div>
+        <div className="seg">
+          {SEVERITIES.map((s) => (
+            <button key={s}
+              className={`seg__btn ${severity === s ? "is-active" : ""} ${s !== "Все" ? `seg__btn--sev-${s.toLowerCase()}` : ""}`}
+              onClick={() => onSeverity(s)}>
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// KPI strip — 4 cards
+// ============================================================
+const KPI = [
+  { lbl: "Сегодня", val: "47", unit: "actions", icon: "bolt", tone: "accent" },
+  { lbl: "За неделю", val: "312", unit: "actions", icon: "chart-line", tone: "info" },
+  { lbl: "За месяц", val: "1 240", unit: "actions", icon: "calendar", tone: "info" },
+  { lbl: "Critical", val: "3", unit: "требуют ревью", icon: "status-error", tone: "danger" },
+];
+
+function KpiRow() {
+  return (
+    <div className="kpi-row kpi-row--4">
+      {KPI.map((k) => (
+        <div key={k.lbl} className={`kpi kpi--${k.tone}`}>
+          <div className="head">
+            <span className="head-ic"><Icon name={k.icon} /></span>
+            <span className="lbl">{k.lbl}</span>
+          </div>
+          <div className="val">
+            {k.val}{k.unit && <span className="unit"> {k.unit}</span>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
+// Event timeline data — 25 events за последние сутки
+// ============================================================
+const EVENTS = [
+  {
+    id: "evt_2026-05-16_001",
+    t: "14:35", date: "16.05.2026", rel: "5 мин назад",
+    actor: { name: "В. Мальцев", initials: "ВМ", role: "owner", kind: "v" },
+    action: "UPDATE", severity: "high",
+    desc: "Утвердил выплату партнёру PAY-2026-04",
+    target: { type: "payment", id: "PAY-2026-04-12", label: "12 000 ₽ → Иван Петров (НДФЛ 1 560 ₽)" },
+    ip: "92.118.176.42",
+  },
+  {
+    id: "evt_2026-05-16_002",
+    t: "14:20", date: "16.05.2026", rel: "20 мин назад",
+    actor: { name: "Никита Ш.", initials: "НШ", role: "support", kind: "support" },
+    action: "UPDATE", severity: "low",
+    desc: "Закрыл тикет #2891 — возврат обработан",
+    target: { type: "ticket", id: "#2891", label: "refund 4 990 ₽ · YooKassa REF-281452" },
+    ip: "94.241.180.13",
+  },
+  {
+    id: "evt_2026-05-16_003",
+    t: "13:50", date: "16.05.2026", rel: "1 час назад",
+    actor: { name: "System", initials: "SY", role: "celery", kind: "sys" },
+    action: "CREATE", severity: "medium",
+    desc: "Партнёрский payouts batch run завершён",
+    target: { type: "batch", id: "BATCH-2026-05-15", label: "12 выплат · 47 380 ₽ · pending" },
+    ip: "127.0.0.1",
+  },
+  {
+    id: "evt_2026-05-16_004",
+    t: "13:30", date: "16.05.2026", rel: "1 час назад",
+    actor: { name: "В. Мальцев", initials: "ВМ", role: "owner", kind: "v" },
+    action: "UPDATE", severity: "medium",
+    desc: "Изменил rate limit для бизнеса biz-005",
+    target: { type: "business", id: "biz-005", label: "Краски СПб · 10 → 25 постов/день" },
+    ip: "92.118.176.42",
+  },
+  {
+    id: "evt_2026-05-16_005",
+    t: "13:00", date: "16.05.2026", rel: "2 часа назад",
+    actor: { name: "Денис К.", initials: "ДК", role: "manager", kind: "support" },
+    action: "UPDATE", severity: "high",
+    desc: "Приостановил бизнес biz-008 на 30 дней",
+    target: { type: "business", id: "biz-008", label: "Cargo Moscow · 30 дней неактивности" },
+    ip: "94.241.180.13",
+  },
+  {
+    id: "evt_2026-05-16_006",
+    t: "12:45", date: "16.05.2026", rel: "2 часа назад",
+    actor: { name: "В. Мальцев", initials: "ВМ", role: "owner", kind: "v" },
+    action: "EXPORT", severity: "critical",
+    desc: "Выгрузил персональные данные клиента (152-ФЗ запрос)",
+    target: { type: "user", id: "user-1245", label: "client@example.ru · согласие #SGL-2026-04" },
+    ip: "92.118.176.42",
+  },
+  {
+    id: "evt_2026-05-16_007",
+    t: "12:18", date: "16.05.2026", rel: "2 часа назад",
+    actor: { name: "System", initials: "SY", role: "ofd", kind: "sys" },
+    action: "CREATE", severity: "low",
+    desc: "ОФД маркировка зарегистрирована · 3 креатива",
+    target: { type: "ord", id: "erid-2H7uS9...4Kp", label: "Договор #ORD-2026-Q2 · ВКонтакте Реклама" },
+    ip: "127.0.0.1",
+  },
+  {
+    id: "evt_2026-05-16_008",
+    t: "11:50", date: "16.05.2026", rel: "3 часа назад",
+    actor: { name: "Никита Ш.", initials: "НШ", role: "support", kind: "support" },
+    action: "CREATE", severity: "low",
+    desc: "Создал ticket #2904 от пользователя",
+    target: { type: "ticket", id: "#2904", label: "MAX не доставляет ответы · biz-008" },
+    ip: "94.241.180.13",
+  },
+  {
+    id: "evt_2026-05-16_009",
+    t: "11:30", date: "16.05.2026", rel: "3 часа назад",
+    actor: { name: "В. Мальцев", initials: "ВМ", role: "owner", kind: "v" },
+    action: "LOGIN", severity: "low",
+    desc: "Вход в admin-кабинет",
+    target: { type: "session", id: "ses-a91f...c4d2", label: "TOTP подтверждён · браузер Chrome 132" },
+    ip: "92.118.176.42",
+  },
+  {
+    id: "evt_2026-05-16_010",
+    t: "11:12", date: "16.05.2026", rel: "3 часа назад",
+    actor: { name: "System", initials: "SY", role: "celery", kind: "sys" },
+    action: "UPDATE", severity: "low",
+    desc: "Обновлены прогрессивные ступени НДФЛ (с 2025 → 2026)",
+    target: { type: "config", id: "tax.ndfl.ladder", label: "5 ступеней · 13/15/18/20/22%" },
+    ip: "127.0.0.1",
+  },
+  {
+    id: "evt_2026-05-16_011",
+    t: "10:48", date: "16.05.2026", rel: "4 часа назад",
+    actor: { name: "Денис К.", initials: "ДК", role: "manager", kind: "support" },
+    action: "DELETE", severity: "critical",
+    desc: "Удалил спам-аккаунт партнёра",
+    target: { type: "partner", id: "prt-spam-0091", label: "fake_referrer@spam.com · 0 валидных переходов" },
+    ip: "94.241.180.13",
+  },
+  {
+    id: "evt_2026-05-16_012",
+    t: "10:30", date: "16.05.2026", rel: "4 часа назад",
+    actor: { name: "В. Мальцев", initials: "ВМ", role: "owner", kind: "v" },
+    action: "UPDATE", severity: "medium",
+    desc: "Изменил тариф промокода",
+    target: { type: "promo", id: "ZAPUSK", label: "скидка 30% · использован 142 раза" },
+    ip: "92.118.176.42",
+  },
+  {
+    id: "evt_2026-05-16_013",
+    t: "10:14", date: "16.05.2026", rel: "4 часа назад",
+    actor: { name: "System", initials: "SY", role: "celery", kind: "sys" },
+    action: "CREATE", severity: "low",
+    desc: "Daily backup БД создан",
+    target: { type: "backup", id: "bk-2026-05-16-03-00", label: "248 MB · /opt/aibro-smm/backups/" },
+    ip: "127.0.0.1",
+  },
+  {
+    id: "evt_2026-05-16_014",
+    t: "09:50", date: "16.05.2026", rel: "5 часов назад",
+    actor: { name: "Никита Ш.", initials: "НШ", role: "support", kind: "support" },
+    action: "UPDATE", severity: "medium",
+    desc: "Продлил триал бизнесу на 3 дня",
+    target: { type: "business", id: "biz-012", label: "Дизайн Ателье · просит дополнительное время" },
+    ip: "94.241.180.13",
+  },
+  {
+    id: "evt_2026-05-16_015",
+    t: "09:22", date: "16.05.2026", rel: "5 часов назад",
+    actor: { name: "В. Мальцев", initials: "ВМ", role: "owner", kind: "v" },
+    action: "CREATE", severity: "low",
+    desc: "Создал новую роль для команды",
+    target: { type: "role", id: "role-content-mgr", label: "Контент-менеджер · 4 прав доступа" },
+    ip: "92.118.176.42",
+  },
+  {
+    id: "evt_2026-05-16_016",
+    t: "08:48", date: "16.05.2026", rel: "6 часов назад",
+    actor: { name: "System", initials: "SY", role: "deploy", kind: "sys" },
+    action: "UPDATE", severity: "high",
+    desc: "Production deploy завершён · версия 2.4.1",
+    target: { type: "release", id: "v2.4.1", label: "23 commits · 4 фичи · 7 фиксов · git SHA 9127b56" },
+    ip: "127.0.0.1",
+  },
+  {
+    id: "evt_2026-05-16_017",
+    t: "08:30", date: "16.05.2026", rel: "6 часов назад",
+    actor: { name: "В. Мальцев", initials: "ВМ", role: "owner", kind: "v" },
+    action: "LOGIN", severity: "low",
+    desc: "Вход в admin-кабинет",
+    target: { type: "session", id: "ses-d27b...8e91", label: "TOTP подтверждён · IP whitelist OK" },
+    ip: "92.118.176.42",
+  },
+  {
+    id: "evt_2026-05-16_018",
+    t: "07:00", date: "16.05.2026", rel: "8 часов назад",
+    actor: { name: "System", initials: "SY", role: "celery", kind: "sys" },
+    action: "CREATE", severity: "low",
+    desc: "Утренний дайджест отправлен в Notion",
+    target: { type: "notion", id: "notion-digest-2026-05-16", label: "12 задач · 4 closures · 1 P0" },
+    ip: "127.0.0.1",
+  },
+  {
+    id: "evt_2026-05-16_019",
+    t: "03:00", date: "16.05.2026", rel: "12 часов назад",
+    actor: { name: "System", initials: "SY", role: "cron", kind: "sys" },
+    action: "CREATE", severity: "low",
+    desc: "Cron backup БД (root crontab)",
+    target: { type: "backup", id: "bk-2026-05-16-03-00-utc", label: "/var/log/aibro-backup.log" },
+    ip: "127.0.0.1",
+  },
+  {
+    id: "evt_2026-05-15_020",
+    t: "23:14", date: "15.05.2026", rel: "вчера",
+    actor: { name: "Денис К.", initials: "ДК", role: "manager", kind: "support" },
+    action: "EXPORT", severity: "high",
+    desc: "Выгрузил список партнёров с НДФЛ за Q1",
+    target: { type: "report", id: "rep-2026-Q1-NDFL", label: "12 строк · отправлен в бухгалтерию" },
+    ip: "94.241.180.13",
+  },
+  {
+    id: "evt_2026-05-15_021",
+    t: "22:48", date: "15.05.2026", rel: "вчера",
+    actor: { name: "В. Мальцев", initials: "ВМ", role: "owner", kind: "v" },
+    action: "DELETE", severity: "critical",
+    desc: "Удалил тестовый бизнес из песочницы",
+    target: { type: "business", id: "biz-test-001", label: "Test Pekarnya · cascade удалено 14 связей" },
+    ip: "92.118.176.42",
+  },
+  {
+    id: "evt_2026-05-15_022",
+    t: "22:00", date: "15.05.2026", rel: "вчера",
+    actor: { name: "System", initials: "SY", role: "celery", kind: "sys" },
+    action: "UPDATE", severity: "low",
+    desc: "MRR пересчитан · итог за 15.05",
+    target: { type: "metric", id: "metric-mrr-daily", label: "1 232 530 ₽ · +8,4% MoM" },
+    ip: "127.0.0.1",
+  },
+  {
+    id: "evt_2026-05-15_023",
+    t: "21:30", date: "15.05.2026", rel: "вчера",
+    actor: { name: "Никита Ш.", initials: "НШ", role: "support", kind: "support" },
+    action: "UPDATE", severity: "medium",
+    desc: "Эскалировал тикет до P0",
+    target: { type: "ticket", id: "#2903", label: "Двойное списание 4 990 ₽ · @cargo_msk" },
+    ip: "94.241.180.13",
+  },
+  {
+    id: "evt_2026-05-15_024",
+    t: "20:14", date: "15.05.2026", rel: "вчера",
+    actor: { name: "В. Мальцев", initials: "ВМ", role: "owner", kind: "v" },
+    action: "UPDATE", severity: "medium",
+    desc: "Ротация ОРД ключей API",
+    target: { type: "config", id: "ord.keys.api", label: "key-2026-05 · OФД-12345 · 90 дней TTL" },
+    ip: "92.118.176.42",
+  },
+  {
+    id: "evt_2026-05-15_025",
+    t: "19:40", date: "15.05.2026", rel: "вчера",
+    actor: { name: "В. Мальцев", initials: "ВМ", role: "owner", kind: "v" },
+    action: "EXPORT", severity: "high",
+    desc: "Сгенерировал 6-НДФЛ Q1 XML",
+    target: { type: "report", id: "6ndfl-2026-Q1.xml", label: "247 строк · отправлен в СБИС" },
+    ip: "92.118.176.42",
+  },
+];
+
+// ============================================================
+// Severity chip helper
+// ============================================================
+function sevClass(s) {
+  return `sev sev--${s}`;
+}
+function sevLabel(s) {
+  return s === "low" ? "Low" : s === "medium" ? "Medium" : s === "high" ? "High" : "Critical";
+}
+
+function actionClass(a) {
+  return `act act--${a.toLowerCase()}`;
+}
+
+// ============================================================
+// Drawer with raw JSON event
+// ============================================================
+function Drawer({ event, onClose }) {
+  if (!event) return null;
+  const json = JSON.stringify(
+    {
+      id: event.id,
+      timestamp_msk: `${event.date} ${event.t}:00`,
+      timestamp_utc: `${event.date.split(".").reverse().join("-")}T${event.t}:00.000Z`,
+      actor: event.actor,
+      action: event.action,
+      severity: event.severity,
+      description: event.desc,
+      target: event.target,
+      request: {
+        ip: event.ip,
+        user_agent: "Mozilla/5.0 (Macintosh; …) Chrome/132.0.0.0",
+        request_id: "req_" + event.id.replace(/^evt_/, ""),
+      },
+      worm: {
+        write_only: true,
+        retention_years: 5,
+        compliance: ["152-ФЗ", "115-ФЗ ст.6"],
+      },
+    },
+    null,
+    2,
+  );
+
+  return (
+    <div className="drawer-bg" onClick={onClose}>
+      <aside className="drawer" onClick={(e) => e.stopPropagation()}>
+        <div className="drawer__h">
+          <div>
+            <div className="drawer__cap">EVENT DETAILS</div>
+            <div className="drawer__id">{event.id}</div>
+          </div>
+          <button className="drawer__close" onClick={onClose} aria-label="Закрыть">×</button>
+        </div>
+        <div className="drawer__meta">
+          <div className="drawer__meta-row">
+            <span className="l">Actor:</span>
+            <span className="v"><b>{event.actor.name}</b> · {event.actor.role}</span>
+          </div>
+          <div className="drawer__meta-row">
+            <span className="l">Action:</span>
+            <span className="v"><span className={actionClass(event.action)}>{event.action}</span></span>
+          </div>
+          <div className="drawer__meta-row">
+            <span className="l">Severity:</span>
+            <span className="v"><span className={sevClass(event.severity)}>{sevLabel(event.severity)}</span></span>
+          </div>
+          <div className="drawer__meta-row">
+            <span className="l">Target:</span>
+            <span className="v mono">{event.target.type} · {event.target.id}</span>
+          </div>
+          <div className="drawer__meta-row">
+            <span className="l">IP:</span>
+            <span className="v mono">{event.ip}</span>
+          </div>
+        </div>
+        <div className="drawer__json">
+          <div className="drawer__json-cap">
+            <Icon name="file-text" />
+            <span>RAW JSON event</span>
+            <button className="btn btn--ghost" style={{ marginLeft: "auto", height: 24, fontSize: 11 }}>
+              <Icon name="icon-action-export" />Скопировать
+            </button>
+          </div>
+          <pre className="drawer__json-body">{json}</pre>
+        </div>
+        <div className="drawer__foot">
+          <Icon name="lock" />
+          <span>WORM-режим · изменение или удаление этой записи невозможно</span>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+// ============================================================
+// Timeline
+// ============================================================
+function Timeline({ onOpen }) {
+  // Group by date
+  const groups = useMemo(() => {
+    const map = new Map();
+    EVENTS.forEach((e) => {
+      if (!map.has(e.date)) map.set(e.date, []);
+      map.get(e.date).push(e);
+    });
+    return Array.from(map.entries());
+  }, []);
+
+  return (
+    <div className="card audit-card">
+      <div className="card-h">
+        <h3>Хронология событий</h3>
+        <span className="meta">{EVENTS.length} событий · сортировка: новые сверху</span>
+        <div className="right">
+          <button className="btn btn--ghost"><Icon name="icon-action-sort" />Сортировка</button>
+          <button className="btn btn--ghost"><Icon name="bar-chart" />По актору</button>
+        </div>
+      </div>
+      <div className="audit-tl">
+        {groups.map(([date, events]) => (
+          <div key={date} className="audit-tl__group">
+            <div className="audit-tl__date">
+              <Icon name="calendar" />
+              <span>{date}</span>
+              <span className="audit-tl__date-count">{events.length} событий</span>
+            </div>
+            {events.map((e) => (
+              <div key={e.id} className="audit-row">
+                <div className="audit-row__rail">
+                  <div className={`audit-row__dot audit-row__dot--${e.severity}`}></div>
+                  <div className="audit-row__line"></div>
+                </div>
+                <div className="audit-row__time" title={`${e.date} ${e.t}:00 МСК`}>
+                  <div className="audit-row__t">{e.t}</div>
+                  <div className="audit-row__rel">{e.rel}</div>
+                </div>
+                <div className={`audit-row__actor audit-row__actor--${e.actor.kind}`}>
+                  <div className="audit-row__avatar">
+                    {e.actor.kind === "sys"
+                      ? <Icon name="lock" />
+                      : e.actor.initials}
+                  </div>
+                </div>
+                <div className="audit-row__body">
+                  <div className="audit-row__top">
+                    <span className="audit-row__name">{e.actor.name}</span>
+                    <span className="audit-row__role">{e.actor.role}</span>
+                    <span className={actionClass(e.action)}>{e.action}</span>
+                    <span className={sevClass(e.severity)}>{sevLabel(e.severity)}</span>
+                  </div>
+                  <div className="audit-row__desc">{e.desc}</div>
+                  <div className="audit-row__target">
+                    <Icon name="external-link" />
+                    <span className="audit-row__target-type">{e.target.type}</span>
+                    <a href="#" className="audit-row__target-id">{e.target.id}</a>
+                    <span className="audit-row__target-sep">·</span>
+                    <span className="audit-row__target-label">{e.target.label}</span>
+                  </div>
+                </div>
+                <div className="audit-row__cta">
+                  <button className="btn btn--ghost" onClick={() => onOpen(e)}>
+                    <Icon name="file-text" />Details
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className="audit-card__foot">
+        <div className="audit-card__foot-l">
+          Показано <b>{EVENTS.length}</b> из <b>1 240</b> событий за месяц
+        </div>
+        <div className="audit-card__foot-r">
+          <button className="btn btn--secondary"><Icon name="icon-action-export" />Export selected as CSV</button>
+          <button className="btn btn--secondary"><Icon name="icon-action-download" />Export full month as JSON</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// WORM info box
+// ============================================================
+function WormInfoBox() {
+  return (
+    <div className="info-box">
+      <div className="info-box__ic">
+        <Icon name="shield-check" />
+      </div>
+      <div className="info-box__body">
+        <div className="info-box__t1">Аудит-log хранится <b>5 лет в WORM-режиме</b> (write-once-read-many)</div>
+        <div className="info-box__t2">
+          Изменение или удаление записей невозможно. Соответствует требованиям <b>152-ФЗ</b> «О персональных данных» и финансового мониторинга
+          (ст. 6 <b>115-ФЗ</b> «О противодействии легализации доходов»).
+        </div>
+      </div>
+      <div className="info-box__chips">
+        <span className="chip chip--ok"><span className="dot"></span>WORM · 5 лет</span>
+        <span className="chip chip--ord"><span className="dot"></span>152-ФЗ</span>
+        <span className="chip chip--ord"><span className="dot"></span>115-ФЗ ст.6</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// App
+// ============================================================
+function App() {
+  const [nav, setNav] = useState("audit");
+  const [period, setPeriod] = useState("Сегодня");
+  const [action, setAction] = useState("Все");
+  const [severity, setSeverity] = useState("Все");
+  const [drawer, setDrawer] = useState(null);
+
+  return (
+    <div className="shell" data-screen-label="09 Admin — Аудит log">
+      <Sidebar current={nav} onNav={setNav} />
+      <div className="workpane">
+        <TopNav />
+        <main className="main">
+          <PageHeader />
+          <KpiRow />
+          <Filters
+            period={period} onPeriod={setPeriod}
+            action={action} onAction={setAction}
+            severity={severity} onSeverity={setSeverity}
+          />
+          <Timeline onOpen={setDrawer} />
+          <WormInfoBox />
+        </main>
+      </div>
+      <Drawer event={drawer} onClose={() => setDrawer(null)} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

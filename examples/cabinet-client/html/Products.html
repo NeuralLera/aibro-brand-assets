@@ -1,0 +1,1140 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>СММ АЙБРО — Кабинет · Товары и услуги</title>
+<link rel="icon" type="image/svg+xml" href="logos/favicon-light.svg" />
+<link rel="stylesheet" href="design/tokens.css" />
+<link rel="stylesheet" href="design/atoms.css" />
+<link rel="stylesheet" href="design/dashboard.css" />
+<link rel="stylesheet" href="design/orders.css" />
+<link rel="stylesheet" href="design/products.css" />
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+/* =====================================================================
+   Icon registry — fetches SVG text, strips width/height for currentColor.
+   ===================================================================== */
+const { useState, useEffect, useMemo, useRef } = React;
+const ICON_CACHE = new Map();
+
+function loadIcon(path) {
+  if (ICON_CACHE.has(path)) return ICON_CACHE.get(path);
+  const p = fetch(path)
+    .then((r) => (r.ok ? r.text() : ""))
+    .then((txt) => {
+      const clean = txt
+        .replace(/<\?xml[^>]*\?>/, "")
+        .replace(/<!--[\s\S]*?-->/g, "")
+        .replace(/(<svg[^>]*?)\swidth="[^"]*"/, "$1")
+        .replace(/(<svg[^>]*?)\sheight="[^"]*"/, "$1");
+      ICON_CACHE.set(path, clean);
+      return clean;
+    });
+  ICON_CACHE.set(path, p);
+  return p;
+}
+function SvgIcon({ path, size = 20, style, className }) {
+  const [html, setHtml] = useState(() => {
+    const v = ICON_CACHE.get(path);
+    return typeof v === "string" ? v : "";
+  });
+  useEffect(() => {
+    let alive = true;
+    Promise.resolve(loadIcon(path)).then((txt) => { if (alive) setHtml(txt); });
+    return () => { alive = false; };
+  }, [path]);
+  const s = typeof size === "number" ? `${size}px` : size;
+  return (
+    <span
+      className={className}
+      aria-hidden="true"
+      style={{ display: "inline-flex", width: s, height: s, flexShrink: 0, ...style }}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+function Ico({ name, size = 20, style, className }) {
+  return <SvgIcon path={`assets/icons/${name}.svg`} size={size} style={style} className={className} />;
+}
+function IcoCore({ name, size = 20, style, className }) {
+  return <SvgIcon path={`assets/icons/ui-core/${name}.svg`} size={size} style={style} className={className} />;
+}
+
+/* =====================================================================
+   Sidebar (matches Bookings.html / Customers.html, current=products)
+   ===================================================================== */
+const NAV_HREFS = {
+  home: "Dashboard.html",
+  orders: "Orders.html",
+  bookings: "Bookings.html",
+  customers: "Customers.html",
+  products: "Products.html",
+  settings: "Settings.html",
+};
+const NAV_PRIMARY = [
+  { id: "home", label: "Главная", icon: "icon-nav-home" },
+  { id: "orders", label: "Заказы", icon: "icon-crm-orders", badge: 7 },
+  { id: "bookings", label: "Записи", icon: "icon-crm-bookings", badge: 3 },
+  { id: "customers", label: "Клиенты", icon: "icon-crm-customers" },
+  { id: "products", label: "Товары и услуги", icon: "icon-nav-products" },
+];
+const NAV_GROWTH = [
+  { id: "content", label: "Контент", icon: "icon-nav-content" },
+  { id: "assistant", label: "ИИ‑ассистент", icon: "spark-ai", dot: true },
+  { id: "analytics", label: "Аналитика", icon: "icon-roadmap-analytics" },
+  { id: "marketing", label: "Маркетинг", icon: "icon-nav-quick-post" },
+];
+const NAV_SETUP = [
+  { id: "tariff", label: "Подписка", icon: "icon-nav-plan" },
+  { id: "settings", label: "Настройки", icon: "icon-nav-settings" },
+];
+
+function Sidebar({ current, business }) {
+  const biz = business || { ava: "У", name: "Пекарня «Уют»", handle: "@pekarnya_uyut" };
+  return (
+    <aside className="sb" aria-label="Главная навигация">
+      <a className="sb-brand" href="#" onClick={(e) => e.preventDefault()}>
+        <span className="sb-brand-tile">
+          <img src="logos/robot-icon-light.svg" alt="" />
+        </span>
+        <span className="sb-brand-word">СММ <b>АЙБРО</b></span>
+      </a>
+      <button type="button" className="sb-biz">
+        <span className="sb-biz-ava">{biz.ava}</span>
+        <span className="sb-biz-text">
+          <span className="sb-biz-name">{biz.name}</span>
+          <span className="sb-biz-handle">{biz.handle}</span>
+        </span>
+        <svg className="sb-biz-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M7 9l5-5 5 5" /><path d="M7 15l5 5 5-5" />
+        </svg>
+      </button>
+      <NavList items={NAV_PRIMARY} current={current} />
+      <div className="sb-nav-cap">Рост</div>
+      <NavList items={NAV_GROWTH} current={current} />
+      <div className="sb-nav-cap">Настройки</div>
+      <NavList items={NAV_SETUP} current={current} />
+      <div className="sb-foot">
+        ИП Мальцев В. В. · ИНН 519041916737<br />
+        Тариф 4 990 ₽/мес · <a href="#support">Поддержка</a>
+      </div>
+    </aside>
+  );
+}
+function NavList({ items, current }) {
+  return (
+    <React.Fragment>
+      {items.map((it) => {
+        const href = NAV_HREFS[it.id];
+        const isActive = current === it.id;
+        const cls = `sb-item ${isActive ? "is-active" : ""}`;
+        const inner = (
+          <React.Fragment>
+            <Ico name={it.icon} size={18} />
+            <span className="lbl">{it.label}</span>
+            {it.badge ? <span className="badge">{it.badge}</span> : null}
+            {it.dot ? <span className="dot" /> : null}
+          </React.Fragment>
+        );
+        if (href) {
+          return <a key={it.id} className={cls} href={href} aria-current={isActive ? "page" : undefined}>{inner}</a>;
+        }
+        return <button key={it.id} type="button" className={cls}>{inner}</button>;
+      })}
+    </React.Fragment>
+  );
+}
+
+const BN_ITEMS = [
+  { id: "home", label: "Главная", icon: "icon-nav-home" },
+  { id: "orders", label: "Заказы", icon: "icon-crm-orders", badge: 7 },
+  { id: "products", label: "Товары", icon: "icon-nav-products" },
+  { id: "customers", label: "Клиенты", icon: "icon-crm-customers" },
+  { id: "more", label: "Ещё", icon: "icon-action-expand" },
+];
+function BottomNav({ current }) {
+  return (
+    <nav className="bn" aria-label="Мобильная навигация">
+      {BN_ITEMS.map((it) => (
+        <a key={it.id} className={`bn-item ${current === it.id ? "is-active" : ""}`} href={NAV_HREFS[it.id] || "#"}>
+          <Ico name={it.icon} size={22} style={{ width: 22, height: 22 }} />
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+/* =====================================================================
+   TopBar — same as Bookings/Orders/Customers
+   ===================================================================== */
+function TopBar() {
+  return (
+    <header className="topnav">
+      <button type="button" className="topnav-hamburger" aria-label="Меню">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="20" y2="17" />
+        </svg>
+      </button>
+      <div className="topnav-search">
+        <Ico name="icon-action-search" size={18} className="ico" />
+        <input type="search" placeholder="Поиск по заказам, клиентам, постам…" aria-label="Поиск" />
+        <span className="topnav-kbd">⌘ K</span>
+      </div>
+      <div className="topnav-actions">
+        <button type="button" className="icon-btn" aria-label="Помощь">
+          <IcoCore name="help-circle" size={20} style={{ width: 20, height: 20 }} />
+        </button>
+        <button type="button" className="icon-btn" aria-label="Уведомления, 4 новых">
+          <Ico name="notification-bell" size={20} style={{ width: 20, height: 20 }} />
+          <span className="badge-dot">4</span>
+        </button>
+        <button type="button" className="topnav-avatar" aria-label="Профиль">
+          <span className="ava">АМ</span>
+          <span className="who">Анна Малинина<small>Владелец</small></span>
+        </button>
+      </div>
+    </header>
+  );
+}
+
+/* =====================================================================
+   Mock data — Пекарня «Уют» (12 товаров + 4 услуги + 5 категорий)
+   ===================================================================== */
+function fmtRub(n) { return new Intl.NumberFormat("ru-RU").format(n) + " ₽"; }
+
+const CATEGORIES = [
+  { id: "all",      label: "Все категории",  count: 128, icon: "layers" },
+  { id: "cakes",    label: "Торты на заказ", count: 24,  icon: "icon-niche-bakery" },
+  { id: "pastry",   label: "Пирожные",       count: 38,  icon: "icon-niche-bakery" },
+  { id: "bread",    label: "Хлеб",           count: 22,  icon: "icon-niche-bakery" },
+  { id: "drinks",   label: "Напитки",        count: 18,  icon: "icon-niche-bakery" },
+  { id: "set",      label: "Готовые наборы", count: 16,  icon: "icon-niche-bakery" },
+  { id: "season",   label: "Сезонное",       count: 10,  icon: "icon-niche-bakery" },
+];
+
+const STATUS_OPTIONS = [
+  { id: "all",     label: "Все статусы" },
+  { id: "active",  label: "Активные" },
+  { id: "hidden",  label: "Скрытые" },
+  { id: "soon",    label: "Скоро в продаже" },
+  { id: "out",     label: "Нет в наличии" },
+];
+
+const SORT_OPTIONS = [
+  { id: "popular", label: "Сначала популярные" },
+  { id: "recent",  label: "По дате добавления" },
+  { id: "name",    label: "По названию (А → Я)" },
+  { id: "price-asc",  label: "По цене (возр.)" },
+  { id: "price-desc", label: "По цене (убыв.)" },
+];
+
+/* SVG decorative photo "tiles" — varied palette per item for visual density */
+const TILE_PALETTES = [
+  ["#fef3c7", "#f59e0b", "#92400e"], // honey
+  ["#fde2e4", "#dc2626", "#7f1d1d"], // berry
+  ["#f1e0c5", "#a16207", "#451a03"], // caramel
+  ["#fff7ed", "#ea580c", "#7c2d12"], // pumpkin
+  ["#fef9c3", "#facc15", "#854d0e"], // butter
+  ["#ecfeff", "#06b6d4", "#0e7490"], // mint
+  ["#f5f3ff", "#8b5cf6", "#4c1d95"], // lavender
+  ["#fce7f3", "#ec4899", "#831843"], // rose
+  ["#ecfdf5", "#10b981", "#065f46"], // emerald
+  ["#eff6ff", "#3b82f6", "#1e3a8a"], // blue
+  ["#fff1f2", "#f43f5e", "#881337"], // red
+  ["#f7fee7", "#65a30d", "#365314"], // olive
+];
+function MockImage({ seed, label }) {
+  const p = TILE_PALETTES[seed % TILE_PALETTES.length];
+  // Simple decorative composition — circle + arc + label initial. Pure SVG, scales with container.
+  const initial = (label || "?").trim().charAt(0).toUpperCase();
+  const gradId = `g${seed}`;
+  return (
+    <svg className="pr-mock-img" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"  stopColor={p[0]} />
+          <stop offset="100%" stopColor={p[1]} stopOpacity="0.42" />
+        </linearGradient>
+      </defs>
+      <rect width="400" height="300" fill={`url(#${gradId})`} />
+      <circle cx="320" cy="80"  r="80"  fill={p[1]} fillOpacity="0.20" />
+      <circle cx="80"  cy="240" r="100" fill={p[1]} fillOpacity="0.12" />
+      <path d="M 0 220 Q 100 160 200 200 T 400 180 L 400 300 L 0 300 Z" fill={p[1]} fillOpacity="0.22" />
+      <text x="36" y="248" fill={p[2]} fontFamily="Onest, sans-serif" fontWeight="800" fontSize="120" letterSpacing="-4">{initial}</text>
+    </svg>
+  );
+}
+
+const PRODUCTS = [
+  { id: "P-001", title: "Медовик «Классический» 1.2 кг", cat: "cakes",  catLabel: "Торты на заказ", price: 1200, oldPrice: null, status: "active", stock: 8,  unit: "шт", chips: ["ok"],            desc: "Восемь медовых коржей со сливочным кремом. Готовим за сутки.", ai: true },
+  { id: "P-002", title: "Торт «Наполеон» 1 кг",           cat: "cakes",  catLabel: "Торты на заказ", price: 950,  oldPrice: 1100, status: "active", stock: 5,  unit: "шт", chips: ["ok"],            desc: "Слоёное тесто, заварной крем, готовим в день заказа.",                                  ai: true },
+  { id: "P-003", title: "Торт «Морковный» 1 кг",          cat: "cakes",  catLabel: "Торты на заказ", price: 1400, oldPrice: null, status: "active", stock: 3,  unit: "шт", chips: ["ok"],            desc: "Морковный бисквит, крем чиз, грецкий орех. Без красителей.",                             ai: true },
+  { id: "P-004", title: "Чизкейк «Нью‑Йорк» 800 г",       cat: "cakes",  catLabel: "Торты на заказ", price: 1100, oldPrice: null, status: "active", stock: 0,  unit: "шт", chips: ["out"],           desc: "Классический чизкейк на печенье спекулос.",                                              ai: true, out: true },
+  { id: "P-005", title: "Эклеры со сливочным кремом, 6 шт", cat: "pastry", catLabel: "Пирожные",     price: 550,  oldPrice: null, status: "active", stock: 24, unit: "уп", chips: ["ok"],            desc: "Заварные эклеры, классическая глазурь.",                                                 ai: true },
+  { id: "P-006", title: "Багет ремесленный 320 г",         cat: "bread",  catLabel: "Хлеб",           price: 230,  oldPrice: null, status: "active", stock: 18, unit: "шт", chips: ["ok"],            desc: "Хрустящая корочка, длительная ферментация 18 ч.",                                        ai: true },
+  { id: "P-007", title: "Круассан с миндалём",             cat: "pastry", catLabel: "Пирожные",     price: 180,  oldPrice: null, status: "active", stock: 32, unit: "шт", chips: ["ok"],            desc: "Слоёный круассан, миндальный крем, обсыпка лепестками.",                                 ai: true },
+  { id: "P-008", title: "Хлеб бородинский 500 г",          cat: "bread",  catLabel: "Хлеб",           price: 95,   oldPrice: null, status: "active", stock: 27, unit: "шт", chips: ["ok"],            desc: "Ржаной заварной, кориандр, тёмный солод.",                                               ai: true },
+  { id: "P-009", title: "Капкейки ассорти, 6 шт",          cat: "pastry", catLabel: "Пирожные",     price: 720,  oldPrice: null, status: "active", stock: 9,  unit: "уп", chips: ["new"],           desc: "Шесть капкейков с разными начинками. Свежие ежедневно.",                                 ai: true, isNew: true },
+  { id: "P-010", title: "Пасхальный кулич 600 г",          cat: "season", catLabel: "Сезонное",     price: 480,  oldPrice: null, status: "soon",   stock: 0,  unit: "шт", chips: ["soon"],          desc: "Сезонная позиция. Старт продаж — апрель 2027.",                                          ai: false },
+  { id: "P-011", title: "Какао со специями, 0.3 л",        cat: "drinks", catLabel: "Напитки",       price: 220,  oldPrice: null, status: "hidden", stock: 14, unit: "шт", chips: ["hidden"],        desc: "Скрыт от витрины. Для дегустаций.",                                                       ai: false, hidden: true },
+  { id: "P-012", title: "Подарочный набор «К чаю»",        cat: "set",    catLabel: "Готовые наборы", price: 1850, oldPrice: 2100, status: "active", stock: 6,  unit: "уп", chips: ["ok"],            desc: "Медовик, эклеры, конфеты, фирменная упаковка.",                                          ai: true },
+];
+
+const SERVICES = [
+  { id: "S-01", title: "Доставка по СПб",           niche: "icon-niche-bakery", duration: "от 60 мин", master: "Курьер", price: 350,  unit: "за заказ",     desc: "В пределах КАД. Бесплатно при заказе от 3 000 ₽.",          booking: true },
+  { id: "S-02", title: "Самовывоз из кофейни",      niche: "icon-niche-bakery", duration: "сегодня",   master: "—",       price: 0,    unit: "бесплатно",   desc: "Невский пр., 78. Сегодня с 9:00 до 21:00.",                  booking: true },
+  { id: "S-03", title: "Кейтеринг и фуршеты",       niche: "icon-niche-bakery", duration: "от 3 дней", master: "Анна",    price: 5000, unit: "от · обсуждаем", desc: "Закрытые мероприятия 10–100 гостей. Сладкий стол, выпечка.", booking: true },
+  { id: "S-04", title: "Торт на заказ по эскизу",   niche: "icon-niche-bakery", duration: "от 5 дней", master: "Анна",    price: 2500, unit: "от · по эскизу", desc: "Индивидуальный дизайн, дегустация, согласование макета.",     booking: false },
+];
+
+const SAMPLE_CUSTOMER_NICHES = [
+  { id: "bakery",    label: "Пекарня",        icon: "icon-niche-bakery" },
+  { id: "fitness",   label: "Фитнес",         icon: "icon-niche-fitness" },
+  { id: "insurance", label: "Страхование",    icon: "icon-niche-insurance" },
+  { id: "services",  label: "Услуги",         icon: "icon-niche-services" },
+  { id: "travel",    label: "Туры",           icon: "icon-niche-travel" },
+];
+
+/* =====================================================================
+   Page header
+   ===================================================================== */
+function PrHeader() {
+  return (
+    <header className="pr-head">
+      <div>
+        <h1>Товары и услуги</h1>
+        <div className="sub">
+          <span><b>128</b> позиций</span>
+          <span className="pip"></span>
+          <span className="ai-fresh">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12l4 4L19 6" />
+            </svg>
+            ИИ обучен на каталоге
+          </span>
+          <span className="pip"></span>
+          <span>обновлено <b>14.05</b></span>
+        </div>
+      </div>
+      <div className="sub">
+        Каталог связан с MAX‑ботом · <b>@pekarnya_uyut</b>
+      </div>
+    </header>
+  );
+}
+
+/* =====================================================================
+   Status strip (4 compact KPI tiles)
+   ===================================================================== */
+function PrStrip() {
+  const tiles = [
+    {
+      ico: <Ico name="icon-nav-products" size={18} />, tone: "ok",
+      lbl: "Использовано", val: <React.Fragment>128 <small>/ 1 000</small></React.Fragment>,
+      meta: "12,8 % лимита тарифа", bar: { pct: 12.8 },
+    },
+    {
+      ico: <IcoCore name="bolt" size={18} />, tone: "ok",
+      lbl: "Активных", val: "121",
+      meta: "доступны клиентам в боте",
+    },
+    {
+      ico: <Ico name="icon-action-archive" size={18} />, tone: "warn",
+      lbl: "Скрытых", val: "7",
+      meta: "не показываются в каталоге",
+    },
+    {
+      ico: <Ico name="spark-ai" size={18} />, tone: "ai",
+      lbl: "ИИ‑обработка", val: "Актуально",
+      meta: "sync 2 часа назад · 0 ошибок",
+    },
+  ];
+  return (
+    <div className="pr-strip">
+      {tiles.map((t, i) => (
+        <div key={i} className="pr-strip-tile">
+          <span className={`ico-wrap ${t.tone}`}>{t.ico}</span>
+          <div className="body">
+            <span className="lbl">{t.lbl}</span>
+            <span className="val">{t.val}</span>
+            <span className="meta">{t.meta}</span>
+            {t.bar && (
+              <span className="bar">
+                <span className="fill" style={{ width: `${t.bar.pct}%` }}></span>
+              </span>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* =====================================================================
+   Tabs (Products / Services / Categories)
+   ===================================================================== */
+function PrTabs({ tab, setTab }) {
+  const items = [
+    { id: "products",   label: "Товары",     count: 124, icon: "icon-nav-products" },
+    { id: "services",   label: "Услуги",     count: 4,   icon: "briefcase" },
+    { id: "categories", label: "Категории",  count: 7,   icon: "layers" },
+  ];
+  return (
+    <div className="pr-tabs" role="tablist" aria-label="Разделы">
+      {items.map((t) => {
+        const isCore = t.icon === "briefcase" || t.icon === "layers";
+        const I = isCore ? IcoCore : Ico;
+        return (
+          <button
+            key={t.id}
+            type="button"
+            className={tab === t.id ? "is-on" : ""}
+            onClick={() => setTab(t.id)}
+            role="tab"
+            aria-selected={tab === t.id}
+          >
+            <I name={t.icon} size={14} />
+            {t.label}
+            <span className="count">{t.count}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* =====================================================================
+   Toolbar (filters + actions) — sticky
+   ===================================================================== */
+function PrToolbar({
+  query, setQuery, cat, setCat, status, setStatus, sort, setSort,
+  onAdd, onImport, onBulk,
+}) {
+  return (
+    <div className="pr-tools" role="toolbar" aria-label="Фильтры">
+      <div className="flt-search">
+        <Ico name="icon-action-search" size={16} className="ico" />
+        <input
+          type="search"
+          placeholder="Поиск по названию или артикулу…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label="Поиск товаров"
+        />
+      </div>
+
+      <div className="pr-select">
+        <select value={cat} onChange={(e) => setCat(e.target.value)} aria-label="Категория">
+          {CATEGORIES.map((c) => (
+            <option key={c.id} value={c.id}>{c.label}{c.id !== "all" ? ` · ${c.count}` : ""}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="pr-select">
+        <select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Статус">
+          {STATUS_OPTIONS.map((s) => (
+            <option key={s.id} value={s.id}>{s.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="pr-select">
+        <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Сортировка">
+          {SORT_OPTIONS.map((o) => (
+            <option key={o.id} value={o.id}>{o.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="pr-tools-actions">
+        <button type="button" className="cab-btn cab-btn--sm cab-btn--ghost" onClick={onBulk}>
+          <Ico name="icon-action-edit" size={14} />
+          Массовое
+        </button>
+        <button type="button" className="cab-btn cab-btn--sm cab-btn--secondary" onClick={onImport}>
+          <Ico name="icon-action-import" size={14} />
+          Импорт сайта
+        </button>
+        <button type="button" className="cab-btn cab-btn--sm cab-btn--primary" onClick={onAdd}>
+          <Ico name="icon-action-add" size={14} />
+          Добавить
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   Product card (grid)
+   ===================================================================== */
+function ProductCard({ p, idx, onEdit, onToggleHide }) {
+  const chipNode = (chip) => {
+    if (chip === "ok")     return <span key={chip} className="pr-chip pr-chip--ok">В наличии</span>;
+    if (chip === "hidden") return <span key={chip} className="pr-chip pr-chip--hidden">Скрыт</span>;
+    if (chip === "soon")   return <span key={chip} className="pr-chip pr-chip--soon">Скоро</span>;
+    if (chip === "new")    return <span key={chip} className="pr-chip pr-chip--new">Новинка</span>;
+    if (chip === "out")    return <span key={chip} className="pr-chip pr-chip--hidden">Нет в наличии</span>;
+    return null;
+  };
+  const stockCls = p.stock === 0 ? "out" : p.stock < 5 ? "warn" : "";
+  const stockText = p.stock === 0
+    ? "Нет в наличии"
+    : `${p.stock} ${p.unit}`;
+  return (
+    <article className={`pr-card ${p.hidden ? "is-hidden" : ""}`}>
+      <div className="pr-card-img">
+        <MockImage seed={idx} label={p.title} />
+        <div className="pr-card-chips">
+          {p.chips.map((c) => chipNode(c))}
+          {p.ai && <span className="pr-chip pr-chip--ai">ИИ ✓</span>}
+        </div>
+        <div className="pr-card-actions">
+          <button type="button" aria-label="Редактировать" onClick={() => onEdit(p)}>
+            <Ico name="icon-action-edit" size={14} />
+          </button>
+          <button type="button" aria-label={p.hidden ? "Показать" : "Скрыть"} onClick={() => onToggleHide(p)}>
+            <Ico name="icon-action-archive" size={14} />
+          </button>
+          <button type="button" className="danger" aria-label="Удалить">
+            <Ico name="icon-action-delete" size={14} />
+          </button>
+        </div>
+      </div>
+      <div className="pr-card-body">
+        <span className="pr-card-cat">{p.catLabel}</span>
+        <h3 className="pr-card-title">{p.title}</h3>
+        <p className="pr-card-desc">{p.desc}</p>
+        <div className="pr-card-foot">
+          <div className="pr-card-price">
+            <span className="amt">{fmtRub(p.price)}</span>
+            {p.oldPrice && <span className="old">{fmtRub(p.oldPrice)}</span>}
+          </div>
+          <span className={`pr-card-stock ${stockCls}`}>
+            <span className="dot"></span>
+            {stockText}
+          </span>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/* =====================================================================
+   Products grid
+   ===================================================================== */
+function ProductsGrid({ items, onEdit, onToggleHide }) {
+  if (items.length === 0) {
+    return (
+      <div className="pr-empty">
+        <Ico name="icon-nav-products" size={48} />
+        <h3>Ничего не нашлось</h3>
+        <p>Попробуйте сбросить фильтры или добавьте новый товар.</p>
+        <button type="button" className="cab-btn cab-btn--sm cab-btn--primary" onClick={() => onEdit(null)}>
+          <Ico name="icon-action-add" size={14} />
+          Добавить товар
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="pr-grid">
+      {items.map((p, i) => (
+        <ProductCard key={p.id} p={p} idx={i} onEdit={onEdit} onToggleHide={onToggleHide} />
+      ))}
+    </div>
+  );
+}
+
+/* =====================================================================
+   Services grid
+   ===================================================================== */
+function ServiceCard({ s, onToggle }) {
+  return (
+    <article className="pr-svc-card">
+      <div className="pr-svc-niche">
+        <Ico name={s.niche} size={30} />
+      </div>
+      <div className="pr-svc-body">
+        <h3 className="pr-svc-title">
+          {s.title}
+          {s.price === 0 && <span className="pr-chip pr-chip--ok">Бесплатно</span>}
+        </h3>
+        <div className="pr-svc-meta">
+          <span><IcoCore name="clock" size={12} style={{ verticalAlign: -2, marginRight: 4 }} /> <b>{s.duration}</b></span>
+          <span className="pip"></span>
+          <span>мастер <b>{s.master}</b></span>
+          <span className="pip"></span>
+          <span className={`pr-toggle-row ${s.booking ? "on" : ""}`}>
+            <Ico name="icon-crm-bookings" size={12} />
+            Запись {s.booking ? "включена" : "выключена"}
+          </span>
+        </div>
+        <p style={{ fontSize: 12, color: "var(--fg-3)", margin: 0, lineHeight: 1.4 }}>{s.desc}</p>
+      </div>
+      <div className="pr-svc-right">
+        <div className="price">
+          {s.price === 0 ? "0 ₽" : fmtRub(s.price)}
+          <small>{s.unit}</small>
+        </div>
+        <button
+          type="button"
+          className={`pr-toggle ${s.booking ? "on" : ""}`}
+          onClick={() => onToggle(s)}
+          aria-label="Переключить запись"
+          aria-pressed={s.booking}
+        ></button>
+      </div>
+    </article>
+  );
+}
+function ServicesGrid({ items, onToggle }) {
+  return (
+    <div className="pr-svc-grid">
+      {items.map((s) => <ServiceCard key={s.id} s={s} onToggle={onToggle} />)}
+    </div>
+  );
+}
+
+/* =====================================================================
+   Categories grid
+   ===================================================================== */
+function CategoriesGrid({ items }) {
+  return (
+    <div className="pr-cat-grid">
+      {items.filter((c) => c.id !== "all").map((c) => (
+        <article key={c.id} className="pr-cat-card">
+          <div className="pr-cat-card-h">
+            <span className="ico"><Ico name={c.icon} size={20} /></span>
+            <span className="name">{c.label}</span>
+          </div>
+          <span className="count">{c.count} <small>позиций</small></span>
+          <div className="meta">
+            <span><IcoCore name="bolt" size={12} style={{ verticalAlign: -2 }} /> {Math.round(c.count * 0.94)} активных</span>
+            <span><Ico name="tag" size={12} style={{ verticalAlign: -2 }} /> ИИ ✓</span>
+          </div>
+        </article>
+      ))}
+      <article className="pr-cat-card" style={{ borderStyle: "dashed", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--brand-700)", cursor: "pointer" }}>
+        <span className="pr-cat-card-h" style={{ flexDirection: "column" }}>
+          <span className="ico" style={{ background: "rgba(16,185,129,0.12)" }}>
+            <Ico name="icon-action-add" size={20} />
+          </span>
+          <span className="name" style={{ color: "var(--brand-700)" }}>Создать категорию</span>
+        </span>
+      </article>
+    </div>
+  );
+}
+
+/* =====================================================================
+   Import-from-site card
+   ===================================================================== */
+function ImportCard({ visible, onClose }) {
+  if (!visible) return null;
+  return (
+    <section className="pr-import" aria-label="Импорт с сайта">
+      <div>
+        <div className="pr-import-h">
+          <span className="ico"><Ico name="icon-action-import" size={20} /></span>
+          <h3>Импорт каталога с сайта</h3>
+          <span className="badge">2 из 3 в этом месяце</span>
+        </div>
+        <p className="pr-import-desc">
+          Вставьте ссылку на сайт пекарни — ИИ распознает товары, услуги и описания и предложит их к публикации.
+          Доступно <b>3 импорта в месяц</b> на тарифе. Реальная публикация — после вашего подтверждения.
+        </p>
+
+        <div className="pr-import-url">
+          <Ico name="icon-action-external-link" size={16} className="ico" />
+          <input type="url" defaultValue="https://pekarnya-uyut.ru/catalog" aria-label="URL сайта" />
+        </div>
+
+        <div className="pr-import-checks">
+          <label className="pr-check">
+            <input type="checkbox" defaultChecked />
+            <span className="box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12l4 4L19 6" />
+              </svg>
+            </span>
+            <span>Импортировать товары</span>
+          </label>
+          <label className="pr-check">
+            <input type="checkbox" defaultChecked />
+            <span className="box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12l4 4L19 6" />
+              </svg>
+            </span>
+            <span>Импортировать услуги</span>
+          </label>
+          <label className="pr-check">
+            <input type="checkbox" defaultChecked />
+            <span className="box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12l4 4L19 6" />
+              </svg>
+            </span>
+            <span>Подтянуть описания и фото</span>
+          </label>
+        </div>
+
+        <div className="pr-import-actions">
+          <button type="button" className="cab-btn cab-btn--md cab-btn--primary">
+            <Ico name="icon-action-import" size={16} />
+            Начать импорт
+          </button>
+          <button type="button" className="cab-btn cab-btn--md cab-btn--ghost" onClick={onClose}>
+            Скрыть карточку
+          </button>
+        </div>
+      </div>
+
+      <aside className="pr-import-side">
+        <h4>
+          <Ico name="spark-ai" size={14} />
+          История за месяц
+        </h4>
+        <div className="pr-import-history">
+          <div className="row"><span className="when">02.05.2026</span><b>+18 позиций</b></div>
+          <div className="row"><span className="when">21.04.2026</span><b>+24 позиции</b></div>
+          <div className="row"><span className="when">14.04.2026</span><span style={{ color: "var(--danger-700)" }}>ошибка</span></div>
+        </div>
+        <span style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 4 }}>Лимит обновится 01.06.2026</span>
+        <span className="pr-quota-bar"><span className="fill" style={{ width: "66%" }}></span></span>
+      </aside>
+    </section>
+  );
+}
+
+/* =====================================================================
+   Edit modal (Basics / Pricing / Media / Variants / Inventory / Доставка / SEO)
+   ===================================================================== */
+function EditModal({ product, onClose }) {
+  const [section, setSection] = useState("basics");
+  useEffect(() => { setSection("basics"); }, [product && product.id]);
+  if (!product) return null;
+  const isNew = product.id === "__new__";
+  const SECTIONS = [
+    { id: "basics",    label: "Основное",    icon: "tag" },
+    { id: "pricing",   label: "Цены",        icon: "price-tag-ruble" },
+    { id: "media",     label: "Медиа",       icon: "gallery" },
+    { id: "variants",  label: "Варианты",    icon: "layers" },
+    { id: "inventory", label: "Остатки",     icon: "inventory" },
+    { id: "delivery",  label: "Доставка",    icon: "icon-crm-delivery" },
+    { id: "seo",       label: "SEO и бот",   icon: "spark-ai" },
+  ];
+  return (
+    <div className="pr-modal-back" role="dialog" aria-modal="true" aria-labelledby="pr-edit-title" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="pr-modal">
+        <div className="pr-modal-h">
+          <div className="title" id="pr-edit-title">
+            {isNew ? "Новый товар" : product.title}
+            <small>{isNew ? "Заполните карточку и нажмите «Сохранить»" : `${product.id} · последнее изменение 12.05.2026`}</small>
+          </div>
+          <button type="button" className="pr-modal-close" onClick={onClose} aria-label="Закрыть">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="pr-modal-body">
+          <nav className="pr-modal-nav" aria-label="Разделы карточки">
+            {SECTIONS.map((s) => {
+              const isCore = s.icon === "layers" || s.icon === "image";
+              const I = isCore ? IcoCore : Ico;
+              return (
+                <button key={s.id} type="button" className={section === s.id ? "is-on" : ""} onClick={() => setSection(s.id)}>
+                  <I name={s.icon} size={14} />
+                  {s.label}
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="pr-modal-pane">
+            {section === "basics" && (
+              <React.Fragment>
+                <div className="pr-modal-section">
+                  <h4>Название и категория</h4>
+                  <div className="pr-field">
+                    <label>Название товара</label>
+                    <input type="text" defaultValue={isNew ? "" : product.title} placeholder="Например: Медовик «Классический» 1.2 кг" />
+                    <span className="help">Видно клиентам в боте. До 80 символов.</span>
+                  </div>
+                  <div className="pr-field-row">
+                    <div className="pr-field">
+                      <label>Категория</label>
+                      <select defaultValue={isNew ? "cakes" : product.cat}>
+                        {CATEGORIES.filter((c) => c.id !== "all").map((c) => (
+                          <option key={c.id} value={c.id}>{c.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="pr-field">
+                      <label>Артикул (SKU)</label>
+                      <input type="text" defaultValue={isNew ? "" : product.id} placeholder="P‑XXX" />
+                    </div>
+                  </div>
+                  <div className="pr-field">
+                    <label>Описание для клиента</label>
+                    <textarea defaultValue={isNew ? "" : product.desc} placeholder="Короткое описание — используется в карточке и боте."></textarea>
+                  </div>
+                </div>
+                <div className="pr-modal-section">
+                  <h4>Статус публикации</h4>
+                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                    {[
+                      { id: "active", lbl: "Активен" },
+                      { id: "hidden", lbl: "Скрыт" },
+                      { id: "soon",   lbl: "Скоро" },
+                    ].map((s) => (
+                      <label key={s.id} className="pr-check" style={{ padding: "8px 14px", border: "1px solid var(--border-2)", borderRadius: 10 }}>
+                        <input type="radio" name="status" defaultChecked={(isNew ? "active" : product.status) === s.id} />
+                        <span className="box" style={{ borderRadius: 999 }}>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M5 12l4 4L19 6" />
+                          </svg>
+                        </span>
+                        <span>{s.lbl}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </React.Fragment>
+            )}
+
+            {section === "pricing" && (
+              <div className="pr-modal-section">
+                <h4>Цена и скидки</h4>
+                <div className="pr-field-row">
+                  <div className="pr-field">
+                    <label>Цена, ₽</label>
+                    <input type="number" defaultValue={isNew ? 0 : product.price} />
+                  </div>
+                  <div className="pr-field">
+                    <label>Старая цена, ₽ <span style={{ fontWeight: 400, color: "var(--fg-3)" }}>(перечёркнутая)</span></label>
+                    <input type="number" defaultValue={isNew ? "" : (product.oldPrice || "")} placeholder="—" />
+                  </div>
+                </div>
+                <div className="pr-field-row">
+                  <div className="pr-field">
+                    <label>Единица</label>
+                    <select defaultValue={isNew ? "шт" : product.unit}>
+                      <option>шт</option>
+                      <option>уп</option>
+                      <option>кг</option>
+                      <option>л</option>
+                    </select>
+                  </div>
+                  <div className="pr-field">
+                    <label>Минимальный заказ</label>
+                    <input type="number" defaultValue="1" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {section === "media" && (
+              <div className="pr-modal-section">
+                <h4>Фотографии и видео</h4>
+                <div className="pr-drop">
+                  <IcoCore name="file" size={28} />
+                  <div>Перетащите файлы сюда или <b>выберите вручную</b></div>
+                  <div className="help" style={{ marginTop: 6 }}>До 8 изображений, JPG/PNG/WebP, до 5 МБ каждое. Первое — обложка.</div>
+                </div>
+                <div style={{ marginTop: 14, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} style={{ aspectRatio: "1 / 1", borderRadius: 10, overflow: "hidden", border: "1px solid var(--border-2)" }}>
+                      <MockImage seed={i + 5} label={product.title} />
+                    </div>
+                  ))}
+                  <button type="button" style={{ aspectRatio: "1 / 1", borderRadius: 10, border: "1px dashed var(--border-3)", background: "var(--bg-subtle)", color: "var(--fg-3)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                    <Ico name="icon-action-add" size={20} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {section === "variants" && (
+              <div className="pr-modal-section">
+                <h4>Варианты</h4>
+                <p style={{ fontSize: 13, color: "var(--fg-3)", margin: "0 0 12px" }}>
+                  Размеры, вкусы, наполнители — каждая комбинация с отдельным артикулом и ценой.
+                </p>
+                <div style={{ background: "var(--bg-subtle)", borderRadius: 10, padding: 14, border: "1px dashed var(--border-2)" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: 10, fontSize: 12, color: "var(--fg-3)", marginBottom: 6, fontFamily: "var(--font-display)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    <span>Название</span><span>Цена</span><span>Артикул</span><span></span>
+                  </div>
+                  {[
+                    { n: "0.8 кг", p: 950,  sku: "P-001-S" },
+                    { n: "1.2 кг", p: 1200, sku: "P-001-M" },
+                    { n: "2.0 кг", p: 1850, sku: "P-001-L" },
+                  ].map((v, i) => (
+                    <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: 10, alignItems: "center", padding: "6px 0", borderTop: i ? "1px solid var(--divider)" : 0 }}>
+                      <input type="text" defaultValue={v.n} style={{ height: 32, padding: "0 10px", borderRadius: 6, border: "1px solid var(--border-2)", fontSize: 13 }} />
+                      <input type="number" defaultValue={v.p} style={{ height: 32, padding: "0 10px", borderRadius: 6, border: "1px solid var(--border-2)", fontSize: 13 }} />
+                      <input type="text" defaultValue={v.sku} style={{ height: 32, padding: "0 10px", borderRadius: 6, border: "1px solid var(--border-2)", fontSize: 13, fontFamily: "var(--font-mono)" }} />
+                      <button type="button" className="pr-modal-close" aria-label="Удалить вариант">
+                        <Ico name="icon-action-delete" size={14} />
+                      </button>
+                    </div>
+                  ))}
+                  <button type="button" className="cab-btn cab-btn--sm cab-btn--ghost" style={{ marginTop: 10 }}>
+                    <Ico name="icon-action-add" size={14} />
+                    Добавить вариант
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {section === "inventory" && (
+              <div className="pr-modal-section">
+                <h4>Остатки на складе</h4>
+                <div className="pr-field-row">
+                  <div className="pr-field">
+                    <label>В наличии, шт.</label>
+                    <input type="number" defaultValue={isNew ? 0 : product.stock} />
+                  </div>
+                  <div className="pr-field">
+                    <label>Порог «мало»</label>
+                    <input type="number" defaultValue="5" />
+                    <span className="help">Будем напоминать, когда останется меньше.</span>
+                  </div>
+                </div>
+                <label className="pr-check" style={{ marginTop: 4 }}>
+                  <input type="checkbox" defaultChecked />
+                  <span className="box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12l4 4L19 6" />
+                    </svg>
+                  </span>
+                  <span>Показывать «Нет в наличии», когда остаток = 0</span>
+                </label>
+              </div>
+            )}
+
+            {section === "delivery" && (
+              <div className="pr-modal-section">
+                <h4>Доставка и самовывоз</h4>
+                <div className="pr-field-row">
+                  <div className="pr-field">
+                    <label>Время сборки</label>
+                    <select defaultValue="60">
+                      <option value="30">30 минут</option>
+                      <option value="60">1 час</option>
+                      <option value="120">2 часа</option>
+                      <option value="1440">1 день</option>
+                    </select>
+                  </div>
+                  <div className="pr-field">
+                    <label>Вес для расчёта доставки, г</label>
+                    <input type="number" defaultValue="1200" />
+                  </div>
+                </div>
+                <label className="pr-check" style={{ marginRight: 18 }}>
+                  <input type="checkbox" defaultChecked />
+                  <span className="box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12l4 4L19 6" />
+                    </svg>
+                  </span>
+                  <span>Доступен курьером</span>
+                </label>
+                <label className="pr-check">
+                  <input type="checkbox" defaultChecked />
+                  <span className="box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12l4 4L19 6" />
+                    </svg>
+                  </span>
+                  <span>Доступен самовывоз</span>
+                </label>
+              </div>
+            )}
+
+            {section === "seo" && (
+              <React.Fragment>
+                <div className="pr-modal-section">
+                  <h4>Поведение в боте</h4>
+                  <div className="pr-field">
+                    <label>Ключевые слова (через запятую)</label>
+                    <input type="text" defaultValue="медовик, торт медовый, медовый торт, к чаю" />
+                    <span className="help">ИИ будет предлагать товар, когда клиент пишет похожие слова.</span>
+                  </div>
+                </div>
+                <div className="pr-modal-section">
+                  <h4>SEO для каталога</h4>
+                  <div className="pr-field">
+                    <label>Title</label>
+                    <input type="text" defaultValue={isNew ? "" : `${product.title} — Пекарня «Уют»`} />
+                  </div>
+                  <div className="pr-field">
+                    <label>Description</label>
+                    <textarea defaultValue={isNew ? "" : `${product.desc} Доставка по СПб. Цена ${fmtRub(product.price)}.`}></textarea>
+                  </div>
+                </div>
+              </React.Fragment>
+            )}
+          </div>
+        </div>
+
+        <div className="pr-modal-foot">
+          <div className="left">
+            <span className="dot"></span>
+            Авто‑сохранение черновика · последнее обновление только что
+          </div>
+          <div className="right">
+            <button type="button" className="cab-btn cab-btn--sm cab-btn--ghost" onClick={onClose}>Отмена</button>
+            <button type="button" className="cab-btn cab-btn--sm cab-btn--secondary">Сохранить как черновик</button>
+            <button type="button" className="cab-btn cab-btn--sm cab-btn--primary">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12l4 4L19 6" />
+              </svg>
+              {isNew ? "Опубликовать" : "Сохранить"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   Bulk-selection mock bar
+   ===================================================================== */
+function BulkBar({ visible, onClose }) {
+  if (!visible) return null;
+  return (
+    <div className="pr-bulk" role="status" aria-live="polite">
+      <span className="count">
+        3 выбрано
+        <small>из 124 товаров</small>
+      </span>
+      <div className="pr-bulk-actions">
+        <button type="button" className="b"><Ico name="icon-action-edit" size={12} /> Изменить</button>
+        <button type="button" className="b"><Ico name="tag" size={12} /> Цена</button>
+        <button type="button" className="b"><Ico name="icon-action-archive" size={12} /> Скрыть</button>
+        <button type="button" className="b"><Ico name="icon-action-export" size={12} /> Экспорт CSV</button>
+        <button type="button" className="b danger"><Ico name="icon-action-delete" size={12} /> Удалить</button>
+        <button type="button" className="b" onClick={onClose}>
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+          Сбросить
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   App root
+   ===================================================================== */
+function ProductsApp() {
+  const [tab, setTab] = useState("products");
+  const [query, setQuery] = useState("");
+  const [cat, setCat] = useState("all");
+  const [status, setStatus] = useState("all");
+  const [sort, setSort] = useState("popular");
+  const [edit, setEdit] = useState(null);
+  const [importOpen, setImportOpen] = useState(true);
+  const [bulkOn, setBulkOn] = useState(false);
+  const [services, setServices] = useState(SERVICES);
+
+  const filteredProducts = useMemo(() => {
+    let list = PRODUCTS.slice();
+    if (cat !== "all") list = list.filter((p) => p.cat === cat);
+    if (status !== "all") list = list.filter((p) => p.status === status);
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      list = list.filter((p) => `${p.title} ${p.id} ${p.catLabel}`.toLowerCase().includes(q));
+    }
+    if (sort === "name") list.sort((a, b) => a.title.localeCompare(b.title, "ru"));
+    if (sort === "price-asc")  list.sort((a, b) => a.price - b.price);
+    if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
+    return list;
+  }, [query, cat, status, sort]);
+
+  const handleEdit = (p) => setEdit(p || { id: "__new__", title: "Новый товар", cat: "cakes", catLabel: "Торты на заказ", price: 0, oldPrice: null, status: "active", stock: 0, unit: "шт", chips: ["ok"], desc: "", ai: false });
+  const handleToggleHide = (p) => alert(`«${p.title}» — заглушка переключения статуса`);
+  const handleToggleService = (s) => {
+    setServices((prev) => prev.map((x) => x.id === s.id ? { ...x, booking: !x.booking } : x));
+  };
+
+  const business = { ava: "У", name: "Пекарня «Уют»", handle: "@pekarnya_uyut" };
+
+  return (
+    <div className="dash" data-screen-label="05 Cabinet — Товары и услуги">
+      <Sidebar current="products" business={business} />
+      <div className="work">
+        <TopBar />
+        <main className="pane">
+          <PrHeader />
+          <PrStrip />
+          <PrTabs tab={tab} setTab={setTab} />
+
+          {tab === "products" && (
+            <React.Fragment>
+              <PrToolbar
+                query={query} setQuery={setQuery}
+                cat={cat} setCat={setCat}
+                status={status} setStatus={setStatus}
+                sort={sort} setSort={setSort}
+                onAdd={() => handleEdit(null)}
+                onImport={() => setImportOpen(true)}
+                onBulk={() => setBulkOn((v) => !v)}
+              />
+              <ImportCard visible={importOpen} onClose={() => setImportOpen(false)} />
+              <ProductsGrid items={filteredProducts} onEdit={handleEdit} onToggleHide={handleToggleHide} />
+              <BulkBar visible={bulkOn} onClose={() => setBulkOn(false)} />
+            </React.Fragment>
+          )}
+
+          {tab === "services" && (
+            <React.Fragment>
+              <PrToolbar
+                query={query} setQuery={setQuery}
+                cat={cat} setCat={setCat}
+                status={status} setStatus={setStatus}
+                sort={sort} setSort={setSort}
+                onAdd={() => handleEdit(null)}
+                onImport={() => setImportOpen(true)}
+                onBulk={() => setBulkOn((v) => !v)}
+              />
+              <ServicesGrid items={services} onToggle={handleToggleService} />
+            </React.Fragment>
+          )}
+
+          {tab === "categories" && (
+            <React.Fragment>
+              <CategoriesGrid items={CATEGORIES} />
+            </React.Fragment>
+          )}
+        </main>
+      </div>
+
+      <EditModal product={edit} onClose={() => setEdit(null)} />
+      <BottomNav current="products" />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<ProductsApp />);
+</script>
+</body>
+</html>

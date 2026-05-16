@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Партнёрский кабинет — Промо-материалы</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/colors_and_type.css">
+  <link rel="stylesheet" href="design/partners-dashboard.css">
+  <link rel="stylesheet" href="design/partners-earnings.css">
+  <link rel="stylesheet" href="design/partners-referrals.css">
+  <link rel="stylesheet" href="design/partners-materials.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useEffect, useRef } = React;
+const ICO = "design/assets/icons/";
+
+function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+/* ---------- nav config (same as other partner pages) ---------- */
+const NAV_MAIN = [
+  { id: "home",      label: "Главная",   icon: "icon-nav-home",      href: "Partners Dashboard.html" },
+  { id: "referrals", label: "Рефералы",  icon: "icon-nav-team",      badge: 47, href: "Partners Referrals.html" },
+  { id: "income",    label: "Доход",     icon: "icon-nav-finance",   href: "Partners Earnings.html" },
+  { id: "payouts",   label: "Выплаты",   icon: "shield-check",       href: "Partners Payouts.html" },
+  { id: "materials", label: "Материалы", icon: "icon-nav-documents", href: "Partners Materials.html" },
+];
+const NAV_FOOT = [
+  { id: "settings", label: "Настройки", icon: "icon-nav-settings", href: "Partners Settings.html" },
+  { id: "help",     label: "Поддержка", icon: "icon-nav-help" },
+];
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+function Sidebar({ current }) {
+  return (
+    <aside className="pd-side" aria-label="Главная навигация">
+      <a className="pd-brand" href="Partners Dashboard.html">
+        <span className="pd-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+        <span>
+          <span className="pd-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="pd-brand-meta">Партнёры</div>
+        </span>
+      </a>
+
+      <div className="pd-biz">
+        <div className="pd-biz-ava">И</div>
+        <div>
+          <div className="pd-biz-name">Иван Петров</div>
+          <div className="pd-biz-handle">@ivan‑petrov · ФЛ</div>
+        </div>
+        <div className="pd-biz-pill">L2</div>
+      </div>
+
+      {NAV_MAIN.map((it) => {
+        const cls = `pd-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="pd-nav-caption">Аккаунт</div>
+      {NAV_FOOT.map((it) => {
+        const cls = `pd-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="pd-side-foot">
+        ИП Мальцев · единый тариф <b style={{color:"var(--fg-2)",fontWeight:600}}>4 990 ₽/мес</b><br/>
+        Партнёрская программа · <a href="#terms">правила</a>
+      </div>
+    </aside>
+  );
+}
+
+function TopBar({ onBurger }) {
+  return (
+    <header className="pd-top">
+      <button className="pd-burger" aria-label="Меню" onClick={onBurger}><span></span></button>
+      <div>
+        <div className="crumb">Партнёры / Материалы</div>
+        <h1>Промо-материалы для партнёров</h1>
+      </div>
+      <div className="pd-top-actions">
+        <button className="pd-iconbtn" aria-label="Уведомления">
+          <Ic name="icon-nav-notifications" size={20} />
+          <span className="dot"></span>
+        </button>
+        <div className="pd-profile" tabIndex="0">
+          <div className="ava">И</div>
+          <div className="meta">
+            <span className="name">Иван П.</span>
+            <span className="role">Партнёр · L2</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ============================================================
+   DATA
+============================================================ */
+const REF_LINK = "https://smmaibro.ru/?ref=ivan-petrov";
+
+const POST_TEMPLATES = [
+  {
+    id: "tpl-1",
+    title: "Короткий пост-приглашение",
+    badge: "≈ 90 символов",
+    text: "ИИ-ассистент в MAX за 4 990 ₽/мес. Триал 5 дней — без карты. Подключайтесь по моей ссылке: {ref}",
+    audience: "Личный чат, короткие посты, сторис",
+  },
+  {
+    id: "tpl-2",
+    title: "Средний пост со списком функций",
+    badge: "≈ 280 символов",
+    text: "Запустил у себя СММ АЙБРО — ИИ-помощник для бизнеса в MAX.\n\nЧто умеет:\n• Отвечает клиентам в чате 24/7\n• Принимает заказы и записи на услуги\n• Сам пишет посты и ведёт канал\n• Ведёт мини-CRM по клиентам\n\nТариф один — 4 990 ₽/мес. Триал 5 дней.\n{ref}",
+    audience: "Канал, лента, нишевые чаты",
+  },
+  {
+    id: "tpl-3",
+    title: "Длинный пост-история кейса",
+    badge: "≈ 540 символов",
+    text: "Пекарня «Уют» из СПб попробовала СММ АЙБРО месяц назад — рассказываю, что получилось.\n\nДо: один админ отвечал в MAX, заказы записывали в блокнот, посты выходили раз в неделю.\n\nПосле:\n→ ИИ отвечает за 3 секунды, даже ночью\n→ Заказы падают в кабинет, владелица получает пуш в MAX\n→ 5 постов в неделю — генерирует ИИ, она только согласовывает\n→ Клиенты в мини-CRM с историей заказов\n\nТариф 4 990 ₽/мес, всё включено. Триал 5 дней — без карты.\n\nЕсли у вас бизнес в MAX — попробуйте: {ref}",
+    audience: "Длинные посты, рассказ-кейс",
+  },
+  {
+    id: "tpl-4",
+    title: "Пост для канала с подписчиками-бизнесами",
+    badge: "≈ 320 символов",
+    text: "Коллеги, делюсь рабочим инструментом — СММ АЙБРО.\n\nЭто ИИ-ассистент в MAX, который заменяет администратора: отвечает клиентам, принимает заказы, ведёт канал, держит мини-CRM. Всё в одном месте.\n\nТариф 4 990 ₽/мес — один, без аддонов. Триал 5 дней.\n\nПробуйте: {ref}",
+    audience: "B2B-канал, профессиональное сообщество",
+  },
+  {
+    id: "tpl-5",
+    title: "Пост для коллег-сммщиков",
+    badge: "≈ 380 символов",
+    text: "Сммщики, держите тулзу — СММ АЙБРО.\n\nЯ перевёл сюда трёх клиентов в MAX и теперь не вожусь с контент-планом руками: ИИ генерирует посты по бренду, отвечает в чате на ЧЗВ, принимает заказы. Я только проверяю и подгоняю.\n\nПо партнёрке: за каждого клиента получаю 10% от его подписки lifetime + 10% с приглашённых им. У вас тоже сработает.\n\nЛинк: {ref}",
+    audience: "Профессиональный SMM-чат",
+  },
+  {
+    id: "tpl-6",
+    title: "Пост-сравнение с конкурентами",
+    badge: "≈ 460 символов",
+    text: "Сравнил три ИИ-сервиса для бизнеса в MAX — оставил СММ АЙБРО.\n\nПочему:\n→ Один тариф 4 990 ₽/мес — без аддонов и доплат за каждую фичу\n→ Внутри MAX, не через бот-обёртки\n→ Принимает заказы и записи на услуги (мини-CRM встроена)\n→ Голосовые сообщения и ИИ-коуч в подписке\n→ Триал 5 дней без карты — реально посмотреть, а не на демо\n\nЕсли выбираете для своего бизнеса — посмотрите: {ref}",
+    audience: "Обзоры, отзывы, личный опыт",
+  },
+];
+
+const BANNERS = [
+  { id: "ban-1", name: "Квадрат для ленты",     size: "1080 × 1080", note: "Instagram-style, posts in MAX",   tile: "g1" },
+  { id: "ban-2", name: "Горизонтальный 1.91:1", size: "1200 × 628",  note: "Превью для ссылок, OpenGraph",    tile: "g2" },
+  { id: "ban-3", name: "Сториз вертикальная",   size: "1080 × 1920", note: "Stories, Reels-обложка",          tile: "g3" },
+  { id: "ban-4", name: "Email / web",           size: "800 × 600",   note: "Шапка в письме, web-баннер",      tile: "g4" },
+];
+
+const VIDEOS = [
+  { id: "vid-1", title: "Что такое СММ АЙБРО",                  duration: "2:30", note: "Обзор для новичка — что это и кому подходит",          tile: "v1" },
+  { id: "vid-2", title: "Как подключить MAX-канал",             duration: "3:45", note: "Пошаговая инструкция: канал → бот → автоответы",       tile: "v2" },
+  { id: "vid-3", title: "Кейс: пекарня «Уют» — 2× рост заказов", duration: "4:15", note: "Реальный кейс с цифрами и скринкастами",               tile: "v3" },
+  { id: "vid-4", title: "Партнёрка: как заработать 10% + 10%",  duration: "3:00", note: "Условия программы, lifetime, налоговые статусы",       tile: "v4" },
+];
+
+const DECKS = [
+  { id: "deck-1", title: "Pitch deck СММ АЙБРО для бизнеса", slides: 15, formats: "PDF · PPTX", note: "Для холодных встреч и презентации владельцу бизнеса", tile: "d1" },
+  { id: "deck-2", title: "Сравнение тарифов и фич",           slides: 8,  formats: "PDF · PPTX", note: "Краткое сравнение с конкурентами в нише",            tile: "d2" },
+  { id: "deck-3", title: "Партнёрская программа целиком",     slides: 10, formats: "PDF · PPTX", note: "Для рекрутинга L2-партнёров под себя",               tile: "d3" },
+];
+
+const TIPS = [
+  { ico: "calendar-clock",  title: "Публикуйте регулярно",          body: "Один пост в неделю — нижняя граница. Партнёры с двумя постами/неделю растут вдвое быстрее." },
+  { ico: "icon-nav-team",   title: "Делайте кейсы клиентов",        body: "Скриншоты «до / после», цифры заказов, отзывы владельцев. Это работает лучше любых баннеров." },
+  { ico: "message-circle",  title: "Отвечайте в комментариях",      body: "Каждый ответ — это касание. Отвечайте на возражения с конкретикой, а не штампами." },
+  { ico: "icon-action-share-link", title: "Используйте сокращалку", body: "Через clck.ru ссылка короче и красивее в посте, и видно клики по сокращалке." },
+  { ico: "megaphone",       title: "Тестируйте форматы",            body: "Один текст не зайдёт всем. Ротируйте: короткий / длинный / кейс / сравнение — следите за регистрациями." },
+];
+
+/* ============================================================
+   SHARE BLOCK (large emerald hero — adapted from referrals)
+============================================================ */
+function ShareBlock({ onToast }) {
+  const inputRef = useRef(null);
+
+  function copyLink() {
+    if (inputRef.current) {
+      inputRef.current.select();
+      try {
+        navigator.clipboard.writeText(REF_LINK);
+        onToast && onToast("Ссылка скопирована");
+      } catch (e) {
+        document.execCommand("copy");
+        onToast && onToast("Ссылка скопирована");
+      }
+    }
+  }
+
+  return (
+    <section className="ref-share">
+      <div className="ref-share-side">
+        <div className="ref-share-eyebrow">
+          <Ic name="referral-link" size={14} />
+          <span>Ваша реферальная ссылка</span>
+        </div>
+        <h3 className="ref-share-h">
+          Используйте материалы — <span style={{color:"var(--brand-700)"}}>зарабатывайте на рефералах</span>
+        </h3>
+        <p className="ref-share-sub">
+          Все шаблоны и баннеры уже содержат вашу ссылку. Подставьте её там, где есть плейсхолдер <b>{`{ref}`}</b>, или используйте кнопку «Скопировать с ссылкой» в каждом материале.
+        </p>
+
+        <div className="ref-share-row">
+          <input
+            ref={inputRef}
+            type="text"
+            readOnly
+            value={REF_LINK}
+            className="ref-share-input"
+            aria-label="Ваша реферальная ссылка"
+            onFocus={(e) => e.target.select()}
+          />
+          <button className="ref-btn-primary" onClick={copyLink}>
+            <Ic name="icon-action-copy" size={16} style={{filter:"brightness(0) invert(1)"}} />
+            <span>Скопировать</span>
+          </button>
+          <button className="ref-btn-secondary" type="button" onClick={() => onToast("QR-код сгенерирован — откроется в новой вкладке")}>
+            <Ic name="icon-status-info" size={16} />
+            <span>QR-код</span>
+          </button>
+          <button className="ref-btn-ghost" type="button" onClick={() => onToast("Ссылка сокращена через clck.ru")}>
+            <Ic name="icon-action-external-link" size={16} />
+            <span>Сократить (clck.ru)</span>
+          </button>
+        </div>
+
+        <div className="ref-share-stats">
+          <div className="ref-share-stat">
+            <span className="num">42</span>
+            <span className="lbl">перехода · 30 дней</span>
+          </div>
+          <span className="ref-share-sep">·</span>
+          <div className="ref-share-stat">
+            <span className="num">5</span>
+            <span className="lbl">регистраций</span>
+          </div>
+          <span className="ref-share-sep">·</span>
+          <div className="ref-share-stat">
+            <span className="num"><span style={{color:"var(--brand-700)"}}>3</span></span>
+            <span className="lbl">оплатили</span>
+          </div>
+          <span className="ref-share-cvr">Конверсия в платящих <b>7,1 %</b></span>
+        </div>
+      </div>
+
+      <div className="ref-share-art" aria-hidden="true">
+        <div className="ref-share-art-orb">
+          <Ic name="megaphone" size={42} />
+        </div>
+        <div className="ref-share-art-chip ref-share-art-chip-1">тексты · 6</div>
+        <div className="ref-share-art-chip ref-share-art-chip-2">баннеры · 4</div>
+        <div className="ref-share-art-chip ref-share-art-chip-3">видео + презы</div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   TABS
+============================================================ */
+const TABS = [
+  { id: "posts",    label: "Тексты для постов",   icon: "file-text", count: POST_TEMPLATES.length },
+  { id: "banners",  label: "Баннеры",             icon: "image",     count: BANNERS.length },
+  { id: "videos",   label: "Видео",               icon: "post",      count: VIDEOS.length },
+  { id: "decks",    label: "Презентации",         icon: "gallery",   count: DECKS.length },
+];
+
+function TabBar({ tab, setTab }) {
+  return (
+    <div className="mt-tabs" role="tablist" aria-label="Категории материалов">
+      {TABS.map((t) => (
+        <button
+          key={t.id}
+          role="tab"
+          aria-selected={tab === t.id}
+          className={`mt-tab ${tab === t.id ? "active" : ""}`}
+          onClick={() => setTab(t.id)}
+        >
+          <span className="mt-tab-ico"><Ic name={t.icon} size={18} /></span>
+          <span className="mt-tab-lbl">{t.label}</span>
+          <span className="mt-tab-count">{t.count}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   TAB 1 — Text templates
+============================================================ */
+function TextTemplates({ onToast }) {
+  function copyText(t) {
+    const body = t.text.replace(/\{ref\}/g, REF_LINK);
+    try {
+      navigator.clipboard.writeText(body);
+      onToast(`Скопировано: «${t.title}»`);
+    } catch (e) {
+      onToast("Не удалось скопировать — попробуйте ещё раз");
+    }
+  }
+
+  return (
+    <div className="mt-posts">
+      {POST_TEMPLATES.map((t) => {
+        const preview = t.text.replace(/\{ref\}/g, "smmaibro.ru/?ref=ivan-petrov");
+        return (
+          <article key={t.id} className="mt-post">
+            <div className="mt-post-h">
+              <div>
+                <h4>{t.title}</h4>
+                <div className="mt-post-meta">
+                  <span className="mt-post-len">{t.badge}</span>
+                  <span className="mt-post-aud">{t.audience}</span>
+                </div>
+              </div>
+              <button className="mt-post-copy" onClick={() => copyText(t)} aria-label={`Скопировать «${t.title}»`}>
+                <Ic name="icon-action-copy" size={14} />
+                <span>Скопировать с ссылкой</span>
+              </button>
+            </div>
+            <pre className="mt-post-body">{preview}</pre>
+            <div className="mt-post-foot">
+              <span className="mt-post-tip">Переменная <code>{`{ref}`}</code> автоматически подставит вашу ссылку при копировании.</span>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ============================================================
+   TAB 2 — Banners
+============================================================ */
+function Banners({ onToast }) {
+  const [signature, setSignature] = useState("Иван Петров · @ivan‑petrov");
+  return (
+    <div className="mt-banners-wrap">
+      <div className="mt-grid mt-grid-3">
+        {BANNERS.map((b) => (
+          <article key={b.id} className={`mt-card mt-banner-card mt-tile-${b.tile}`}>
+            <div className="mt-thumb mt-thumb-banner" aria-hidden="true">
+              <div className="mt-thumb-overlay">
+                <div className="mt-thumb-brand">
+                  <span>СММ</span>
+                  <span className="brand">АЙБРО</span>
+                </div>
+                <div className="mt-thumb-tagline">ИИ-ассистент в MAX · 4 990 ₽/мес</div>
+                {signature && (
+                  <div className="mt-thumb-sign">{signature}</div>
+                )}
+              </div>
+            </div>
+            <div className="mt-card-body">
+              <h4>{b.name}</h4>
+              <div className="mt-card-meta">
+                <span className="mt-chip mt-chip-size">{b.size}</span>
+                <span className="mt-card-note">{b.note}</span>
+              </div>
+            </div>
+            <div className="mt-card-foot">
+              <button className="mt-btn-secondary" onClick={() => onToast(`Скачиваем PNG: ${b.name}`)}>
+                <Ic name="icon-action-download" size={14} />
+                <span>PNG</span>
+              </button>
+              <button className="mt-btn-ghost" onClick={() => onToast(`Скачиваем SVG: ${b.name}`)}>
+                <Ic name="icon-action-download" size={14} />
+                <span>SVG</span>
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="mt-custom">
+        <div className="mt-custom-ico"><Ic name="icon-action-edit" size={20} /></div>
+        <div className="mt-custom-body">
+          <h4>Добавить вашу подпись на баннер</h4>
+          <p>Подпись появится в правом нижнем углу всех экспортов. Поддерживает имя, @handle, телефон.</p>
+          <div className="mt-custom-row">
+            <input
+              className="mt-input"
+              type="text"
+              value={signature}
+              onChange={(e) => setSignature(e.target.value)}
+              placeholder="Иван Петров · @ivan-petrov"
+              maxLength={60}
+            />
+            <button className="ref-btn-primary" onClick={() => onToast("Подпись применена ко всем баннерам")}>
+              <Ic name="status-checkmark-done" size={14} style={{filter:"brightness(0) invert(1)"}} />
+              <span>Применить</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   TAB 3 — Videos
+============================================================ */
+function Videos({ onToast }) {
+  return (
+    <div className="mt-grid mt-grid-2">
+      {VIDEOS.map((v) => (
+        <article key={v.id} className={`mt-card mt-video-card mt-tile-${v.tile}`}>
+          <div className="mt-thumb mt-thumb-video" aria-hidden="true">
+            <div className="mt-thumb-play">
+              <span></span>
+            </div>
+            <div className="mt-thumb-duration">{v.duration}</div>
+            <div className="mt-thumb-overlay mt-thumb-overlay-video">
+              <div className="mt-thumb-brand">
+                <span>СММ</span>
+                <span className="brand">АЙБРО</span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-card-body">
+            <h4>{v.title}</h4>
+            <div className="mt-card-meta">
+              <span className="mt-chip mt-chip-time">
+                <Ic name="clock" size={11} />
+                {v.duration}
+              </span>
+              <span className="mt-card-note">{v.note}</span>
+            </div>
+          </div>
+          <div className="mt-card-foot mt-card-foot-3">
+            <button className="mt-btn-secondary" onClick={() => onToast(`Открываем превью: ${v.title}`)}>
+              <Ic name="icon-action-external-link" size={14} />
+              <span>Превью</span>
+            </button>
+            <button className="mt-btn-ghost" onClick={() => onToast(`Скачиваем MP4: ${v.title}`)}>
+              <Ic name="icon-action-download" size={14} />
+              <span>MP4</span>
+            </button>
+            <button className="mt-btn-ghost" onClick={() => onToast("Embed-код скопирован")}>
+              <Ic name="icon-action-copy" size={14} />
+              <span>Embed</span>
+            </button>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   TAB 4 — Decks / Presentations
+============================================================ */
+function Decks({ onToast }) {
+  return (
+    <div className="mt-grid mt-grid-3">
+      {DECKS.map((d) => (
+        <article key={d.id} className={`mt-card mt-deck-card mt-tile-${d.tile}`}>
+          <div className="mt-thumb mt-thumb-deck" aria-hidden="true">
+            <div className="mt-thumb-slide mt-thumb-slide-1"></div>
+            <div className="mt-thumb-slide mt-thumb-slide-2"></div>
+            <div className="mt-thumb-slide mt-thumb-slide-3">
+              <div className="mt-thumb-brand">
+                <span>СММ</span>
+                <span className="brand">АЙБРО</span>
+              </div>
+              <div className="mt-thumb-deck-num">{d.slides} слайдов</div>
+            </div>
+          </div>
+          <div className="mt-card-body">
+            <h4>{d.title}</h4>
+            <div className="mt-card-meta">
+              <span className="mt-chip mt-chip-slides">{d.slides} слайдов</span>
+              <span className="mt-chip mt-chip-fmt">{d.formats}</span>
+            </div>
+            <p className="mt-card-note mt-card-note-block">{d.note}</p>
+          </div>
+          <div className="mt-card-foot">
+            <button className="mt-btn-secondary" onClick={() => onToast(`Скачиваем PDF: ${d.title}`)}>
+              <Ic name="icon-action-download" size={14} />
+              <span>PDF</span>
+            </button>
+            <button className="mt-btn-ghost" onClick={() => onToast(`Скачиваем PPTX: ${d.title}`)}>
+              <Ic name="icon-action-download" size={14} />
+              <span>PPTX</span>
+            </button>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   TIPS BLOCK
+============================================================ */
+function TipsBlock() {
+  return (
+    <section className="mt-tips">
+      <div className="mt-tips-h">
+        <div className="mt-tips-ico"><Ic name="bolt" size={20} /></div>
+        <div>
+          <h3>Лучшие практики для роста рефералов</h3>
+          <p className="mt-tips-sub">Что реально работает — основано на данных топ-20 партнёров СММ АЙБРО за последние 6 месяцев.</p>
+        </div>
+        <a className="mt-tips-cta" href="#help">
+          <span>Открыть полный гайд</span>
+          <Ic name="icon-action-external-link" size={14} />
+        </a>
+      </div>
+      <ol className="mt-tips-list">
+        {TIPS.map((t, i) => (
+          <li key={i} className="mt-tip">
+            <div className="mt-tip-num">{i + 1}</div>
+            <div className="mt-tip-ico"><Ic name={t.ico} size={18} /></div>
+            <div className="mt-tip-body">
+              <h5>{t.title}</h5>
+              <p>{t.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+/* ============================================================
+   TOAST (reuse ref-toast styling)
+============================================================ */
+function Toast({ msg }) {
+  if (!msg) return null;
+  return <div className="ref-toast">{msg}</div>;
+}
+
+/* ============================================================
+   APP
+============================================================ */
+function App() {
+  const [tab, setTab] = useState("posts");
+  const [toast, setToast] = useState("");
+
+  function fireToast(m) {
+    setToast(m);
+    setTimeout(() => setToast(""), 2200);
+  }
+
+  return (
+    <div className="pd" data-screen-label="05 Партнёры — Материалы">
+      <Sidebar current="materials" />
+
+      <div className="pd-work">
+        <TopBar onBurger={() => {}} />
+        <main className="pd-page">
+          <div className="pd-pgh">
+            <div>
+              <h2>Промо-материалы для партнёров</h2>
+              <div className="sub">Готовые баннеры, тексты, видео и презентации для привлечения рефералов. Все материалы уже содержат вашу ссылку.</div>
+            </div>
+          </div>
+
+          <ShareBlock onToast={fireToast} />
+
+          <TabBar tab={tab} setTab={setTab} />
+
+          <div className="mt-pane">
+            {tab === "posts"   && <TextTemplates onToast={fireToast} />}
+            {tab === "banners" && <Banners onToast={fireToast} />}
+            {tab === "videos"  && <Videos onToast={fireToast} />}
+            {tab === "decks"   && <Decks onToast={fireToast} />}
+          </div>
+
+          <TipsBlock />
+
+          <div style={{marginTop: 8, fontSize: 11, color: "var(--fg-3)", lineHeight: 1.6, maxWidth: 720}}>
+            Материалы обновляются автоматически — мы пересобираем баннеры и тексты под текущие условия (тариф, длительность пробного периода, актуальные кейсы). Если использовали материал в посте — можно не пересохранять, ссылка <code>{`{ref}`}</code> остаётся живой пожизненно.
+          </div>
+        </main>
+      </div>
+
+      <Toast msg={toast} />
+
+      <nav className="pd-bottomnav" aria-label="Мобильная навигация">
+        {NAV_MAIN.slice(0, 5).map((it) => {
+          const cls = `pd-bottomnav-item ${it.id === "materials" ? "active" : ""}`;
+          const body = <>
+            <span className="ico"><Ic name={it.icon} size={22} /></span>
+            <span>{it.label}</span>
+          </>;
+          return it.href
+            ? <a key={it.id} className={cls} href={it.href} style={{textDecoration:"none"}}>{body}</a>
+            : <button key={it.id} className={cls}>{body}</button>;
+        })}
+      </nav>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

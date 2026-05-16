@@ -1,0 +1,400 @@
+/* ============================================================
+   admin.smmaibro.ru — Налоги (Taxes)
+   Page-specific styles. Builds on dashboard.css.
+   ============================================================ */
+
+/* ----- Page header ----- */
+.page-hdr {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 4px 2px 0;
+}
+.page-hdr__main { flex: 1; min-width: 0; }
+.page-hdr__h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--fg-1);
+  line-height: 1.15;
+}
+.page-hdr__sub {
+  margin-top: 6px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--fg-3);
+}
+.page-hdr__sub .ic { --ic-size: 14px; color: var(--fg-3); }
+.page-hdr__sub b { color: var(--fg-1); font-weight: 600; }
+.page-hdr__sub .dot-sep { color: var(--fg-4); }
+.page-hdr__sub .page-hdr__ip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-4);
+  letter-spacing: 0.02em;
+}
+.page-hdr__cta { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* ----- KPI row (4 cards instead of 6) ----- */
+.kpi-row.kpi-row--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+@media (max-width: 1280px) { .kpi-row.kpi-row--4 { grid-template-columns: repeat(2, 1fr); } }
+
+/* ----- Top tabs ----- */
+.tax-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-1);
+  border-radius: 10px;
+  padding: 4px 6px 4px 4px;
+}
+.tax-tab {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 32px; padding: 0 14px;
+  border-radius: 7px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--fg-2);
+  transition: background-color var(--dur-fast), color var(--dur-fast);
+}
+.tax-tab:hover { background: var(--bg-subtle); color: var(--fg-1); }
+.tax-tab.is-active {
+  background: var(--brand-50);
+  color: var(--brand-700);
+}
+.tax-tab__count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--bg-subtle);
+  color: var(--fg-3);
+  padding: 2px 6px;
+  border-radius: 999px;
+  min-width: 22px;
+  text-align: center;
+  line-height: 12px;
+}
+.tax-tab.is-active .tax-tab__count {
+  background: var(--brand-100);
+  color: var(--brand-700);
+}
+.tax-tabs__legal {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-3);
+}
+.tax-tabs__legal .ic { --ic-size: 13px; color: var(--brand-700); }
+
+/* ----- Quarter selector ----- */
+.quarter-sel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-1);
+  border-radius: 10px;
+}
+.quarter-sel__cap {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-3);
+}
+.quarter-sel__cap .ic { --ic-size: 13px; color: var(--fg-3); }
+.quarter-sel__btns { display: flex; gap: 4px; }
+.quarter-sel__btn {
+  height: 28px; padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-1);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fg-2);
+  transition: background-color var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+}
+.quarter-sel__btn:hover { background: var(--bg-subtle); color: var(--fg-1); }
+.quarter-sel__btn.is-active {
+  background: var(--brand-500);
+  color: white;
+  border-color: var(--brand-500);
+}
+.quarter-sel__meta {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-3);
+}
+.quarter-sel__meta b {
+  color: var(--fg-1);
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+/* ----- Tax table specific ----- */
+.tax-tbl {
+  /* base inherits from .tbl */
+}
+.tax-tbl thead th { background: var(--bg-subtle); }
+.tax-tbl .rate-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 20px; padding: 0 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--brand-700);
+  background: var(--brand-50);
+  border: 1px solid rgba(16,185,129,0.20);
+}
+.tax-tbl__total td {
+  background: var(--bg-subtle);
+  border-top: 2px solid var(--border-2);
+  border-bottom: 0;
+  font-weight: 700;
+}
+.tax-tbl__total .num { font-size: 14px; color: var(--fg-1); }
+.tax-tbl__total b { color: var(--brand-700); font-size: 15px; }
+
+/* ============================================================
+   Bottom grid — Ladder + Deadlines
+   ============================================================ */
+.tax-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 1280px) { .tax-bottom-grid { grid-template-columns: 1fr; } }
+
+/* ----- NDFL ladder ----- */
+.ladder {
+  padding: 14px 18px 6px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.ladder__row {
+  display: grid;
+  grid-template-columns: 28px 130px 1fr 130px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-radius: 6px;
+}
+.ladder__step {
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  display: grid; place-items: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  background: var(--bg-subtle);
+  color: var(--fg-3);
+}
+.ladder__row--g1 .ladder__step { background: var(--brand-50); color: var(--brand-700); }
+.ladder__row--g2 .ladder__step { background: var(--info-50); color: var(--info-700); }
+.ladder__row--g3 .ladder__step { background: rgba(168,85,247,0.10); color: #6d28d9; }
+.ladder__row--g4 .ladder__step { background: var(--warning-50); color: var(--warning-700); }
+.ladder__row--g5 .ladder__step { background: var(--danger-50); color: var(--danger-700); }
+
+.ladder__range {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-1);
+}
+.ladder__bar {
+  height: 8px;
+  background: var(--bg-subtle);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.ladder__bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width var(--dur-slow) var(--ease-standard);
+}
+.ladder__row--g1 .ladder__bar-fill { background: linear-gradient(90deg, var(--brand-400), var(--brand-600)); }
+.ladder__row--g2 .ladder__bar-fill { background: linear-gradient(90deg, #60a5fa, var(--info-700)); }
+.ladder__row--g3 .ladder__bar-fill { background: linear-gradient(90deg, #c084fc, #7c3aed); }
+.ladder__row--g4 .ladder__bar-fill { background: linear-gradient(90deg, #fbbf24, var(--warning-700)); }
+.ladder__row--g5 .ladder__bar-fill { background: linear-gradient(90deg, #fb7185, var(--danger-700)); }
+
+.ladder__rate {
+  text-align: right;
+  display: flex; flex-direction: column; align-items: flex-end;
+}
+.ladder__rate b {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--fg-1);
+}
+.ladder__rate span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--fg-3);
+  margin-top: 2px;
+}
+
+.ndfl-ladder__note {
+  margin: 6px 18px 18px;
+  padding: 10px 12px;
+  background: var(--bg-subtle);
+  border-radius: 8px;
+  border: 1px solid var(--border-1);
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.ndfl-ladder__note .ic { --ic-size: 14px; color: var(--info-700); flex-shrink: 0; margin-top: 1px; }
+.ndfl-ladder__note .t1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--fg-1);
+}
+.ndfl-ladder__note .t2 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  margin-top: 3px;
+  line-height: 1.5;
+}
+
+/* ----- Deadlines timeline ----- */
+.deadlines__grid {
+  padding: 14px 18px 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+@media (max-width: 1280px) { .deadlines__grid { grid-template-columns: repeat(2, 1fr); } }
+
+.deadline {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-1);
+  background: var(--bg-elevated);
+  display: flex; flex-direction: column; gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.deadline--submitted {
+  background: var(--success-50);
+  border-color: rgba(16,185,129,0.24);
+}
+.deadline--current {
+  background: var(--warning-50);
+  border-color: rgba(245,158,11,0.30);
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.10);
+}
+.deadline--future {
+  background: var(--bg-subtle);
+}
+.deadline__head { display: flex; align-items: center; justify-content: space-between; }
+.deadline__q {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--fg-1);
+}
+.deadline__status {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 20px; padding: 0 8px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.deadline__status .ic { --ic-size: 11px; }
+.deadline__status--submitted {
+  background: rgba(16,185,129,0.18);
+  color: var(--success-700);
+}
+.deadline__status--current {
+  background: rgba(245,158,11,0.20);
+  color: var(--warning-700);
+}
+.deadline__status--future {
+  background: var(--bg-elevated);
+  color: var(--fg-3);
+  border: 1px solid var(--border-1);
+}
+.deadline__period {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-3);
+}
+.deadline__due {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--fg-1);
+}
+.deadline__due-l { color: var(--fg-3); margin-right: 6px; font-family: var(--font-mono); font-size: 11px; }
+.deadline__due b { font-weight: 700; font-family: var(--font-display); }
+.deadline__amt {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border-2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--fg-1);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
+}
+.deadline--future .deadline__amt { color: var(--fg-4); font-weight: 500; }
+
+.deadlines__note {
+  margin: 6px 18px 18px;
+  padding: 10px 12px;
+  background: var(--danger-50);
+  border: 1px solid rgba(239,68,68,0.20);
+  border-radius: 8px;
+  display: flex; align-items: flex-start; gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--danger-700);
+  line-height: 1.5;
+}
+.deadlines__note .ic { --ic-size: 14px; color: var(--danger-700); flex-shrink: 0; margin-top: 1px; }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 1100px) {
+  .page-hdr { flex-direction: column; gap: 14px; }
+  .page-hdr__cta { width: 100%; }
+  .quarter-sel { flex-wrap: wrap; }
+  .quarter-sel__meta { width: 100%; margin-left: 0; }
+  .tax-tabs { flex-wrap: wrap; }
+  .tax-tabs__legal { width: 100%; margin-left: 0; padding: 6px 8px 0; border-top: 1px solid var(--divider); margin-top: 4px; }
+  .ladder__row { grid-template-columns: 24px 110px 1fr 110px; }
+}
+
+@media (max-width: 720px) {
+  .ladder__row { grid-template-columns: 24px 1fr; gap: 8px; }
+  .ladder__bar, .ladder__rate { grid-column: 2; }
+  .ladder__rate { text-align: left; flex-direction: row; align-items: baseline; gap: 8px; }
+  .deadlines__grid { grid-template-columns: 1fr; }
+  .tax-tbl thead th:nth-child(3), .tax-tbl tbody td:nth-child(3) { display: none; } /* hide ИНН */
+}

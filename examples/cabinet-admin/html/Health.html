@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>СММ АЙБРО · admin · Health</title>
+<link rel="icon" href="logos/aibro/favicon-light.svg">
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="health.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+// admin.smmaibro.ru — Health · Системы и интеграции
+// Internal monitoring console — uptime, services, alerts.
+
+const { useState, useMemo } = React;
+
+// ============================================================
+// Icon helper
+// ============================================================
+function Icon({ name, size }) {
+  const style = { "--ic": `url(icons/${name}.svg)` };
+  if (size) style["--ic-size"] = typeof size === "number" ? `${size}px` : size;
+  return <span className="ic" style={style} aria-hidden="true" />;
+}
+
+// ============================================================
+// Sidebar (same chrome as Dashboard / Users / Support)
+// ============================================================
+const NAV = [
+  { id: "home",     label: "Главная",      icon: "dashboard", href: "Dashboard.html" },
+  { id: "users",    label: "Пользователи", icon: "icon-nav-customers", count: "285", href: "Users.html" },
+  { id: "finance",  label: "Финансы",      icon: "icon-nav-finance" },
+  { id: "taxes",    label: "Налоги",       icon: "icon-nav-taxes" },
+  { id: "partners", label: "Партнёрка",    icon: "icon-nav-partners" },
+  { id: "ord",      label: "ОРД",          icon: "badge-erid", count: "1.2k" },
+  { id: "support",  label: "Поддержка",    icon: "icon-nav-messages", count: "6", countTone: "p0", href: "Support.html" },
+  { id: "health",   label: "Health",       icon: "health",    href: "Health.html" },
+  { id: "audit",    label: "Аудит log",    icon: "audit-log" },
+];
+
+function Sidebar({ current }) {
+  return (
+    <aside className="side">
+      <div className="side-brand">
+        <span className="tile">
+          <img src="icons/favicon-light.svg" alt="" onError={(e) => { e.target.style.display = 'none'; }} />
+        </span>
+        <div>
+          <div className="wm">СММ <span className="em">АЙБРО</span></div>
+          <div className="sub">admin · v 2.4.1</div>
+        </div>
+      </div>
+      <div className="side-cap">Операции</div>
+      {NAV.map((it) => (
+        <a key={it.id} href={it.href || "#"} className={`nav-item ${current === it.id ? "is-active" : ""}`}>
+          <Icon name={it.icon} />
+          <span>{it.label}</span>
+          {it.count && <span className={`badge ${it.countTone === "p0" ? "is-p0" : ""}`}>{it.count}</span>}
+        </a>
+      ))}
+      <div className="side-foot">
+        <span className="avatar">ВМ</span>
+        <div>
+          <div className="who">В. Мальцев</div>
+          <div className="meta">owner · мск 14:35</div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function TopNav() {
+  return (
+    <div className="topnav">
+      <div className="crumbs">
+        <span className="role"><span className="dot"></span>ADMIN</span>
+        <span className="path">admin / <b>health</b></span>
+      </div>
+      <h1>Health</h1>
+      <div className="search">
+        <Icon name="icon-action-search" />
+        <input placeholder="Поиск по сервисам, endpoint, alert ID…" />
+        <kbd>⌘K</kbd>
+      </div>
+      <button className="icon-btn" title="Обновить"><Icon name="icon-action-refresh" /></button>
+      <button className="icon-btn" title="Уведомления">
+        <Icon name="icon-nav-notifications" />
+        <span className="pulse" />
+      </button>
+      <button className="user">
+        <span className="avatar">ВМ</span>
+        <div>
+          <div className="name">Валерий Мальцев</div>
+          <div className="role-sub">owner · ip‑мальцев</div>
+        </div>
+      </button>
+    </div>
+  );
+}
+
+// ============================================================
+// Page header
+// ============================================================
+function PageHeader() {
+  return (
+    <div className="page-h">
+      <div className="ttl">
+        <h1>Health · Системы и интеграции</h1>
+        <div className="sub">
+          <span>Uptime last 24h <b>98,4%</b></span>
+          <span className="dot" />
+          <span><b>3</b> активных alert</span>
+          <span className="dot" />
+          <span>MTTR <b>14 мин</b></span>
+          <span className="dot" />
+          <span>обновлено <b>14:35 МСК</b> · авто-рефреш 30 сек</span>
+        </div>
+      </div>
+      <div className="actions">
+        <button className="btn btn--secondary"><Icon name="icon-action-refresh" />Запустить probe</button>
+        <button className="btn btn--secondary"><Icon name="icon-action-export" />Экспорт алертов</button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Big status strip — overall state
+// ============================================================
+function StatusStrip() {
+  // 3 alerts → degraded
+  return (
+    <div className="status-strip status-strip--warn">
+      <div className="ic-wrap"><Icon name="icon-status-warning" /></div>
+      <div className="body">
+        <div className="ttl">3 активных alert · деградация частичная</div>
+        <div className="meta">
+          MAX webhook timeouts · Yandex S3 ошибки · ОФД rate limit ·
+          затронуто <b>4</b> бизнеса · core-сервисы работают
+        </div>
+      </div>
+      <div className="overall">
+        <div className="ov-num">98,4%</div>
+        <div className="ov-lbl">Uptime 24h</div>
+      </div>
+      <button className="btn btn--primary">К алертам ↓</button>
+    </div>
+  );
+}
+
+// ============================================================
+// KPI 4 cards
+// ============================================================
+const HK_KPI = [
+  { lbl: "Uptime 24h",        val: "98,4", unit: "%", tone: "warn",   icon: "health",          meta: "цель 99,5%" },
+  { lbl: "Avg response",      val: "145",  unit: "мс", tone: "info",   icon: "clock",           meta: "p95 280 мс" },
+  { lbl: "Активных alert",    val: "3",                tone: "danger", icon: "icon-status-warning", meta: "0 P0 · 3 P1" },
+  { lbl: "Resolved today",    val: "7",                tone: "accent", icon: "icon-status-success", meta: "ср. MTTR 14 мин" },
+];
+
+function KpiRow() {
+  return (
+    <div className="hk-kpi-row">
+      {HK_KPI.map((k) => (
+        <div key={k.lbl} className={`hk-kpi hk-kpi--${k.tone}`}>
+          <div className="head">
+            <span className="head-ic"><Icon name={k.icon} /></span>
+            <span className="lbl">{k.lbl}</span>
+          </div>
+          <div className="val">
+            {k.val}{k.unit && <span className="unit"> {k.unit}</span>}
+          </div>
+          <div className="foot">{k.meta}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
+// Services grid (12 services, 3 columns)
+// ============================================================
+const SERVICES = [
+  { name: "Backend API",          state: "ok",   uptime: "99,8%", meta: "response 120 мс · last error 2д назад", icon: "server" },
+  { name: "PostgreSQL",           state: "ok",   uptime: "99,9%", meta: "12 active conns · query 8 мс", icon: "database" },
+  { name: "Redis",                state: "ok",   uptime: "100%",  meta: "memory 38% · 0 evictions", icon: "database" },
+  { name: "Celery workers",       state: "ok",   uptime: "99,5%", meta: "7 active · 0 stuck · queue 12", icon: "bolt" },
+  { name: "MAX webhook receiver", state: "warn", uptime: "94,2%", meta: "12 timeouts/h · с 14:20", icon: "icon-max-channel" },
+  { name: "MAX publisher",        state: "ok",   uptime: "99,7%", meta: "234 posts/day · ср. 320 мс", icon: "icon-max-channel" },
+  { name: "Gemini proxy (Hetzner)", state: "ok", uptime: "99,9%", meta: "mTLS OK · ср. 890 мс · 1842 calls/h", icon: "bolt" },
+  { name: "Yandex S3 storage",    state: "warn", uptime: "98,1%", meta: "3× 403 ошибки/h · с 13:40", icon: "gallery" },
+  { name: "YooKassa webhook",     state: "ok",   uptime: "100%",  meta: "4 success / 0 retry · сегодня", icon: "credit-card" },
+  { name: "T-Bank webhook",       state: "ok",   uptime: "100%",  meta: "0 платежей · последний 14.05", icon: "credit-card" },
+  { name: "ОРД VK API",           state: "ok",   uptime: "99,4%", meta: "42 erid/день · ср. 1,2 сек", icon: "badge-erid" },
+  { name: "Travelata API",        state: "ok",   uptime: "97,2%", meta: "245 мс · 18 туров кэш", icon: "icon-niche-travel" },
+];
+
+function ServicesGrid() {
+  return (
+    <div className="services-grid">
+      {SERVICES.map((s, i) => (
+        <div key={i} className={`svc svc--${s.state}`}>
+          <div className="svc-h">
+            <span className="svc-ic"><Icon name={s.icon} /></span>
+            <div className="svc-nm">
+              <div className="nm">{s.name}</div>
+              <div className={`svc-state svc-state--${s.state}`}>
+                {s.state === "ok"   && <><Icon name="icon-status-success" /> healthy</>}
+                {s.state === "warn" && <><Icon name="icon-status-warning" /> degraded</>}
+                {s.state === "bad"  && <><Icon name="icon-status-error" /> down</>}
+              </div>
+            </div>
+          </div>
+          <div className="svc-body">
+            <div className="svc-uptime">
+              <span className="lb">Uptime</span>
+              <span className="vl">{s.uptime}</span>
+            </div>
+            <div className="svc-meta">{s.meta}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
+// Active alerts (expandable)
+// ============================================================
+const ALERTS = [
+  {
+    id: "AL-2891",
+    sev: "warn",
+    title: "MAX webhook timeouts",
+    summary: "12 за час (с 14:20)",
+    affected: "затронуто 4 бизнеса",
+    details: [
+      "Endpoint: max.api.aibro/webhook",
+      "Timeout >30s в 12 запросах из 184",
+      "Первое срабатывание: 14:20:34 МСК",
+      "Бизнесы: @pekarnya_uyut, @puls_fitness, @insurance_bot, @smart_tour",
+      "Retry-очередь автоматически запущена в 14:25",
+    ],
+  },
+  {
+    id: "AL-2890",
+    sev: "warn",
+    title: "Yandex S3 403 ошибки",
+    summary: "3 за час (с 13:40)",
+    affected: "file upload affected",
+    details: [
+      "Bucket: aibro-smm-media",
+      "Ошибка: 403 Forbidden — IAM token expired?",
+      "Затронут upload изображений для постов",
+      "Ротация IAM token: последний 12.05.2026",
+      "Рекомендация: ротировать токен (cron job)",
+    ],
+  },
+  {
+    id: "AL-2889",
+    sev: "warn",
+    title: "ОФД маркировка: rate limit 80%",
+    summary: "приближается к квоте 10K erid/день",
+    affected: "нужно увеличить квоту",
+    details: [
+      "API: vk.com/erid",
+      "Использовано 8014 из 10000 erid за сутки",
+      "Проекция: лимит достигнут к 22:00 МСК",
+      "Действие: подать заявку на увеличение квоты в OFD VK",
+      "Альтернатива: остановить автомаркировку для триал-аккаунтов",
+    ],
+  },
+];
+
+function AlertsList() {
+  const [open, setOpen] = useState("AL-2891");
+  return (
+    <div className="card">
+      <div className="card-h">
+        <h3>Активные alert</h3>
+        <span className="meta">3 · все требуют внимания</span>
+        <div className="right">
+          <button className="btn btn--ghost"><Icon name="icon-action-filter" />Фильтр</button>
+        </div>
+      </div>
+      <div className="alerts-list">
+        {ALERTS.map((a) => {
+          const isOpen = open === a.id;
+          return (
+            <div key={a.id} className={`al ${isOpen ? "is-open" : ""} al--${a.sev}`}>
+              <button className="al-head" onClick={() => setOpen(isOpen ? null : a.id)}>
+                <div className="ic-wrap"><Icon name="icon-status-warning" /></div>
+                <div className="body">
+                  <div className="ttl">{a.title}</div>
+                  <div className="meta">{a.summary} · {a.affected}</div>
+                </div>
+                <span className="al-id">{a.id}</span>
+                <span className="caret">{isOpen ? "▴" : "▾"}</span>
+              </button>
+              {isOpen && (
+                <div className="al-body">
+                  <ul className="al-details">
+                    {a.details.map((d, i) => <li key={i}>{d}</li>)}
+                  </ul>
+                  <div className="al-actions">
+                    <button className="btn btn--primary"><Icon name="icon-action-search" />Investigate</button>
+                    <button className="btn btn--secondary">Acknowledge</button>
+                    <button className="btn btn--secondary"><Icon name="icon-status-success" />Resolve</button>
+                    <span style={{ flex: 1 }} />
+                    <button className="btn btn--ghost">Silence 1 час</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Mini-graphs: CPU / RAM / Disk last 24h
+// ============================================================
+function MetricGraph({ label, color, values, peak, latest, unit }) {
+  const W = 280, H = 80, PT = 8, PB = 18, PL = 4, PR = 4;
+  const innerW = W - PL - PR;
+  const innerH = H - PT - PB;
+  const min = 0;
+  const max = 100;
+  const step = innerW / (values.length - 1);
+  const pts = values.map((v, i) => [PL + i * step, PT + innerH - ((v - min) / (max - min)) * innerH]);
+  const d = "M " + pts.map((p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" L ");
+  const area = d + ` L ${PL + innerW} ${PT + innerH} L ${PL} ${PT + innerH} Z`;
+  const gradId = `g-${label.replace(/\s/g, "")}`;
+
+  return (
+    <div className="mtg">
+      <div className="mtg-h">
+        <div className="mtg-lbl">{label}</div>
+        <div className="mtg-vl">
+          <span className="latest">{latest}{unit}</span>
+          <span className="peak">peak {peak}{unit}</span>
+        </div>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto" }}>
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.22" />
+            <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {/* 3 grid lines */}
+        {[25, 50, 75].map((g) => {
+          const y = PT + innerH - (g / 100) * innerH;
+          return <line key={g} x1={PL} y1={y} x2={W - PR} y2={y}
+                       stroke="rgba(15,23,42,0.05)" strokeDasharray="2 4" />;
+        })}
+        <path d={area} fill={`url(#${gradId})`} />
+        <path d={d} fill="none" stroke={color} strokeWidth="1.8"
+              strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx={pts[pts.length-1][0]} cy={pts[pts.length-1][1]} r="3" fill={color} />
+        <text x={PL} y={H - 4} fontFamily="var(--font-mono)" fontSize="9" fill="var(--fg-4)">−24ч</text>
+        <text x={W - PR} y={H - 4} textAnchor="end" fontFamily="var(--font-mono)" fontSize="9" fill="var(--fg-4)">сейчас</text>
+      </svg>
+    </div>
+  );
+}
+
+const CPU_DATA  = [22,24,28,30,34,40,42,38,36,32,30,28,30,34,38,44,52,48,46,42,40,38,36,34];
+const RAM_DATA  = [58,58,60,60,62,64,66,68,70,72,72,70,68,68,70,72,74,76,78,76,74,72,72,71];
+const DISK_DATA = [42,42,42,43,43,43,44,44,44,45,45,45,46,46,46,47,47,47,48,48,48,49,49,49];
+
+function ResourceGraphs() {
+  return (
+    <div className="card resource-card">
+      <div className="card-h">
+        <h3>Использование ресурсов · последние 24 часа</h3>
+        <span className="meta">Backend сервер · Jino aibro-prod-moscow</span>
+        <div className="right">
+          <button className="btn btn--ghost">24Ч</button>
+          <button className="btn btn--ghost">7Д</button>
+          <button className="btn btn--ghost">30Д</button>
+        </div>
+      </div>
+      <div className="resource-grid">
+        <MetricGraph label="CPU"  color="#10b981" values={CPU_DATA}  peak="52" latest="34" unit="%" />
+        <MetricGraph label="RAM"  color="#3b82f6" values={RAM_DATA}  peak="78" latest="71" unit="%" />
+        <MetricGraph label="Disk" color="#f59e0b" values={DISK_DATA} peak="49" latest="49" unit="%" />
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Deploy history (last 5)
+// ============================================================
+const DEPLOYS = [
+  { t: "14:12 · сегодня",   ver: "v 2.4.1",  who: "deploy-runner", status: "ok",     msg: "fix: MAX webhook retry timeout 30→45s",    sha: "9127b56" },
+  { t: "вчера 23:40",       ver: "v 2.4.0",  who: "deploy-runner", status: "ok",     msg: "feat: Tax Phase 3 ND-FL прогрессивная шкала", sha: "6c8fab7" },
+  { t: "13.05 · 18:22",     ver: "v 2.3.8",  who: "deploy-runner", status: "ok",     msg: "feat: ОРД auto-revalidate Celery beat",    sha: "f5ac732" },
+  { t: "12.05 · 14:08",     ver: "v 2.3.7",  who: "deploy-runner", status: "rollback", msg: "rollback: media migration causing 500s", sha: "65a27db" },
+  { t: "12.05 · 11:30",     ver: "v 2.3.6",  who: "deploy-runner", status: "ok",     msg: "feat: Партнёрка backend 5/8 endpoints",     sha: "4dab1da" },
+];
+
+function DeployHistory() {
+  return (
+    <div className="card">
+      <div className="card-h">
+        <h3>История деплоев</h3>
+        <span className="meta">последние 5 · deploy-runner</span>
+        <div className="right">
+          <button className="btn btn--ghost">Все деплои →</button>
+        </div>
+      </div>
+      <div className="dep-list">
+        {DEPLOYS.map((d, i) => (
+          <div key={i} className={`dep dep--${d.status}`}>
+            <div className="dep-t">{d.t}</div>
+            <div className={`dep-state dep-state--${d.status}`}>
+              {d.status === "ok"       && <Icon name="icon-status-success" />}
+              {d.status === "rollback" && <Icon name="icon-status-warning" />}
+              {d.status === "fail"     && <Icon name="icon-status-error" />}
+            </div>
+            <div className="dep-body">
+              <div className="dep-msg">
+                <b>{d.ver}</b>
+                <span>{d.msg}</span>
+              </div>
+              <div className="dep-meta">
+                {d.who} · <code>{d.sha}</code>
+                {d.status === "rollback" && <span className="rb-tag">откат</span>}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// App
+// ============================================================
+function App() {
+  return (
+    <div className="shell" data-screen-label="05 Admin — Health">
+      <Sidebar current="health" />
+      <div className="workpane">
+        <TopNav />
+        <main className="main">
+          <PageHeader />
+          <StatusStrip />
+          <KpiRow />
+
+          <div className="sec-h" style={{ marginTop: 6 }}>
+            <h2>Статус сервисов</h2>
+            <span className="hint">12 сервисов · 10 healthy · 2 degraded</span>
+          </div>
+          <ServicesGrid />
+
+          <AlertsList />
+
+          <div className="bottom-row">
+            <ResourceGraphs />
+            <DeployHistory />
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+/* =============================================================
+   СММ АЙБРО — Design System (Emerald Light)
+   colors_and_type.css
+
+   Canonical tokens for the Light theme.
+   • Brand: Emerald (#10b981), restraint ≤10% surface coverage
+   • Type:  Onest (headlines) + Golos Text (body)
+   • Theme: Light-first; a separate Dark system ships next.
+
+   Source of truth for tokens that all 4 surfaces use:
+   smmaibro.ru / cabinet.smmaibro.ru / admin.smmaibro.ru / partners.smmaibro.ru
+   ============================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Golos+Text:wght@400;500;600;700&display=swap");
+
+:root {
+  /* ---------- Color: brand (emerald) ---------- */
+  --brand-50:  #ecfdf5;
+  --brand-100: #d1fae5;
+  --brand-200: #a7f3d0;
+  --brand-300: #6ee7b7;
+  --brand-400: #34d399;
+  --brand-500: #10b981; /* primary accent */
+  --brand-600: #059669; /* hover, pressed */
+  --brand-700: #047857; /* accent text — AAA 7.4:1 on white */
+  --brand-800: #065f46;
+  --brand-900: #064e3b;
+  --brand-950: #022c22;
+
+  /* ---------- Color: surface (light) ---------- */
+  --bg-base:      #fafafa; /* page */
+  --bg-subtle:    #f4f6f5; /* sections, hovers */
+  --bg-elevated:  #ffffff; /* cards, panels */
+  --bg-inverse:   #0e0f12; /* inverse surfaces (dark chips, screenshots) */
+
+  /* Glass */
+  --glass-bg:        rgba(255, 255, 255, 0.70);
+  --glass-bg-strong: rgba(255, 255, 255, 0.85);
+  --glass-border:    rgba(255, 255, 255, 0.30);
+  --glass-blur:      20px;
+  --glass-blur-strong: 24px;
+
+  /* ---------- Color: text (light) ---------- */
+  --fg-1: #0e0f12;            /* primary — headlines, body */
+  --fg-2: #3a3d44;            /* secondary — sub copy, captions */
+  --fg-3: #6b7079;            /* tertiary — meta, helper */
+  --fg-4: #9aa0aa;            /* placeholder, disabled */
+  --fg-inverse: #fafafa;      /* on dark/inverse surfaces */
+  --fg-accent: var(--brand-700); /* links, accent text */
+  --fg-on-brand: #ffffff;     /* text on filled emerald button */
+
+  /* ---------- Color: borders & dividers ---------- */
+  --border-1: rgba(15, 23, 42, 0.08); /* hairline */
+  --border-2: rgba(15, 23, 42, 0.12); /* card */
+  --border-3: rgba(15, 23, 42, 0.18); /* focus secondary */
+  --divider:  rgba(15, 23, 42, 0.06);
+
+  /* ---------- Color: semantic ---------- */
+  --success-50:  #ecfdf5;
+  --success-500: #10b981;
+  --success-700: #047857;
+
+  --warning-50:  #fffbeb;
+  --warning-500: #f59e0b;
+  --warning-700: #b45309;
+
+  --danger-50:   #fef2f2;
+  --danger-500:  #ef4444;
+  --danger-700:  #b91c1c;
+
+  --info-50:     #eff6ff;
+  --info-500:    #3b82f6;
+  --info-700:    #1d4ed8;
+
+  /* ---------- Color: focus ---------- */
+  --focus-ring: var(--brand-500);
+  --focus-ring-offset: var(--bg-base);
+
+  /* ---------- Typography: families ---------- */
+  --font-display: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body:    "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ---------- Typography: weight ---------- */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-extrabold: 800;
+
+  /* ---------- Typography: size scale (clamped, fluid) ---------- */
+  --fs-xs:   12px;  --lh-xs:   16px;
+  --fs-sm:   14px;  --lh-sm:   20px;
+  --fs-base: 16px;  --lh-base: 24px;
+  --fs-md:   18px;  --lh-md:   26px;
+  --fs-lg:   20px;  --lh-lg:   28px;
+  --fs-xl:   24px;  --lh-xl:   32px;
+  --fs-2xl:  30px;  --lh-2xl:  38px;
+  --fs-3xl:  36px;  --lh-3xl:  44px;
+  --fs-4xl:  48px;  --lh-4xl:  56px;
+  --fs-5xl:  60px;  --lh-5xl:  68px;
+  --fs-6xl:  72px;  --lh-6xl:  80px;
+
+  /* ---------- Typography: tracking ---------- */
+  --ls-tight:    -0.02em;  /* display */
+  --ls-snug:     -0.01em;  /* h2, h3 */
+  --ls-normal:    0em;
+  --ls-wide:      0.02em;
+  --ls-label:     0.08em;  /* UPPERCASE chips: ПРО / СТАНДАРТ / НОВОЕ */
+
+  /* ---------- Spacing scale (4-px base) ---------- */
+  --space-0:   0;
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+  --space-20:  80px;
+  --space-24:  96px;
+  --space-32:  128px;
+
+  /* ---------- Radii ---------- */
+  --radius-xs:  4px;
+  --radius-sm:  6px;
+  --radius-md:  8px;
+  --radius-lg:  12px;  /* default card */
+  --radius-xl:  16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 28px;
+  --radius-pill: 999px;
+
+  /* ---------- Elevation (light-theme shadow ramp) ---------- */
+  --shadow-0:  none;
+  --shadow-1:  0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.02);
+  --shadow-2:  0 4px 8px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-3:  0 8px 16px rgba(15, 23, 42, 0.08), 0 4px 6px rgba(15, 23, 42, 0.04);
+  --shadow-4:  0 16px 32px rgba(15, 23, 42, 0.10), 0 8px 12px rgba(15, 23, 42, 0.06);
+  --shadow-focus: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--brand-500);
+  --shadow-glow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+
+  /* ---------- Motion ---------- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-enter:    cubic-bezier(0.0, 0, 0.2, 1);
+  --ease-exit:     cubic-bezier(0.4, 0, 1, 1);
+  --dur-fast:   140ms;
+  --dur-base:   180ms;
+  --dur-slow:   220ms;
+
+  /* ---------- Container widths ---------- */
+  --container-sm:  640px;
+  --container-md:  768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1440px;
+
+  /* ---------- Tile-pattern background (4% emerald dots) ---------- */
+  --tile-bg-light: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'><defs><pattern id='t' patternUnits='userSpaceOnUse' width='60' height='60'><circle cx='30' cy='30' r='1.2' fill='%2310b981' fill-opacity='0.16'/></pattern></defs><rect width='100%25' height='100%25' fill='url(%23t)'/></svg>");
+}
+
+/* =========================================================
+   Base reset + page defaults
+   ========================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+html, body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--fg-1);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  font-weight: var(--fw-regular);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* All numbers render with tabular figures.
+   Required for: 4 990 ₽, 15.05.2026, #1234, percentages, etc. */
+body, button, input, select, textarea {
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   Semantic type roles
+   ========================================================= */
+
+.t-display-1,
+.t-display-2,
+.t-h1, .t-h2, .t-h3, .t-h4 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  color: var(--fg-1);
+  text-wrap: balance;
+  margin: 0;
+}
+
+.t-display-1 {
+  font-size: clamp(48px, 6vw, 72px);
+  line-height: 1.05;
+  letter-spacing: var(--ls-tight);
+  font-weight: var(--fw-bold);
+}
+
+.t-display-2 {
+  font-size: clamp(36px, 4.5vw, 56px);
+  line-height: 1.08;
+  letter-spacing: var(--ls-tight);
+  font-weight: var(--fw-bold);
+}
+
+.t-h1 {
+  font-size: var(--fs-4xl);
+  line-height: var(--lh-4xl);
+  letter-spacing: var(--ls-tight);
+  font-weight: var(--fw-bold);
+}
+
+.t-h2 {
+  font-size: var(--fs-3xl);
+  line-height: var(--lh-3xl);
+  letter-spacing: var(--ls-snug);
+}
+
+.t-h3 {
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-2xl);
+  letter-spacing: var(--ls-snug);
+}
+
+.t-h4 {
+  font-size: var(--fs-xl);
+  line-height: var(--lh-xl);
+}
+
+.t-lead {
+  font-family: var(--font-body);
+  font-size: var(--fs-lg);
+  line-height: var(--lh-lg);
+  color: var(--fg-2);
+  font-weight: var(--fw-regular);
+  text-wrap: pretty;
+}
+
+.t-body {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  color: var(--fg-1);
+  font-weight: var(--fw-regular);
+}
+
+.t-body-sm {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-sm);
+  color: var(--fg-2);
+}
+
+.t-caption {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-xs);
+  color: var(--fg-3);
+}
+
+/* Chip / label — UPPERCASE micro-text:  НОВОЕ / ПРО / ОРД / BETA */
+.t-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--brand-700);
+}
+
+/* Brand wordmark — strict spec from brand directives.
+   Never «Aibro» / «AIBRO» / «SMMAIBRO» — only «СММ АЙБРО». */
+.t-wordmark {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--fg-1);
+}
+
+/* Numeric pricing — for 4 990 ₽, large dashboard KPIs */
+.t-numeric {
+  font-family: var(--font-display);
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--fg-accent);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+a:hover { text-decoration: underline; }
+a:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* =========================================================
+   Reduced motion — mandatory
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================
+   Utility — tile background
+   ========================================================= */
+.bg-tile {
+  background-color: var(--bg-base);
+  background-image: var(--tile-bg-light);
+  background-repeat: repeat;
+  background-size: 240px 240px;
+}
+@media (max-width: 768px) {
+  .bg-tile { background-size: 200px 200px; }
+}
+
+/* =========================================================
+   Utility — glass surfaces
+   ========================================================= */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+}
+.glass-strong {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+  border: 1px solid rgba(255, 255, 255, 0.40);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2);
+}
+@supports not (backdrop-filter: blur(20px)) {
+  .glass, .glass-strong { background: rgba(255, 255, 255, 0.95); }
+}

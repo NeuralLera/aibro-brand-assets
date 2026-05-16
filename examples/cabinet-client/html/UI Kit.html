@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · UI Kit — Modals, Empty states, Toasts</title>
+  <link rel="icon" type="image/svg+xml" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/ui-kit.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+const ICO = "design/assets/icons/";
+
+function Ic({ name, size = 18, style }) {
+  return (
+    <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+         style={{ width: size, height: size, display: "block", ...style }} />
+  );
+}
+
+/* ============================================================
+   TOC navigation
+============================================================ */
+const SECTIONS = [
+  { id: "toasts",    num: "01", title: "Toasts / Notifications", desc: "5 типов всплывающих уведомлений · auto-dismiss + manual", count: 5 },
+  { id: "modals",    num: "02", title: "Modals",                  desc: "6 типов модальных окон · confirm / form / drag-drop", count: 6 },
+  { id: "empty",     num: "03", title: "Empty states",            desc: "8 пустых состояний для разных страниц кабинета",      count: 8 },
+  { id: "banners",   num: "04", title: "Banners / Callouts",      desc: "5 full-width баннеров для глобальных уведомлений",    count: 5 },
+  { id: "loading",   num: "05", title: "Loading / Skeletons",     desc: "3 паттерна для async-загрузки данных",                 count: 3 },
+];
+
+function Toc() {
+  return (
+    <nav className="uk-toc" aria-label="Разделы UI Kit">
+      {SECTIONS.map(s => (
+        <a key={s.id} href={`#${s.id}`}>
+          <span className="uk-toc-num">{s.num}</span>
+          <span>{s.title}</span>
+          <span className="uk-toc-num">· {s.count}</span>
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+function Section({ id, num, title, desc, count, children }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <section id={id} className={`uk-section ${open ? "" : "collapsed"}`}>
+      <div className={`uk-section-head ${open ? "" : "collapsed"}`} onClick={() => setOpen(!open)}>
+        <div>
+          <h2><span className="num">{num}</span> {title} <span className="num">{count}</span></h2>
+          <p className="desc">{desc}</p>
+        </div>
+        <button className="uk-section-toggle" aria-label={open ? "Свернуть" : "Развернуть"}>
+          <Ic name="icon-action-expand" size={14} />
+        </button>
+      </div>
+      {open && <div className="uk-section-body">{children}</div>}
+    </section>
+  );
+}
+
+/* ============================================================
+   TOAST LIVE STACK
+============================================================ */
+function ToastStack({ toasts, onClose }) {
+  return (
+    <div className="uk-toast-stack" aria-live="polite">
+      {toasts.map(t => (
+        <ToastView key={t.id} t={t} onClose={() => onClose(t.id)} />
+      ))}
+    </div>
+  );
+}
+
+function ToastView({ t, onClose }) {
+  return (
+    <div className={`uk-toast uk-toast--${t.kind}`} role="status">
+      <div className="uk-toast-icon">
+        <Ic name={t.icon} size={18} />
+      </div>
+      <div className="uk-toast-body">
+        <div className="uk-toast-title">{t.title}</div>
+        <p className="uk-toast-text">{t.text}</p>
+        {t.cta && (
+          <div className="uk-toast-action">
+            <button className="uk-btn uk-btn--ghost uk-btn--sm">{t.cta} →</button>
+          </div>
+        )}
+      </div>
+      <button className="uk-toast-close" onClick={onClose} aria-label="Закрыть">×</button>
+    </div>
+  );
+}
+
+/* Toast catalog (static previews) */
+const TOAST_SAMPLES = [
+  {
+    id: "s1", kind: "success", icon: "icon-status-success",
+    title: "Заказ сохранён",
+    text: "Опубликован в кабинете и MAX",
+    meta: "auto-dismiss 5s",
+  },
+  {
+    id: "s2", kind: "info", icon: "icon-status-info",
+    title: "Новое уведомление",
+    text: "ИИ-ассистент готов к работе",
+    meta: "info",
+  },
+  {
+    id: "s3", kind: "warning", icon: "icon-status-warning",
+    title: "Истекает Пробный период",
+    text: "Осталось 2 дня · продлите тариф",
+    cta: "Продлить",
+    meta: "warning + cta",
+  },
+  {
+    id: "s4", kind: "error", icon: "icon-status-error",
+    title: "Не удалось отправить",
+    text: "Проверьте интернет-соединение",
+    cta: "Повторить",
+    meta: "error + retry",
+  },
+  {
+    id: "s5", kind: "feature", icon: "spark-ai",
+    title: "Доступна новая функция",
+    text: "Контент-план в виде канбана",
+    cta: "Посмотреть",
+    meta: "feature · sparkle",
+  },
+];
+
+function ToastsSection({ onFire }) {
+  return (
+    <div className="uk-grid">
+      {TOAST_SAMPLES.map(t => (
+        <div key={t.id} className="uk-preview">
+          <div className="uk-preview-head">
+            <h3 className="uk-preview-title">{t.title}</h3>
+            <span className="uk-preview-meta">{t.meta}</span>
+          </div>
+          <div className="uk-preview-stage">
+            <ToastView t={t} onClose={() => {}} />
+          </div>
+          <div className="uk-preview-actions">
+            <button className="uk-btn uk-btn--ghost uk-btn--sm" onClick={() => onFire(t)}>
+              <Ic name="icon-action-refresh" size={12} /> Показать живой toast
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   MODAL LIVE OVERLAY
+============================================================ */
+function ModalOverlay({ children, onClose }) {
+  useEffect(() => {
+    const onKey = e => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, []);
+  return (
+    <div className="uk-modal-overlay" onClick={onClose}>
+      <div className="uk-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   MODAL VARIANTS — re-usable bodies
+============================================================ */
+function ModalConfirmDelete({ onClose }) {
+  return (
+    <>
+      <button className="uk-modal-close" onClick={onClose} aria-label="Закрыть">×</button>
+      <div className="uk-modal-head uk-modal--danger" style={{display:"flex"}}>
+        <div className="uk-modal-head-icon" style={{background: "rgba(239, 68, 68, 0.12)"}}>
+          <Ic name="shield-check" size={22} />
+        </div>
+        <div className="uk-modal-head-text">
+          <h3 className="uk-modal-title">Удалить данные клиента?</h3>
+          <p className="uk-modal-subtitle">Действие нельзя отменить</p>
+        </div>
+      </div>
+      <div className="uk-modal-body">
+        <p>
+          Будут безвозвратно удалены: имя, телефон, история заказов и записей.
+          Данные пропадут как из вашего кабинета, так и из ИИ-памяти ассистента в MAX.
+        </p>
+        <div className="uk-modal-note uk-modal-note--law">
+          <Ic name="info" size={16} />
+          <div>
+            <b>152-ФЗ ст. 21:</b> вы как оператор персональных данных обязаны удалить
+            ПДн клиента по его запросу в течение 30 дней. Действие журналируется.
+          </div>
+        </div>
+      </div>
+      <div className="uk-modal-foot">
+        <button className="uk-btn uk-btn--ghost" onClick={onClose}>Отмена</button>
+        <button className="uk-btn uk-btn--danger" onClick={onClose}>Удалить безвозвратно</button>
+      </div>
+    </>
+  );
+}
+
+function ModalCancelSubscription({ onClose }) {
+  return (
+    <>
+      <button className="uk-modal-close" onClick={onClose} aria-label="Закрыть">×</button>
+      <div className="uk-modal-head" style={{display:"flex"}}>
+        <div className="uk-modal-head-icon" style={{background: "rgba(245, 158, 11, 0.14)"}}>
+          <Ic name="icon-status-warning" size={22} />
+        </div>
+        <div className="uk-modal-head-text">
+          <h3 className="uk-modal-title">Отменить подписку?</h3>
+          <p className="uk-modal-subtitle">Тариф «Единый» · 4 990 ₽/мес</p>
+        </div>
+      </div>
+      <div className="uk-modal-body">
+        <p>
+          Подписка останется активной до <b>24.06.2026</b> (ещё 39 дней).
+          После этой даты функции будут отключены, но данные сохранятся
+          30 дней для восстановления.
+        </p>
+        <div className="uk-modal-note">
+          <Ic name="info" size={16} />
+          <div>Можем оформить пропорциональный возврат за неиспользованные дни — напишите в поддержку.</div>
+        </div>
+      </div>
+      <div className="uk-modal-foot">
+        <button className="uk-btn uk-btn--ghost" onClick={onClose}>Не отменять</button>
+        <button className="uk-btn uk-btn--warn" onClick={onClose}>Отменить подписку</button>
+      </div>
+    </>
+  );
+}
+
+function ModalTrialExpiring({ onClose }) {
+  return (
+    <>
+      <button className="uk-modal-close" onClick={onClose} aria-label="Закрыть">×</button>
+      <div className="uk-modal-head" style={{display:"flex"}}>
+        <div className="uk-modal-head-icon" style={{background: "rgba(245, 158, 11, 0.14)"}}>
+          <Ic name="gift-trial" size={22} />
+        </div>
+        <div className="uk-modal-head-text">
+          <h3 className="uk-modal-title">Пробный период истекает завтра</h3>
+          <p className="uk-modal-subtitle">Активируйте тариф, чтобы продолжить</p>
+        </div>
+      </div>
+      <div className="uk-modal-body">
+        <p>
+          Активируйте тариф <b>4 990 ₽/мес</b>, чтобы продолжить пользоваться
+          функционалом без перерыва.
+        </p>
+        <p style={{fontSize: 12, color: "var(--fg-3)", margin: "8px 0 4px"}}>
+          ВЫ ПОТЕРЯЕТЕ ДОСТУП К:
+        </p>
+        <ul className="uk-modal-checklist">
+          <li><span className="dot"></span>Приём заказов от клиентов через ИИ-ассистента в MAX</li>
+          <li><span className="dot"></span>Запись на услуги с напоминаниями</li>
+          <li><span className="dot"></span>Карточки клиентов и история покупок (мини-ЧЗВ)</li>
+          <li><span className="dot"></span>Автопостинг в MAX-канал и контент-план</li>
+        </ul>
+      </div>
+      <div className="uk-modal-foot">
+        <button className="uk-btn uk-btn--ghost" onClick={onClose}>Напомнить позже</button>
+        <button className="uk-btn uk-btn--primary" onClick={onClose}>Активировать тариф →</button>
+      </div>
+    </>
+  );
+}
+
+function ModalAddMaster({ onClose }) {
+  const [services, setServices] = useState(["Маникюр"]);
+  const ALL = ["Маникюр", "Педикюр", "Стрижка", "Окрашивание", "Укладка", "Борода"];
+  return (
+    <>
+      <button className="uk-modal-close" onClick={onClose} aria-label="Закрыть">×</button>
+      <div className="uk-modal-head" style={{display:"flex"}}>
+        <div className="uk-modal-head-icon" style={{background: "rgba(16, 185, 129, 0.14)"}}>
+          <Ic name="icon-action-add" size={22} />
+        </div>
+        <div className="uk-modal-head-text">
+          <h3 className="uk-modal-title">Добавить мастера</h3>
+          <p className="uk-modal-subtitle">Появится в записи на услуги</p>
+        </div>
+      </div>
+      <div className="uk-modal-body">
+        <div className="uk-form">
+          <div className="uk-form-row">
+            <label>ФИО</label>
+            <input type="text" placeholder="Например, Ирина Соколова" />
+          </div>
+          <div className="uk-form-row">
+            <label>Специализация</label>
+            <input type="text" placeholder="мастер маникюра" />
+          </div>
+          <div className="uk-form-row uk-form-row--grid2">
+            <div className="uk-form-row">
+              <label>Контакт (MAX или телефон)</label>
+              <input type="text" placeholder="@ irina_sokolova" />
+            </div>
+            <div className="uk-form-row">
+              <label>График работы</label>
+              <select defaultValue="mo-sa">
+                <option value="mo-sa">Пн–Сб 10:00–20:00</option>
+                <option value="mo-fr">Пн–Пт 09:00–18:00</option>
+                <option value="tu-su">Вт–Вс 11:00–21:00</option>
+                <option value="custom">Свой график</option>
+              </select>
+            </div>
+          </div>
+          <div className="uk-form-row">
+            <label>Услуги, которые выполняет</label>
+            <div className="uk-form-chips">
+              {ALL.map(s => {
+                const on = services.includes(s);
+                return (
+                  <span key={s}
+                        className={`uk-form-chip ${on ? "is-on" : ""}`}
+                        onClick={() => setServices(on ? services.filter(x => x !== s) : [...services, s])}>
+                    {on && "✓ "}{s}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="uk-modal-foot">
+        <button className="uk-btn uk-btn--ghost" onClick={onClose}>Отмена</button>
+        <button className="uk-btn uk-btn--primary" onClick={onClose}>Сохранить</button>
+      </div>
+    </>
+  );
+}
+
+function ModalAddPromo({ onClose }) {
+  const [type, setType] = useState("percent");
+  return (
+    <>
+      <button className="uk-modal-close" onClick={onClose} aria-label="Закрыть">×</button>
+      <div className="uk-modal-head" style={{display:"flex"}}>
+        <div className="uk-modal-head-icon" style={{background: "rgba(16, 185, 129, 0.14)"}}>
+          <Ic name="percent" size={22} />
+        </div>
+        <div className="uk-modal-head-text">
+          <h3 className="uk-modal-title">Создать промокод</h3>
+          <p className="uk-modal-subtitle">Появится в боте для клиентов</p>
+        </div>
+      </div>
+      <div className="uk-modal-body">
+        <div className="uk-form">
+          <div className="uk-form-row uk-form-row--grid2">
+            <div className="uk-form-row">
+              <label>Код промокода</label>
+              <input type="text" placeholder="WELCOME10" style={{textTransform: "uppercase"}} />
+            </div>
+            <div className="uk-form-row">
+              <label>Тип скидки</label>
+              <select value={type} onChange={e => setType(e.target.value)}>
+                <option value="percent">Процент (%)</option>
+                <option value="rub">Фиксированная (₽)</option>
+              </select>
+            </div>
+          </div>
+          <div className="uk-form-row uk-form-row--grid2">
+            <div className="uk-form-row">
+              <label>Размер скидки</label>
+              <input type="number" placeholder={type === "percent" ? "10" : "500"} />
+            </div>
+            <div className="uk-form-row">
+              <label>Срок действия (до)</label>
+              <input type="text" placeholder="14.06.2026" />
+            </div>
+          </div>
+          <div className="uk-form-row">
+            <label>Лимит использований</label>
+            <input type="number" placeholder="100 (оставьте пустым для бессрочного)" />
+          </div>
+        </div>
+      </div>
+      <div className="uk-modal-foot">
+        <button className="uk-btn uk-btn--ghost" onClick={onClose}>Отмена</button>
+        <button className="uk-btn uk-btn--primary" onClick={onClose}>Создать</button>
+      </div>
+    </>
+  );
+}
+
+function ModalUploadImage({ onClose }) {
+  const [file, setFile] = useState(null);
+  return (
+    <>
+      <button className="uk-modal-close" onClick={onClose} aria-label="Закрыть">×</button>
+      <div className="uk-modal-head" style={{display:"flex"}}>
+        <div className="uk-modal-head-icon" style={{background: "rgba(16, 185, 129, 0.14)"}}>
+          <Ic name="icon-action-upload" size={22} />
+        </div>
+        <div className="uk-modal-head-text">
+          <h3 className="uk-modal-title">Загрузить фото товара</h3>
+          <p className="uk-modal-subtitle">Перетащите файл или нажмите для выбора</p>
+        </div>
+      </div>
+      <div className="uk-modal-body">
+        <div className="uk-dropzone" onClick={() => setFile({name: "medovik-1080.jpg", size: "284 КБ"})}>
+          <div className="uk-dropzone-icon">
+            <Ic name="icon-action-upload" size={20} />
+          </div>
+          <p>Перетащите файл или нажмите для выбора</p>
+          <div className="req">JPG, PNG до 5 МБ · рекомендовано 1080×1080</div>
+        </div>
+        {file && (
+          <div className="uk-dropzone-preview">
+            <div className="thumb"><Ic name="gallery" size={22} /></div>
+            <div className="meta">
+              <b>{file.name}</b>
+              <span>{file.size} · готово к загрузке</span>
+            </div>
+            <button className="uk-btn uk-btn--ghost uk-btn--sm" onClick={() => setFile(null)}>
+              <Ic name="icon-action-delete" size={12} />
+            </button>
+          </div>
+        )}
+        <div className="uk-modal-note" style={{marginTop: 14}}>
+          <Ic name="info" size={16} />
+          <div>ИИ-ассистент автоматически распознает товар на фото и предложит описание</div>
+        </div>
+      </div>
+      <div className="uk-modal-foot">
+        <button className="uk-btn uk-btn--ghost" onClick={onClose}>Отмена</button>
+        <button className="uk-btn uk-btn--primary" onClick={onClose}>Загрузить</button>
+      </div>
+    </>
+  );
+}
+
+const MODAL_CATALOG = [
+  { id: "delete-customer", title: "Confirm Delete (152-ФЗ)",
+    meta: "danger · confirm",
+    render: (close) => <ModalConfirmDelete onClose={close} /> },
+  { id: "cancel-sub",      title: "Cancel Subscription",
+    meta: "warning · confirm",
+    render: (close) => <ModalCancelSubscription onClose={close} /> },
+  { id: "trial-expire",    title: "Trial Expiring",
+    meta: "warning · upsell",
+    render: (close) => <ModalTrialExpiring onClose={close} /> },
+  { id: "add-master",      title: "Add Master (CRM Bookings)",
+    meta: "form · multi-select",
+    render: (close) => <ModalAddMaster onClose={close} /> },
+  { id: "add-promo",       title: "Add Promo Code",
+    meta: "form · select",
+    render: (close) => <ModalAddPromo onClose={close} /> },
+  { id: "upload",          title: "Upload Image (drag-drop)",
+    meta: "form · upload",
+    render: (close) => <ModalUploadImage onClose={close} /> },
+];
+
+function ModalsSection({ onOpen }) {
+  return (
+    <div className="uk-grid uk-grid--wide">
+      {MODAL_CATALOG.map(m => (
+        <div key={m.id} className="uk-preview">
+          <div className="uk-preview-head">
+            <h3 className="uk-preview-title">{m.title}</h3>
+            <span className="uk-preview-meta">{m.meta}</span>
+          </div>
+          <div className="uk-preview-stage uk-preview-stage--tall">
+            <div className="uk-modal uk-modal--inline" style={{transform: "scale(0.78)", transformOrigin: "top center"}}>
+              {m.render(() => {})}
+            </div>
+          </div>
+          <div className="uk-preview-actions">
+            <button className="uk-btn uk-btn--ghost uk-btn--sm" onClick={() => onOpen(m.id)}>
+              <Ic name="icon-action-external-link" size={12} /> Открыть в overlay
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   EMPTY STATES
+============================================================ */
+function EmptyArt({ kind }) {
+  /* Inline SVG illustrations — emerald accent, geometric */
+  const ART = {
+    orders: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <rect x="6" y="10" width="32" height="26" rx="3" stroke="#10b981" strokeWidth="1.8"/>
+        <path d="M6 16 H38" stroke="#10b981" strokeWidth="1.8"/>
+        <circle cx="14" cy="24" r="1.6" fill="#10b981"/>
+        <path d="M19 24 H32" stroke="#a7f3d0" strokeWidth="1.8" strokeLinecap="round"/>
+        <circle cx="14" cy="30" r="1.6" fill="#10b981"/>
+        <path d="M19 30 H28" stroke="#a7f3d0" strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
+    ),
+    bookings: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <rect x="6" y="10" width="32" height="28" rx="3" stroke="#10b981" strokeWidth="1.8"/>
+        <path d="M6 18 H38" stroke="#10b981" strokeWidth="1.8"/>
+        <path d="M14 6 V14 M30 6 V14" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round"/>
+        <circle cx="22" cy="28" r="6" stroke="#10b981" strokeWidth="1.5"/>
+        <path d="M22 25 V28 L24 30" stroke="#10b981" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+    customers: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <rect x="6" y="8" width="32" height="28" rx="3" stroke="#10b981" strokeWidth="1.8" strokeDasharray="3 3"/>
+        <circle cx="22" cy="20" r="4" stroke="#10b981" strokeWidth="1.8"/>
+        <path d="M14 32 Q14 25 22 25 Q30 25 30 32" stroke="#10b981" strokeWidth="1.8" fill="none"/>
+      </svg>
+    ),
+    products: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <path d="M6 14 H38 V20 H6 Z" stroke="#10b981" strokeWidth="1.8" strokeDasharray="3 3"/>
+        <path d="M6 24 H38 V30 H6 Z" stroke="#10b981" strokeWidth="1.8" strokeDasharray="3 3"/>
+        <path d="M6 34 H38" stroke="#10b981" strokeWidth="1.8"/>
+        <path d="M6 10 H38" stroke="#10b981" strokeWidth="1.8"/>
+      </svg>
+    ),
+    referrals: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <circle cx="12" cy="22" r="5" stroke="#10b981" strokeWidth="1.8"/>
+        <circle cx="32" cy="22" r="5" stroke="#10b981" strokeWidth="1.8"/>
+        <path d="M17 22 H27" stroke="#10b981" strokeWidth="1.8" strokeDasharray="2 2"/>
+        <path d="M12 30 Q12 35 8 36 M32 30 Q32 35 36 36" stroke="#10b981" strokeWidth="1.8"/>
+      </svg>
+    ),
+    search: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <circle cx="20" cy="20" r="10" stroke="#10b981" strokeWidth="1.8"/>
+        <path d="M28 28 L36 36" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round"/>
+        <path d="M16 16 L24 24 M24 16 L16 24" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
+    ),
+    payouts: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <path d="M6 14 Q6 12 8 12 H36 Q38 12 38 14 V30 Q38 32 36 32 H8 Q6 32 6 30 Z" stroke="#10b981" strokeWidth="1.8" strokeDasharray="3 3"/>
+        <circle cx="30" cy="22" r="2.5" stroke="#10b981" strokeWidth="1.5"/>
+      </svg>
+    ),
+    rocket: (
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <path d="M22 6 Q30 14 30 24 V32 H14 V24 Q14 14 22 6 Z" stroke="#10b981" strokeWidth="1.8"/>
+        <circle cx="22" cy="20" r="2.5" fill="#10b981"/>
+        <path d="M14 32 L10 38 M30 32 L34 38" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
+    ),
+  };
+  return ART[kind] || ART.orders;
+}
+
+const EMPTY_CATALOG = [
+  {
+    id: "no-orders", art: "orders",
+    title: "Пока нет заказов",
+    text: "Здесь будут заказы от клиентов через ИИ-ассистента в MAX",
+    cta: { label: "Настроить приём заказов", primary: true, icon: "icon-action-add" },
+  },
+  {
+    id: "no-bookings", art: "bookings",
+    title: "Пока нет записей",
+    text: "Здесь будут записи клиентов на услуги",
+    cta: { label: "Добавить мастера", primary: true, icon: "icon-action-add" },
+  },
+  {
+    id: "no-customers", art: "customers",
+    title: "Карточки клиентов появятся автоматически",
+    text: "При первом контакте через MAX-канал создаётся карточка с историей покупок",
+    link: "Узнать больше →",
+  },
+  {
+    id: "no-products", art: "products",
+    title: "Каталог пуст",
+    text: "Загрузите товары и услуги — ИИ обучится отвечать клиентам",
+    multi: [
+      { label: "Импорт с сайта", icon: "icon-action-import" },
+      { label: "CSV-загрузка", icon: "icon-action-upload" },
+      { label: "Добавить вручную", icon: "icon-action-add", primary: true },
+    ],
+  },
+  {
+    id: "no-referrals", art: "referrals",
+    title: "Ваша партнёрская активность начинается здесь",
+    text: "Скопируйте реферальную ссылку и поделитесь с теми, кому может пригодиться СММ АЙБРО",
+    cta: { label: "Скопировать ссылку", primary: true, icon: "icon-action-copy" },
+  },
+  {
+    id: "no-search", art: "search",
+    title: "По запросу «медовик» ничего не найдено",
+    text: "Попробуйте изменить фильтры или сбросить поиск",
+    cta: { label: "Сбросить фильтры", icon: "icon-action-refresh" },
+  },
+  {
+    id: "no-payouts", art: "payouts",
+    title: "Первая выплата 10-го числа",
+    text: "Партнёрские начисления выплачиваются ежемесячно · к выплате 0 ₽",
+  },
+  {
+    id: "crm-coming", art: "rocket",
+    title: "Скоро · 08.06.2026",
+    text: "CRM-light включит приём заказов, запись на услуги и мини-ЧЗВ клиентов",
+    cta: { label: "Узнать, что появится", icon: "icon-action-external-link" },
+  },
+];
+
+function EmptyView({ e }) {
+  return (
+    <div className="uk-empty">
+      <div className="uk-empty-art"><EmptyArt kind={e.art} /></div>
+      <h3 className="uk-empty-title">{e.title}</h3>
+      <p className="uk-empty-text">{e.text}</p>
+      {e.cta && (
+        <div className="uk-empty-actions">
+          <button className={`uk-btn ${e.cta.primary ? "uk-btn--primary" : "uk-btn--ghost"}`}>
+            {e.cta.icon && <Ic name={e.cta.icon} size={13} />} {e.cta.label} {e.cta.primary && "→"}
+          </button>
+        </div>
+      )}
+      {e.multi && (
+        <div className="uk-empty-actions">
+          {e.multi.map(b => (
+            <button key={b.label} className={`uk-btn ${b.primary ? "uk-btn--primary" : "uk-btn--ghost"}`}>
+              {b.icon && <Ic name={b.icon} size={13} />} {b.label}
+            </button>
+          ))}
+        </div>
+      )}
+      {e.link && <a className="uk-empty-link" href="#">{e.link}</a>}
+    </div>
+  );
+}
+
+function EmptySection() {
+  return (
+    <div className="uk-grid uk-grid--wide">
+      {EMPTY_CATALOG.map(e => (
+        <div key={e.id} className="uk-preview">
+          <div className="uk-preview-head">
+            <h3 className="uk-preview-title">{e.title.length > 32 ? e.title.slice(0, 30) + "…" : e.title}</h3>
+            <span className="uk-preview-meta">{e.id}</span>
+          </div>
+          <div className="uk-preview-stage uk-preview-stage--tall">
+            <EmptyView e={e} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   BANNERS
+============================================================ */
+const BANNER_CATALOG = [
+  {
+    id: "crm-release", kind: "brand",
+    icon: "rocket",
+    title: "CRM-light уже скоро · 08.06.2026",
+    text: "Приём заказов, запись на услуги и мини-ЧЗВ клиентов — без доплат, в тариф",
+    cta: "Узнать подробнее →",
+  },
+  {
+    id: "trial-expire", kind: "warn",
+    icon: "icon-status-warning",
+    title: "Пробный период истекает через 2 дня",
+    text: "Активируйте тариф 4 990 ₽/мес, чтобы продолжить пользоваться функционалом",
+    cta: "Активировать тариф →",
+  },
+  {
+    id: "payment-failed", kind: "danger",
+    icon: "icon-status-error",
+    title: "Платёж не прошёл",
+    text: "Не удалось списать 4 990 ₽ с карты Visa **4242. Попробуем повторно через 24 часа",
+    cta: "Обновить способ оплаты →",
+  },
+  {
+    id: "maintenance", kind: "info",
+    icon: "icon-status-info",
+    title: "Плановое обслуживание 17.05.2026 с 03:00 до 04:00 МСК",
+    text: "Возможны кратковременные перебои в работе кабинета · функции ИИ-ассистента в MAX продолжат работать",
+    cta: "Подробнее →",
+  },
+  {
+    id: "feature-release", kind: "feature",
+    icon: "spark-ai",
+    title: "Новое: контент-план в виде канбана",
+    text: "Перетаскивайте посты между колонками «Идея → На согласовании → Готово → Опубликовано»",
+    cta: "Посмотреть →",
+  },
+];
+
+function BannerView({ b }) {
+  return (
+    <div className={`uk-banner uk-banner--${b.kind}`}>
+      <div className="uk-banner-icon"><Ic name={b.icon} size={20} /></div>
+      <div className="uk-banner-body">
+        <h4 className="uk-banner-title">{b.title}</h4>
+        <p className="uk-banner-text">{b.text}</p>
+      </div>
+      {b.cta && <a className="uk-banner-cta" href="#" onClick={e => e.preventDefault()}>{b.cta}</a>}
+    </div>
+  );
+}
+
+function BannersSection() {
+  return (
+    <div className="uk-grid uk-grid--full">
+      {BANNER_CATALOG.map(b => (
+        <div key={b.id} className="uk-preview">
+          <div className="uk-preview-head">
+            <h3 className="uk-preview-title">{b.title}</h3>
+            <span className="uk-preview-meta">banner · {b.kind}</span>
+          </div>
+          <div className="uk-preview-stage uk-preview-stage--banner">
+            <BannerView b={b} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   SKELETONS
+============================================================ */
+function SkeletonsSection() {
+  return (
+    <div className="uk-grid uk-grid--wide">
+      <div className="uk-preview">
+        <div className="uk-preview-head">
+          <h3 className="uk-preview-title">Table skeleton (5 rows shimmer)</h3>
+          <span className="uk-preview-meta">skeleton · table</span>
+        </div>
+        <div className="uk-preview-stage uk-preview-stage--tall" style={{padding: 0, alignItems: "flex-start"}}>
+          <table className="uk-skel-table">
+            <thead>
+              <tr><th>Заказ</th><th>Клиент</th><th>Сумма</th><th>Статус</th></tr>
+            </thead>
+            <tbody>
+              {[68, 88, 76, 92, 80].map((w, i) => (
+                <tr key={i}>
+                  <td><span className="uk-skel" style={{width: 64, height: 14}} /></td>
+                  <td><span className="uk-skel" style={{width: w + "%", height: 14}} /></td>
+                  <td><span className="uk-skel" style={{width: 56, height: 14}} /></td>
+                  <td><span className="uk-skel" style={{width: 72, height: 18, borderRadius: 999}} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="uk-preview">
+        <div className="uk-preview-head">
+          <h3 className="uk-preview-title">Card grid skeleton (3×2 shimmer)</h3>
+          <span className="uk-preview-meta">skeleton · cards</span>
+        </div>
+        <div className="uk-preview-stage uk-preview-stage--tall">
+          <div className="uk-skel-cards">
+            {Array.from({length: 6}).map((_, i) => (
+              <div key={i} className="uk-skel-card">
+                <span className="uk-skel uk-skel--block" style={{height: 48, borderRadius: 8}} />
+                <span className="uk-skel" style={{width: "75%", height: 14}} />
+                <span className="uk-skel" style={{width: "50%", height: 12}} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="uk-preview">
+        <div className="uk-preview-head">
+          <h3 className="uk-preview-title">Spinner inline</h3>
+          <span className="uk-preview-meta">spinner · inline</span>
+        </div>
+        <div className="uk-preview-stage">
+          <div className="uk-spinner-row">
+            <span className="uk-spinner" aria-hidden="true" />
+            <span className="text">Загружаем заказы…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   ROOT APP
+============================================================ */
+function App() {
+  const [toasts, setToasts] = useState([]);
+  const [activeModal, setActiveModal] = useState(null);
+  const counter = useRef(0);
+
+  function fireToast(template) {
+    const id = ++counter.current;
+    setToasts(prev => [...prev, { ...template, id }]);
+    if (template.kind === "success" || template.kind === "info") {
+      setTimeout(() => closeToast(id), 5000);
+    }
+  }
+  function closeToast(id) {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }
+
+  const modal = MODAL_CATALOG.find(m => m.id === activeModal);
+
+  return (
+    <div className="uk-shell">
+      <div className="uk-wrap">
+        <header className="uk-head">
+          <div>
+            <div className="uk-head-meta" style={{marginBottom: 8}}>
+              <span>Кабинет / UI Kit</span>
+              <span>·</span>
+              <span>v1.0</span>
+              <span>·</span>
+              <span>обновлено 16.05.2026</span>
+            </div>
+            <h1>UI Kit · Modals, Empty states, Toasts</h1>
+            <p className="lead">
+              Gallery всех reusable UI patterns для cabinet.smmaibro.ru / admin.smmaibro.ru / partners.smmaibro.ru.
+              Используется codex для Phase 4 TSX implementation и Валерием для дизайн-ревью всех edge cases.
+            </p>
+          </div>
+          <div className="uk-head-meta">
+            <span className="uk-head-tag">Aibro · 27 паттернов</span>
+          </div>
+        </header>
+
+        <Toc />
+
+        <Section id="toasts" num="01" title="Toasts / Notifications" desc="Всплывающие уведомления · 4 семантических состояния + feature" count={5}>
+          <ToastsSection onFire={fireToast} />
+        </Section>
+
+        <Section id="modals" num="02" title="Modals" desc="Confirm / form / drag-drop · все вызывают overlay с blur и Esc-handler" count={6}>
+          <ModalsSection onOpen={setActiveModal} />
+        </Section>
+
+        <Section id="empty" num="03" title="Empty states" desc="Для всех пустых страниц кабинета · иллюстрация + CTA или ссылка" count={8}>
+          <EmptySection />
+        </Section>
+
+        <Section id="banners" num="04" title="Banners / Callouts" desc="Full-width баннеры на странице · brand / warn / danger / info / feature" count={5}>
+          <BannersSection />
+        </Section>
+
+        <Section id="loading" num="05" title="Loading / Skeletons" desc="Async загрузка · shimmer animation 1400ms линейная" count={3}>
+          <SkeletonsSection />
+        </Section>
+
+        <footer style={{marginTop: 80, paddingTop: 24, borderTop: "1px solid var(--border-1)",
+                        fontSize: 12, color: "var(--fg-3)", display: "flex",
+                        justifyContent: "space-between", flexWrap: "wrap", gap: 12}}>
+          <div>СММ АЙБРО · UI Kit gallery · single-MAX · 4 990 ₽/мес · 168-ФЗ compliant</div>
+          <div>RUMIRA · Claude Opus 4.7 · TASK-007 · 16.05.2026</div>
+        </footer>
+      </div>
+
+      <ToastStack toasts={toasts} onClose={closeToast} />
+
+      {modal && (
+        <ModalOverlay onClose={() => setActiveModal(null)}>
+          {modal.render(() => setActiveModal(null))}
+        </ModalOverlay>
+      )}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

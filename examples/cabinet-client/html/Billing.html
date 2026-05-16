@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Кабинет — Подписка и оплата</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/atoms.css">
+  <link rel="stylesheet" href="design/cabinet.css">
+  <link rel="stylesheet" href="design/settings.css">
+  <link rel="stylesheet" href="design/billing.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+const ICO = "design/assets/icons/";
+
+function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+function fmtRub(n) { return fmt(n) + " ₽"; }
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+const NAV = [
+  { id: "home",      label: "Главная",         icon: "icon-nav-home",       href: "Dashboard.html" },
+  { id: "bots",      label: "Боты и каналы",   icon: "icon-nav-integrations", href: "Bots.html" },
+  { id: "orders",    label: "Заказы",          icon: "icon-crm-orders",     href: "Orders.html",    badge: 7 },
+  { id: "bookings",  label: "Записи",          icon: "icon-crm-bookings",   href: "Bookings.html",  badge: 12 },
+  { id: "customers", label: "Клиенты",         icon: "icon-crm-customers",  href: "Customers.html" },
+  { id: "products",  label: "Товары и услуги", icon: "icon-nav-products",   href: "Products.html" },
+  { id: "content",   label: "Контент",         icon: "icon-nav-content",    href: "Calendar.html" },
+  { id: "ai",        label: "ИИ-ассистент",    icon: "spark-ai" },
+  { id: "analytics", label: "Аналитика",       icon: "chart-line" },
+  { id: "marketing", label: "Маркетинг",       icon: "megaphone" },
+  { id: "billing",   label: "Подписка",        icon: "price-tag-ruble",     href: "Billing.html" },
+  { id: "settings",  label: "Настройки",       icon: "icon-nav-settings",   href: "Settings.html" },
+];
+
+function Sidebar({ current }) {
+  return (
+    <aside className="cab-side" aria-label="Главная навигация">
+      <a className="cab-brand" href="Dashboard.html">
+        <span className="cab-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+        <span>
+          <span className="cab-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="cab-brand-meta">Кабинет</div>
+        </span>
+      </a>
+
+      <button className="cab-biz">
+        <div className="cab-biz-ava" style={{background:"#fed7aa", color:"#9a3412"}}>У</div>
+        <div>
+          <div className="cab-biz-name">Пекарня «Уют»</div>
+          <div className="cab-biz-handle">@pekarnya_uyut · Бакалея</div>
+        </div>
+        <Ic name="icon-action-expand" size={14} style={{opacity:0.4}} />
+      </button>
+
+      {NAV.map((it) => {
+        const cls = `cab-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="cab-side-foot">
+        Тариф «Единый» · <b>4 990 ₽/мес</b><br/>
+        До 24.06.2026 · <a href="Billing.html">Продлить</a>
+      </div>
+    </aside>
+  );
+}
+
+function TopBar() {
+  return (
+    <header className="cab-top">
+      <div>
+        <div className="crumb">Кабинет / Подписка и оплата</div>
+        <h1>Подписка и оплата</h1>
+      </div>
+      <div className="cab-top-actions">
+        <button className="cab-iconbtn" aria-label="Уведомления">
+          <Ic name="notification-bell" size={20} />
+          <span className="dot"></span>
+        </button>
+        <div className="cab-profile" tabIndex="0">
+          <div className="ava">А</div>
+          <div className="meta">
+            <span className="name">Анна П.</span>
+            <span className="role">Владелец</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ============================================================
+   DATA
+============================================================ */
+const FEATURES = [
+  "ИИ-ассистент 1 000 ответов/мес",
+  "5 автопостов + 5 быстрых/день",
+  "1 000 товаров в каталоге",
+  { text: "СRM-light (заказы и записи)", soon: "с 08.06.2026" },
+  "Карточки клиентов с историей",
+  "Календарь записей на услуги",
+  "ИИ-коуч продаж",
+  "Голосовые сообщения",
+  "Импорт с сайта 3/мес",
+  "30 рекламных постов с маркировкой ОРД",
+  "Аналитика и отчёты",
+  "Приоритетная поддержка в MAX",
+];
+
+const PAYMENTS = [
+  { date: "24.05.2026", descr: "Подписка ПРО", sub: "период 24.05–24.06.2026", method: "Карта •••• 4521", amount: 4990, status: "succeeded",  receipt: "ok" },
+  { date: "24.04.2026", descr: "Подписка ПРО", sub: "период 24.04–24.05.2026", method: "Карта •••• 4521", amount: 4990, status: "succeeded",  receipt: "ok" },
+  { date: "24.03.2026", descr: "Подписка ПРО", sub: "период 24.03–24.04.2026", method: "Карта •••• 4521", amount: 4990, status: "succeeded",  receipt: "ok" },
+  { date: "24.02.2026", descr: "Подписка ПРО", sub: "период 24.02–24.03.2026", method: "Карта •••• 4521", amount: 4990, status: "succeeded",  receipt: "ok" },
+  { date: "24.01.2026", descr: "Подписка ПРО", sub: "период 24.01–24.02.2026", method: "Карта •••• 4521", amount: 4990, status: "succeeded",  receipt: "ok" },
+  { date: "24.12.2025", descr: "Подписка ПРО", sub: "период 24.12.25–24.01.26", method: "Карта •••• 4521", amount: 4990, status: "succeeded",  receipt: "ok" },
+  { date: "24.11.2025", descr: "Подписка ПРО", sub: "период 24.11–24.12.2025", method: "СБП Т-Банк",       amount: 4990, status: "succeeded",  receipt: "ok" },
+  { date: "20.11.2025", descr: "Возврат", sub: "ошибочное списание 19.11", method: "Карта •••• 4521",     amount: -4990, status: "refunded",   receipt: "ok" },
+  { date: "19.11.2025", descr: "Подписка ПРО", sub: "(сторнировано)",        method: "Карта •••• 4521",  amount: 4990, status: "refunded",   receipt: "ok" },
+  { date: "24.10.2025", descr: "Подписка ПРО", sub: "период 24.10–24.11.2025", method: "Карта •••• 4521", amount: 4990, status: "succeeded",  receipt: "ok" },
+  { date: "24.09.2025", descr: "Подписка ПРО", sub: "первое списание после триала", method: "Карта •••• 4521", amount: 4990, status: "succeeded", receipt: "ok" },
+  { date: "24.08.2025", descr: "Попытка списания", sub: "недостаточно средств — повтор через 24 ч", method: "Карта •••• 4521", amount: 4990, status: "failed", receipt: "none" },
+  { date: "24.06.2025", descr: "Подписка ПРО (со скидкой WELCOME10)", sub: "−499 ₽ по промокоду", method: "Карта •••• 4521", amount: 4491, status: "succeeded", receipt: "ok" },
+];
+
+function StatusPill({ status }) {
+  const label =
+    status === "succeeded" ? "оплачено" :
+    status === "pending"   ? "в обработке" :
+    status === "failed"    ? "ошибка" :
+    status === "refunded"  ? "возврат" : status;
+  return <span className={`bill-pill ${status}`}>{label}</span>;
+}
+
+/* ============================================================
+   ROOT
+============================================================ */
+function App() {
+  const [promo, setPromo] = useState("");
+
+  return (
+    <div className="cab-shell">
+      <Sidebar current="billing" />
+      <main className="cab-main">
+        <TopBar />
+        <div className="cab-content">
+          <div className="bill-head">
+            <div>
+              <h2>Управление подпиской и платежами</h2>
+              <div className="sub">Тариф, способ оплаты, история списаний и чеки за всё время</div>
+            </div>
+            <button className="btn btn-secondary">
+              <Ic name="icon-action-download" size={13} /> Скачать справку об оплате
+            </button>
+          </div>
+
+          {/* Status strip */}
+          <div className="bill-status-strip">
+            <div className="bill-status-item accent">
+              <div className="bill-status-icon"><Ic name="price-tag-ruble" size={20} /></div>
+              <div style={{minWidth:0, flex:1}}>
+                <div className="bill-status-label">Тариф</div>
+                <div className="bill-status-val"><b>ПРО</b> · действует до 24.06.2026</div>
+                <div className="bill-status-meta">осталось 39 дней</div>
+              </div>
+            </div>
+            <div className="bill-status-item">
+              <div className="bill-status-icon" style={{background:"rgba(96,165,250,0.10)"}}>
+                <Ic name="credit-card" size={20} />
+              </div>
+              <div style={{minWidth:0, flex:1}}>
+                <div className="bill-status-label">Способ оплаты</div>
+                <div className="bill-status-val">•••• 4521 (Тинькофф)</div>
+                <div className="bill-status-meta">автопродление включено</div>
+              </div>
+            </div>
+            <div className="bill-status-item">
+              <div className="bill-status-icon" style={{background:"rgba(245,158,11,0.10)"}}>
+                <Ic name="gift-trial" size={20} />
+              </div>
+              <div style={{minWidth:0, flex:1}}>
+                <div className="bill-status-label">Пробный период</div>
+                <div className="bill-status-val">Использован</div>
+                <div className="bill-status-meta">7.04.2026 – 12.04.2026 (5 дней)</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Plan card */}
+          <div className="bill-plan-card">
+            <span className="bill-plan-chip">
+              <Ic name="status-checkmark-done" size={11} /> Ваш тариф
+            </span>
+            <h2 className="bill-plan-title">
+              Единый <span className="price">4 990 ₽</span> <span className="per">/мес</span>
+            </h2>
+            <div className="bill-plan-desc">
+              Всё включено. Без аддонов, без скрытых платежей. Один тариф для всех бизнесов.
+            </div>
+
+            <div className="bill-plan-features">
+              {FEATURES.map((f, i) => {
+                const text = typeof f === "string" ? f : f.text;
+                const soon = typeof f === "string" ? null : f.soon;
+                return (
+                  <div key={i} className="bill-plan-feature">
+                    <span className="check">✓</span>
+                    <span>{text}{soon && <span className="soon">{soon}</span>}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="bill-plan-next">
+              <div className="bill-plan-next-info">
+                Следующее списание: <b>24.06.2026</b> · <b>4 990 ₽</b>
+                <div style={{fontSize:12, color:"var(--fg-3)", marginTop:4}}>
+                  С карты •••• 4521 (Тинькофф) автоматически
+                </div>
+              </div>
+              <div className="bill-plan-actions">
+                <button className="btn btn-secondary">
+                  <Ic name="credit-card" size={13} /> Изменить способ оплаты
+                </button>
+                <button className="btn btn-link btn-danger-link">Отменить автопродление</button>
+              </div>
+            </div>
+          </div>
+
+          {/* History */}
+          <section className="cab-section">
+            <div className="cab-section-head">
+              <div>
+                <h3>История платежей</h3>
+                <p>За последние 12 месяцев · {PAYMENTS.length} операций · чеки 54-ФЗ доступны</p>
+              </div>
+              <div style={{display:"flex", gap:6}}>
+                <button className="btn btn-ghost"><Ic name="icon-action-filter" size={13} /> Фильтр</button>
+                <button className="btn btn-ghost"><Ic name="icon-action-download" size={13} /> Скачать все чеки</button>
+              </div>
+            </div>
+
+            <div className="cab-card" style={{padding: "10px 14px 14px"}}>
+              <div className="bill-history-wrap">
+                <table className="bill-history">
+                  <thead>
+                    <tr>
+                      <th>Дата</th>
+                      <th>Описание</th>
+                      <th>Способ</th>
+                      <th className="num">Сумма</th>
+                      <th>Статус</th>
+                      <th>Чек</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {PAYMENTS.map((p, i) => (
+                      <tr key={i}>
+                        <td className="date">{p.date}</td>
+                        <td className="descr">
+                          <b>{p.descr}</b>
+                          <span className="sub">{p.sub}</span>
+                        </td>
+                        <td>{p.method}</td>
+                        <td className="num amount">
+                          {p.amount < 0 ? "−" : ""}{fmtRub(Math.abs(p.amount))}
+                        </td>
+                        <td><StatusPill status={p.status} /></td>
+                        <td className="receipt">
+                          {p.receipt === "ok"
+                            ? <a href="#"><Ic name="invoice" size={13} /> PDF</a>
+                            : <span className="none">—</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="bill-history-actions">
+                <div className="bill-history-summary">
+                  Итого оплачено за год: <b>{fmtRub(59880)}</b> · возвратов: <b>{fmtRub(4990)}</b> ·
+                  чеков выдано: <b>12</b>
+                </div>
+                <div style={{display:"flex", gap:8}}>
+                  <button className="btn btn-secondary">
+                    <Ic name="icon-action-download" size={13} /> Скачать все чеки за год (ZIP)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Refund + Promo side-by-side */}
+          <div className="bill-side-grid">
+            <div className="bill-refund">
+              <h4><Ic name="status-arrow-rescheduled" size={16} /> Возврат подписки</h4>
+              <p>
+                Передумали? Можем оформить возврат пропорционально неиспользованным дням.
+                Деньги вернутся на тот же способ оплаты в течение 5 рабочих дней.
+              </p>
+              <div style={{display:"flex", gap:8, alignItems:"center"}}>
+                <button className="btn btn-secondary">
+                  <Ic name="icon-action-share-link" size={13} /> Запросить возврат
+                </button>
+                <span className="bill-refund-meta">
+                  <Ic name="icon-status-info" size={12} /> 5 рабочих дней
+                </span>
+              </div>
+            </div>
+
+            <div className="bill-promo">
+              <h4><Ic name="gift-trial" size={16} /> Промокод</h4>
+              <p>Скидка на следующее списание или дополнительные дни подписки</p>
+              <div className="bill-promo-input">
+                <input
+                  type="text"
+                  placeholder="ВВЕДИТЕ КОД"
+                  value={promo}
+                  onChange={(e) => setPromo(e.target.value.toUpperCase())}
+                />
+                <button className="btn btn-primary">Применить</button>
+              </div>
+              <div className="bill-promo-history">
+                История применённых: <code>WELCOME10</code> — использован 24.06.2025, скидка −499 ₽
+              </div>
+            </div>
+          </div>
+
+          {/* Legal footer */}
+          <div className="bill-legal-footer">
+            <div className="bill-legal-icon">
+              <Ic name="shield-check" size={20} />
+            </div>
+            <div className="bill-legal-content">
+              <div className="bill-legal-links">
+                <a href="#"><Ic name="scroll" size={12} /> Оферта v2.6</a>
+                <a href="#"><Ic name="shield-check" size={12} /> Политика конфиденциальности v1.2</a>
+                <a href="#"><Ic name="shield-check" size={12} /> DPA v1.3</a>
+                <a href="#"><Ic name="status-arrow-rescheduled" size={12} /> Политика возврата</a>
+                <a href="#"><Ic name="invoice" size={12} /> Чеки 54-ФЗ</a>
+              </div>
+              <div className="bill-legal-entity">
+                <b>ИП Мальцев Валерий Валерьевич</b> · ИНН 519041916737 · ОГРНИП 318784700255560 · УСН 6%<br/>
+                Расчётный счёт в Т-Банке · юридический адрес: г. Санкт-Петербург
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

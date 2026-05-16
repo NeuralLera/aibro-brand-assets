@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>СММ АЙБРО — Кабинет · Клиенты</title>
+<link rel="icon" type="image/svg+xml" href="logos/favicon-light.svg" />
+<link rel="stylesheet" href="design/tokens.css" />
+<link rel="stylesheet" href="design/atoms.css" />
+<link rel="stylesheet" href="design/dashboard.css" />
+<link rel="stylesheet" href="design/orders.css" />
+<link rel="stylesheet" href="design/customers.css" />
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+/* =====================================================================
+   Icon registry — fetches SVG text, strips width/height for currentColor.
+   ===================================================================== */
+const { useState, useEffect, useMemo, useRef } = React;
+const ICON_CACHE = new Map();
+
+function loadIcon(path) {
+  if (ICON_CACHE.has(path)) return ICON_CACHE.get(path);
+  const p = fetch(path)
+    .then((r) => (r.ok ? r.text() : ""))
+    .then((txt) => {
+      const clean = txt
+        .replace(/<\?xml[^>]*\?>/, "")
+        .replace(/<!--[\s\S]*?-->/g, "")
+        .replace(/(<svg[^>]*?)\swidth="[^"]*"/, "$1")
+        .replace(/(<svg[^>]*?)\sheight="[^"]*"/, "$1");
+      ICON_CACHE.set(path, clean);
+      return clean;
+    });
+  ICON_CACHE.set(path, p);
+  return p;
+}
+function SvgIcon({ path, size = 20, style, className }) {
+  const [html, setHtml] = useState(() => {
+    const v = ICON_CACHE.get(path);
+    return typeof v === "string" ? v : "";
+  });
+  useEffect(() => {
+    let alive = true;
+    Promise.resolve(loadIcon(path)).then((txt) => { if (alive) setHtml(txt); });
+    return () => { alive = false; };
+  }, [path]);
+  const s = typeof size === "number" ? `${size}px` : size;
+  return (
+    <span
+      className={className}
+      aria-hidden="true"
+      style={{ display: "inline-flex", width: s, height: s, flexShrink: 0, ...style }}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+function Ico({ name, size = 20, style, className }) {
+  return <SvgIcon path={`assets/icons/${name}.svg`} size={size} style={style} className={className} />;
+}
+function IcoCore({ name, size = 20, style, className }) {
+  return <SvgIcon path={`assets/icons/ui-core/${name}.svg`} size={size} style={style} className={className} />;
+}
+
+/* =====================================================================
+   Sidebar (matches Bookings.html / Orders.html pattern, current=customers)
+   ===================================================================== */
+const NAV_HREFS = {
+  home: "Dashboard.html",
+  orders: "Orders.html",
+  bookings: "Bookings.html",
+  customers: "Customers.html",
+};
+const NAV_PRIMARY = [
+  { id: "home", label: "Главная", icon: "icon-nav-home" },
+  { id: "orders", label: "Заказы", icon: "icon-crm-orders", badge: 7 },
+  { id: "bookings", label: "Записи", icon: "icon-crm-bookings", badge: 3 },
+  { id: "customers", label: "Клиенты", icon: "icon-crm-customers" },
+  { id: "products", label: "Товары и услуги", icon: "icon-nav-products" },
+];
+const NAV_GROWTH = [
+  { id: "content", label: "Контент", icon: "icon-nav-content" },
+  { id: "assistant", label: "ИИ‑ассистент", icon: "spark-ai", dot: true },
+  { id: "analytics", label: "Аналитика", icon: "icon-roadmap-analytics" },
+  { id: "marketing", label: "Маркетинг", icon: "icon-nav-quick-post" },
+];
+const NAV_SETUP = [
+  { id: "tariff", label: "Подписка", icon: "icon-nav-plan" },
+  { id: "settings", label: "Настройки", icon: "icon-nav-settings" },
+];
+
+function Sidebar({ current, business }) {
+  const biz = business || { ava: "У", name: "Пекарня «Уют»", handle: "@pekarnya_uyut" };
+  return (
+    <aside className="sb" aria-label="Главная навигация">
+      <a className="sb-brand" href="#" onClick={(e) => e.preventDefault()}>
+        <span className="sb-brand-tile">
+          <img src="logos/robot-icon-light.svg" alt="" />
+        </span>
+        <span className="sb-brand-word">СММ <b>АЙБРО</b></span>
+      </a>
+      <button type="button" className="sb-biz">
+        <span className="sb-biz-ava">{biz.ava}</span>
+        <span className="sb-biz-text">
+          <span className="sb-biz-name">{biz.name}</span>
+          <span className="sb-biz-handle">{biz.handle}</span>
+        </span>
+        <svg className="sb-biz-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M7 9l5-5 5 5" /><path d="M7 15l5 5 5-5" />
+        </svg>
+      </button>
+      <NavList items={NAV_PRIMARY} current={current} />
+      <div className="sb-nav-cap">Рост</div>
+      <NavList items={NAV_GROWTH} current={current} />
+      <div className="sb-nav-cap">Настройки</div>
+      <NavList items={NAV_SETUP} current={current} />
+      <div className="sb-foot">
+        ИП Мальцев В. В. · ИНН 519041916737<br />
+        Тариф 4 990 ₽/мес · <a href="#support">Поддержка</a>
+      </div>
+    </aside>
+  );
+}
+function NavList({ items, current }) {
+  return (
+    <React.Fragment>
+      {items.map((it) => {
+        const href = NAV_HREFS[it.id];
+        const isActive = current === it.id;
+        const cls = `sb-item ${isActive ? "is-active" : ""}`;
+        const inner = (
+          <React.Fragment>
+            <Ico name={it.icon} size={18} />
+            <span className="lbl">{it.label}</span>
+            {it.badge ? <span className="badge">{it.badge}</span> : null}
+            {it.dot ? <span className="dot" /> : null}
+          </React.Fragment>
+        );
+        if (href) {
+          return <a key={it.id} className={cls} href={href} aria-current={isActive ? "page" : undefined}>{inner}</a>;
+        }
+        return <button key={it.id} type="button" className={cls}>{inner}</button>;
+      })}
+    </React.Fragment>
+  );
+}
+
+const BN_ITEMS = [
+  { id: "home", label: "Главная", icon: "icon-nav-home" },
+  { id: "orders", label: "Заказы", icon: "icon-crm-orders", badge: 7 },
+  { id: "bookings", label: "Записи", icon: "icon-crm-bookings", badge: 3 },
+  { id: "customers", label: "Клиенты", icon: "icon-crm-customers" },
+  { id: "more", label: "Ещё", icon: "icon-action-expand" },
+];
+function BottomNav({ current }) {
+  return (
+    <nav className="bn" aria-label="Мобильная навигация">
+      {BN_ITEMS.map((it) => (
+        <a key={it.id} className={`bn-item ${current === it.id ? "is-active" : ""}`} href={NAV_HREFS[it.id] || "#"}>
+          <Ico name={it.icon} size={22} style={{ width: 22, height: 22 }} />
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+/* =====================================================================
+   TopBar — same as Bookings/Orders
+   ===================================================================== */
+function TopBar() {
+  return (
+    <header className="topnav">
+      <button type="button" className="topnav-hamburger" aria-label="Меню">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="20" y2="17" />
+        </svg>
+      </button>
+      <div className="topnav-search">
+        <Ico name="icon-action-search" size={18} className="ico" />
+        <input type="search" placeholder="Поиск по заказам, клиентам, постам…" aria-label="Поиск" />
+        <span className="topnav-kbd">⌘ K</span>
+      </div>
+      <div className="topnav-actions">
+        <button type="button" className="icon-btn" aria-label="Помощь">
+          <IcoCore name="help-circle" size={20} style={{ width: 20, height: 20 }} />
+        </button>
+        <button type="button" className="icon-btn" aria-label="Уведомления, 4 новых">
+          <Ico name="notification-bell" size={20} style={{ width: 20, height: 20 }} />
+          <span className="badge-dot">4</span>
+        </button>
+        <button type="button" className="topnav-avatar" aria-label="Профиль">
+          <span className="ava">АМ</span>
+          <span className="who">Анна Малинина<small>Владелец</small></span>
+        </button>
+      </div>
+    </header>
+  );
+}
+
+/* =====================================================================
+   Mock data — Пекарня «Уют» customers (12 шт.)
+   ===================================================================== */
+const TAGS = {
+  vip: { label: "VIP", cls: "vip" },
+  regular: { label: "Постоянный", cls: "regular" },
+  new: { label: "Новый", cls: "new" },
+  dormant: { label: "Спящий", cls: "dormant" },
+  trial: { label: "Триал", cls: "trial" },
+};
+
+// Avatar background palette (deterministic by initials)
+const AVA_COLORS = [
+  "#0e7490", "#8b5cf6", "#059669", "#dc2626", "#d97706",
+  "#0284c7", "#7c3aed", "#16a34a", "#db2777", "#0891b2",
+];
+function avaColor(initials) {
+  let h = 0;
+  for (let i = 0; i < initials.length; i++) h = (h * 31 + initials.charCodeAt(i)) & 0xffff;
+  return AVA_COLORS[h % AVA_COLORS.length];
+}
+function getInitials(name) {
+  const parts = name.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return parts[0].slice(0, 2).toUpperCase();
+}
+
+const CUSTOMERS = [
+  {
+    id: "C-1042", name: "Анна Петрова", tags: ["vip", "regular"], status: "active",
+    phone: "+7 921 412‑05‑18", src: "bot", since: "12.10.2025",
+    orders: 24, ltv: 18400, lastOrder: "14.05.2026",
+    address: "СПб, Невский пр., 78, кв. 14",
+    notes: "Любит закрытые торты «Эстерхази», предупреждать о свежей выпечке хлеба бородинского. Не ест глютен — для дочки безглютеновое тесто.",
+    nextEvent: "Заказ #AB‑3041 готов 15:00",
+  },
+  {
+    id: "C-1041", name: "Дмитрий Колесов", tags: ["vip"], status: "active",
+    phone: "+7 911 287‑44‑62", src: "bot", since: "03.09.2025",
+    orders: 18, ltv: 22600, lastOrder: "13.05.2026",
+    address: "СПб, Большой пр. ПС, 32",
+    notes: "Корпоративные заказы по средам — 12 круассанов + 6 кофе в офис.",
+    nextEvent: null,
+  },
+  {
+    id: "C-1040", name: "Михаил Якушев", tags: ["regular"], status: "active",
+    phone: "+7 921 003‑18‑44", src: "bot", since: "21.11.2025",
+    orders: 14, ltv: 9200, lastOrder: "12.05.2026",
+    address: "СПб, ул. Маршала Захарова, 7",
+    notes: "",
+    nextEvent: null,
+  },
+  {
+    id: "C-1039", name: "Татьяна Берг", tags: ["regular"], status: "active",
+    phone: "+7 911 654‑29‑17", src: "bot", since: "08.10.2025",
+    orders: 12, ltv: 8800, lastOrder: "11.05.2026",
+    address: "СПб, Лиговский пр., 154",
+    notes: "Постоянно заказывает торт «Медовик» к воскресенью. Доставка после 14:00.",
+    nextEvent: "Запись «торт на 18.05» в работе",
+  },
+  {
+    id: "C-1038", name: "Сергей Васильев", tags: ["regular"], status: "active",
+    phone: "+7 921 778‑31‑05", src: "manual", since: "15.09.2025",
+    orders: 11, ltv: 7400, lastOrder: "10.05.2026",
+    address: "СПб, Каменноостровский пр., 41",
+    notes: "Аллергия на орехи — никаких пралине, грильяжа.",
+    nextEvent: null,
+  },
+  {
+    id: "C-1037", name: "Юлия Лебедева", tags: ["regular"], status: "active",
+    phone: "+7 911 244‑08‑93", src: "bot", since: "29.08.2025",
+    orders: 9, ltv: 6200, lastOrder: "09.05.2026",
+    address: "СПб, ул. Восстания, 12",
+    notes: "",
+    nextEvent: null,
+  },
+  {
+    id: "C-1036", name: "Егор Соломатин", tags: ["new"], status: "active",
+    phone: "+7 921 110‑62‑34", src: "bot", since: "07.05.2026",
+    orders: 2, ltv: 1200, lastOrder: "08.05.2026",
+    address: "СПб, Московский пр., 192",
+    notes: "Узнал о пекарне через MAX‑канал, первый заказ — мини‑эклеры.",
+    nextEvent: null,
+  },
+  {
+    id: "C-1035", name: "Карина Бирюкова", tags: ["new"], status: "active",
+    phone: "+7 911 905‑27‑08", src: "bot", since: "02.05.2026",
+    orders: 1, ltv: 1850, lastOrder: "02.05.2026",
+    address: "СПб, ул. Думская, 4",
+    notes: "",
+    nextEvent: null,
+  },
+  {
+    id: "C-1034", name: "Ольга Найдёнова", tags: ["trial"], status: "trial",
+    phone: "+7 921 318‑74‑12", src: "bot", since: "14.05.2026",
+    orders: 0, ltv: 0, lastOrder: "—",
+    address: "СПб, не указан",
+    notes: "Зарегистрировалась через бот, ждёт первого предложения.",
+    nextEvent: "Триал до 19.05.2026",
+  },
+  {
+    id: "C-1033", name: "Илья Гончаренко", tags: ["dormant"], status: "dormant",
+    phone: "+7 911 740‑15‑49", src: "manual", since: "12.04.2025",
+    orders: 6, ltv: 4100, lastOrder: "21.03.2026",
+    address: "СПб, ул. Рубинштейна, 24",
+    notes: "Заказывал торты к семейным датам — каждые 2 месяца. Не покупал 56 дней.",
+    nextEvent: null,
+  },
+  {
+    id: "C-1032", name: "Марина Соколова", tags: ["dormant"], status: "dormant",
+    phone: "+7 921 459‑80‑22", src: "bot", since: "18.01.2026",
+    orders: 4, ltv: 2900, lastOrder: "08.04.2026",
+    address: "СПб, ул. Марата, 86",
+    notes: "",
+    nextEvent: null,
+  },
+  {
+    id: "C-1031", name: "Никита Зуев", tags: ["regular"], status: "active",
+    phone: "+7 911 002‑41‑75", src: "bot", since: "30.10.2025",
+    orders: 8, ltv: 5600, lastOrder: "07.05.2026",
+    address: "СПб, ул. Чайковского, 19",
+    notes: "Доставка курьером, ЦАО, до 18:00.",
+    nextEvent: null,
+  },
+];
+
+const TAG_FILTERS = [
+  { id: "all", label: "Все", count: 247 },
+  { id: "vip", label: "VIP", count: 18 },
+  { id: "regular", label: "Постоянные", count: 96 },
+  { id: "new", label: "Новые", count: 22 },
+  { id: "dormant", label: "Спящие", count: 31 },
+];
+
+const STATUS_FILTERS = [
+  { id: "all", label: "Все" },
+  { id: "active", label: "Активные" },
+  { id: "trial", label: "Триал" },
+  { id: "dormant", label: "30+ дней без покупок" },
+];
+
+const SORT_OPTIONS = [
+  { id: "ltv", label: "По LTV (убыв.)" },
+  { id: "recent", label: "По последнему заказу" },
+  { id: "name", label: "По имени (А → Я)" },
+  { id: "since", label: "По дате регистрации" },
+];
+
+/* =====================================================================
+   Helpers
+   ===================================================================== */
+function fmtRub(n) {
+  return new Intl.NumberFormat("ru-RU").format(n) + " ₽";
+}
+
+/* =====================================================================
+   Page header
+   ===================================================================== */
+function CuHeader({ onAdd, onImport }) {
+  return (
+    <div className="cu-head">
+      <div>
+        <h1>Клиенты</h1>
+        <div className="sub">
+          <b>247</b> клиентов
+          <span className="pip"></span>
+          <b>38</b> активных в этом месяце
+          <span className="pip"></span>
+          средний LTV <b>4 200 ₽</b>
+        </div>
+      </div>
+      <div className="head-actions">
+        <button type="button" className="cab-btn cab-btn--sm cab-btn--secondary" onClick={onImport}>
+          <Ico name="icon-action-import" size={16} />
+          Импорт CSV
+        </button>
+        <button type="button" className="cab-btn cab-btn--sm cab-btn--primary" onClick={onAdd}>
+          <Ico name="icon-action-add" size={16} />
+          Добавить клиента
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   KPI cards (4)
+   ===================================================================== */
+function CuKpis() {
+  const kpis = [
+    { label: "Всего клиентов", val: "247", delta: "+12 за месяц", deltaCls: "", icon: "icon-crm-customers", core: false },
+    { label: "Активных", val: "38", delta: "+5 vs апрель", deltaCls: "", icon: "users", core: true },
+    { label: "Средний LTV", val: "4 200 ₽", delta: "+8 %", deltaCls: "", icon: "price-tag-ruble", core: false },
+    { label: "Средний чек", val: "1 850 ₽", delta: "−2 % vs апрель", deltaCls: "neg", icon: "bar-chart", core: true },
+  ];
+  return (
+    <div className="cu-kpis">
+      {kpis.map((k, i) => (
+        <div key={i} className="cu-kpi">
+          <span className="lbl">{k.label}</span>
+          <span className="val">{k.val}</span>
+          <span className={`delta ${k.deltaCls}`}>{k.delta}</span>
+          <span className="ico-bg">
+            {k.core ? <IcoCore name={k.icon} size={18} /> : <Ico name={k.icon} size={18} />}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* =====================================================================
+   Toolbar — search + tag chips + status seg + sort + actions
+   ===================================================================== */
+function CuToolbar({ query, setQuery, tag, setTag, status, setStatus, sort, setSort }) {
+  return (
+    <div className="cu-tools">
+      <div className="flt-search">
+        <Ico name="icon-action-search" size={16} className="ico" />
+        <input
+          type="search"
+          placeholder="Поиск по имени или телефону…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label="Поиск клиентов"
+        />
+      </div>
+
+      <div className="cu-tags" role="tablist" aria-label="Теги">
+        {TAG_FILTERS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            className={`cu-tag-chip ${tag === t.id ? "is-on" : ""}`}
+            onClick={() => setTag(t.id)}
+            role="tab"
+            aria-selected={tag === t.id}
+          >
+            {t.label} <span className="n">{t.count}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="seg" role="tablist" aria-label="Статус">
+        {STATUS_FILTERS.map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            className={status === s.id ? "is-on" : ""}
+            onClick={() => setStatus(s.id)}
+            role="tab"
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      <select
+        className="sort-select"
+        value={sort}
+        onChange={(e) => setSort(e.target.value)}
+        aria-label="Сортировка"
+      >
+        {SORT_OPTIONS.map((o) => (
+          <option key={o.id} value={o.id}>{o.label}</option>
+        ))}
+      </select>
+
+      <div className="flt-actions">
+        <button type="button" className="cab-btn cab-btn--sm cab-btn--secondary" aria-label="Экспорт">
+          <Ico name="icon-action-export" size={16} />
+          Экспорт
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   Customer card (in grid)
+   ===================================================================== */
+function CustomerCard({ c, onOpen }) {
+  const initials = getInitials(c.name);
+  const color = avaColor(initials);
+  return (
+    <button
+      type="button"
+      className="cu-card"
+      data-status={c.status}
+      onClick={() => onOpen(c)}
+      aria-label={`Открыть карточку клиента ${c.name}`}
+    >
+      <span className={`status-dot ${c.status}`} aria-hidden="true"></span>
+      <div className="top">
+        <span className="ava" style={{ background: color }}>{initials}</span>
+        <div className="name-stack">
+          <div className="name">{c.name}</div>
+          <div className="tags-row">
+            {c.tags.map((t) => (
+              <span key={t} className={`cu-tag ${TAGS[t].cls}`}>{TAGS[t].label}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="contact-row">
+        <Ico name="chat-bubble" size={14} className="ic" />
+        <span className="tel">{c.phone}</span>
+        <span className={`src ${c.src === "bot" ? "bot" : ""}`}>{c.src === "bot" ? "MAX" : "Вручную"}</span>
+      </div>
+      <div className="stats-row">
+        <div className="stat"><span className="v">{c.orders}</span><span className="l">заказов</span></div>
+        <div className="stat"><span className="v">{fmtRub(c.ltv)}</span><span className="l">LTV</span></div>
+        <div className="stat"><span className="v">{c.lastOrder}</span><span className="l">последний</span></div>
+      </div>
+      <span className="hover-cta">Открыть карточку →</span>
+    </button>
+  );
+}
+
+/* =====================================================================
+   Customer drawer (slide-from-right) — reuses .dw-scrim / .dw from orders.css
+   ===================================================================== */
+function CuDrawer({ customer, onClose }) {
+  const [tab, setTab] = useState("overview");
+  useEffect(() => { setTab("overview"); }, [customer && customer.id]);
+  const open = !!customer;
+  if (!customer) {
+    return <div className={`dw-scrim`}><div className="dw"></div></div>;
+  }
+  const initials = getInitials(customer.name);
+  const color = avaColor(initials);
+  return (
+    <React.Fragment>
+      <div className={`dw-scrim ${open ? "is-open" : ""}`} onClick={onClose}></div>
+      <aside className={`dw ${open ? "is-open" : ""}`} role="dialog" aria-modal="true" aria-labelledby="cu-dw-name">
+        {/* Head */}
+        <div className="cu-dw-head">
+          <span className="ava-lg" style={{ background: color }}>{initials}</span>
+          <div className="head-stack">
+            <h2 id="cu-dw-name" className="name">{customer.name}</h2>
+            <div className="meta">
+              <span>{customer.id}</span>
+              <span className="pip"></span>
+              <span>с {customer.since}</span>
+              <span className="pip"></span>
+              <span>{customer.src === "bot" ? "пришёл через MAX" : "добавлен вручную"}</span>
+            </div>
+            <div className="tags-row">
+              {customer.tags.map((t) => (
+                <span key={t} className={`cu-tag ${TAGS[t].cls}`}>{TAGS[t].label}</span>
+              ))}
+            </div>
+          </div>
+          <button type="button" className="dw-close" onClick={onClose} aria-label="Закрыть">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Action toolbar */}
+        <div className="cu-dw-actions">
+          <button type="button" className="cab-btn cab-btn--sm cab-btn--primary">
+            <Ico name="chat-bubble" size={14} />
+            Написать в MAX
+          </button>
+          <button type="button" className="cab-btn cab-btn--sm cab-btn--secondary">
+            <Ico name="icon-action-add" size={14} />
+            Заказ
+          </button>
+          <button type="button" className="cab-btn cab-btn--sm cab-btn--secondary">
+            <Ico name="icon-crm-bookings" size={14} />
+            Запись
+          </button>
+          <button type="button" className="cab-btn cab-btn--sm cab-btn--ghost">
+            <Ico name="icon-action-edit" size={14} />
+            Редактировать
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="cu-dw-tabs" role="tablist">
+          <button type="button" className={`cu-dw-tab ${tab === "overview" ? "is-on" : ""}`} onClick={() => setTab("overview")} role="tab">
+            Обзор
+          </button>
+          <button type="button" className={`cu-dw-tab ${tab === "orders" ? "is-on" : ""}`} onClick={() => setTab("orders")} role="tab">
+            Заказы <span className="n">{customer.orders}</span>
+          </button>
+          <button type="button" className={`cu-dw-tab ${tab === "bookings" ? "is-on" : ""}`} onClick={() => setTab("bookings")} role="tab">
+            Записи <span className="n">3</span>
+          </button>
+          <button type="button" className={`cu-dw-tab ${tab === "notes" ? "is-on" : ""}`} onClick={() => setTab("notes")} role="tab">
+            Заметки и теги
+          </button>
+          <button type="button" className={`cu-dw-tab ${tab === "log" ? "is-on" : ""}`} onClick={() => setTab("log")} role="tab">
+            Переписка
+          </button>
+          <button type="button" className={`cu-dw-tab ${tab === "privacy" ? "is-on" : ""}`} onClick={() => setTab("privacy")} role="tab">
+            152‑ФЗ
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="dw-body">
+          {tab === "overview" && <OverviewTab customer={customer} />}
+          {tab === "orders" && <OrdersTab customer={customer} />}
+          {tab === "bookings" && <BookingsTab customer={customer} />}
+          {tab === "notes" && <NotesTab customer={customer} />}
+          {tab === "log" && <LogTab customer={customer} />}
+          {tab === "privacy" && <PrivacyTab customer={customer} />}
+        </div>
+      </aside>
+    </React.Fragment>
+  );
+}
+
+function OverviewTab({ customer }) {
+  return (
+    <React.Fragment>
+      <div className="cu-stat-stack">
+        <div className="cu-stat-tile">
+          <span className="lbl">Заказов</span>
+          <span className="val">{customer.orders}</span>
+          <span className="sub">за всё время</span>
+        </div>
+        <div className="cu-stat-tile">
+          <span className="lbl">LTV</span>
+          <span className="val" style={{ color: "var(--brand-700)" }}>{fmtRub(customer.ltv)}</span>
+          <span className="sub">с {customer.since}</span>
+        </div>
+        <div className="cu-stat-tile">
+          <span className="lbl">Средний чек</span>
+          <span className="val">{customer.orders ? fmtRub(Math.round(customer.ltv / customer.orders)) : "—"}</span>
+          <span className="sub">{customer.lastOrder !== "—" ? `последний ${customer.lastOrder}` : "нет заказов"}</span>
+        </div>
+      </div>
+
+      {customer.nextEvent && (
+        <div className="dw-section">
+          <h4>Ближайшее</h4>
+          <div className="cu-152" style={{
+            background: "linear-gradient(180deg, rgba(16,185,129,0.05), rgba(255,255,255,0) 70%), var(--bg-elevated)",
+            borderColor: "rgba(16,185,129,0.22)",
+          }}>
+            <div className="title" style={{ color: "var(--brand-700)" }}>
+              <Ico name="notification-bell" size={14} />
+              {customer.nextEvent}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="dw-section">
+        <h4>Контакты и адрес</h4>
+        <dl className="cu-info-grid">
+          <dt>Телефон</dt><dd><a href={`tel:${customer.phone}`}>{customer.phone}</a></dd>
+          <dt>Источник</dt><dd>{customer.src === "bot" ? "MAX‑бот @pekarnya_uyut_bot" : "Добавлен вручную"}</dd>
+          <dt>Адрес</dt><dd>{customer.address}</dd>
+          <dt>Клиент с</dt><dd>{customer.since}</dd>
+        </dl>
+      </div>
+
+      {customer.notes && (
+        <div className="dw-section">
+          <h4>Заметка</h4>
+          <div className="cu-note-card">{customer.notes}</div>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+function OrdersTab({ customer }) {
+  // Mock recent orders for this customer
+  const orders = [
+    { id: "AB-3041", title: "Эстерхази 1.2 кг", date: "14.05.2026", amt: 2400, status: "work" },
+    { id: "AB-3025", title: "Бородинский хлеб × 2 + круассаны 6 шт", date: "07.05.2026", amt: 980, status: "done" },
+    { id: "AB-3014", title: "Торт «Прага» 1 кг", date: "28.04.2026", amt: 1850, status: "done" },
+    { id: "AB-3001", title: "Эклеры мини 12 шт", date: "21.04.2026", amt: 720, status: "done" },
+    { id: "AB-2987", title: "Хлеб ремесленный × 3", date: "14.04.2026", amt: 540, status: "done" },
+  ];
+  const labels = { done: "Выполнен", work: "В работе", new: "Новый", cancel: "Отменён" };
+  return (
+    <div className="dw-section">
+      <h4>История заказов · всего {customer.orders}</h4>
+      {orders.map((o) => (
+        <div key={o.id} className="cu-order-row">
+          <span className="icon-wrap"><Ico name="icon-crm-orders" size={16} /></span>
+          <div className="body">
+            <div className="title">{o.title}</div>
+            <div className="meta">{o.id} · {o.date}</div>
+          </div>
+          <span className="amt">{fmtRub(o.amt)}</span>
+          <span className={`status-chip ${o.status}`}>{labels[o.status]}</span>
+        </div>
+      ))}
+      <button type="button" className="cab-btn cab-btn--sm cab-btn--ghost" style={{ marginTop: 12 }}>
+        Показать все заказы →
+      </button>
+    </div>
+  );
+}
+
+function BookingsTab({ customer }) {
+  const bookings = [
+    { id: "B-2241", title: "Торт на заказ — обсуждение", date: "18.05.2026 14:00", status: "new" },
+    { id: "B-2210", title: "Дегустация новой линейки", date: "11.05.2026 11:00", status: "done" },
+    { id: "B-2188", title: "Согласование оформления", date: "02.05.2026 17:30", status: "done" },
+  ];
+  const labels = { done: "Завершена", new: "Запланирована", cancel: "Отменена" };
+  return (
+    <div className="dw-section">
+      <h4>Записи на услуги · всего 3</h4>
+      {bookings.map((b) => (
+        <div key={b.id} className="cu-order-row">
+          <span className="icon-wrap"><Ico name="icon-crm-bookings" size={16} /></span>
+          <div className="body">
+            <div className="title">{b.title}</div>
+            <div className="meta">{b.id} · {b.date}</div>
+          </div>
+          <span className={`status-chip ${b.status}`}>{labels[b.status]}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function NotesTab({ customer }) {
+  const notes = [
+    { when: "12.05.2026", author: "Анна М.", text: customer.notes || "Без заметок." },
+    { when: "28.04.2026", author: "ИИ‑ассистент", text: "Сегмент: постоянные клиенты. Заказывает регулярно (раз в 2 недели), средний чек 1 200 ₽." },
+  ];
+  return (
+    <React.Fragment>
+      <div className="dw-section">
+        <h4>Теги клиента</h4>
+        <div className="cu-tag-editor">
+          {customer.tags.map((t) => (
+            <span key={t} className={`cu-tag ${TAGS[t].cls}`}>{TAGS[t].label}</span>
+          ))}
+          <button type="button" className="add">
+            <Ico name="icon-action-add" size={10} />
+            Добавить
+          </button>
+        </div>
+      </div>
+
+      <div className="dw-section">
+        <h4>Заметки</h4>
+        {notes.map((n, i) => (
+          <div key={i} className="cu-note-card">
+            <span className="when">{n.when} · <span className="author">{n.author}</span></span>
+            {n.text}
+          </div>
+        ))}
+        <textarea className="cu-note-input" placeholder="Добавить заметку…"></textarea>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
+          <button type="button" className="cab-btn cab-btn--sm cab-btn--primary">Сохранить</button>
+        </div>
+      </div>
+    </React.Fragment>
+  );
+}
+
+function LogTab({ customer }) {
+  return (
+    <div className="dw-section">
+      <h4>Переписка через MAX‑бот</h4>
+      <div className="cu-log">
+        <div className="cu-log-author">14 мая, четверг</div>
+        <div className="cu-log-bubble from-client">
+          Добрый день! Можно эстерхази 1.2 кг к субботе?
+          <span className="when">10:24</span>
+        </div>
+        <div className="cu-log-bubble from-bot">
+          Здравствуйте, Анна! Конечно. Стандартный «Эстерхази» 1.2 кг — 2 400 ₽, готовность 16.05 после 14:00. Подтверждаем заказ?
+          <span className="when">10:24</span>
+        </div>
+        <div className="cu-log-bubble from-client">
+          Да, подтверждаю. Самовывоз.
+          <span className="when">10:25</span>
+        </div>
+        <div className="cu-log-bubble from-bot">
+          Готово, заказ #AB‑3041. Напомним за час до готовности.
+          <span className="when">10:25</span>
+        </div>
+        <div className="cu-log-author">сегодня</div>
+        <div className="cu-log-bubble from-owner">
+          Анна, торт готов. Ждём вас до 19:00. — Анна, владелец.
+          <span className="when">14:02</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PrivacyTab({ customer }) {
+  return (
+    <div className="dw-section">
+      <h4>152‑ФЗ — персональные данные</h4>
+      <dl className="cu-info-grid" style={{ marginBottom: 16 }}>
+        <dt>Согласие</dt><dd>получено {customer.since} через MAX‑бот</dd>
+        <dt>Цель обработки</dt><dd>выполнение заказов, доставка, история покупок</dd>
+        <dt>Срок хранения</dt><dd>до отзыва согласия + 1 год для бухучёта</dd>
+      </dl>
+
+      <div className="cu-152">
+        <div className="title">
+          <Ico name="shield-check" size={14} />
+          Права субъекта данных
+        </div>
+        <div className="desc">
+          По закону 152‑ФЗ клиент имеет право получить копию данных или потребовать их удаления.
+          Действия логируются и доступны в админ‑панели СММ АЙБРО.
+        </div>
+        <div className="actions">
+          <button type="button" className="cab-btn cab-btn--sm cab-btn--secondary">
+            <Ico name="icon-action-download" size={14} />
+            Экспорт в PDF
+          </button>
+          <button type="button" className="danger-btn">
+            <Ico name="icon-action-delete" size={14} />
+            Удалить все данные
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   Customers grid + filtering + sorting
+   ===================================================================== */
+function CustomersGrid({ items, onOpen }) {
+  if (items.length === 0) {
+    return (
+      <div className="cu-grid">
+        <div className="cu-empty">
+          Ничего не нашлось. Попробуйте изменить фильтр или сбросить поиск.
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="cu-grid">
+      {items.map((c) => <CustomerCard key={c.id} c={c} onOpen={onOpen} />)}
+    </div>
+  );
+}
+
+/* =====================================================================
+   App
+   ===================================================================== */
+function CustomersApp() {
+  const [query, setQuery] = useState("");
+  const [tag, setTag] = useState("all");
+  const [status, setStatus] = useState("all");
+  const [sort, setSort] = useState("ltv");
+  const [active, setActive] = useState(null);
+
+  const filtered = useMemo(() => {
+    let list = CUSTOMERS.slice();
+    if (tag !== "all") list = list.filter((c) => c.tags.includes(tag));
+    if (status !== "all") list = list.filter((c) => c.status === status);
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      list = list.filter((c) => `${c.name} ${c.phone} ${c.id}`.toLowerCase().includes(q));
+    }
+    if (sort === "ltv") list.sort((a, b) => b.ltv - a.ltv);
+    if (sort === "recent") list.sort((a, b) => (b.lastOrder || "").localeCompare(a.lastOrder || ""));
+    if (sort === "name") list.sort((a, b) => a.name.localeCompare(b.name, "ru"));
+    if (sort === "since") list.sort((a, b) => (b.since || "").localeCompare(a.since || ""));
+    return list;
+  }, [query, tag, status, sort]);
+
+  const business = { ava: "У", name: "Пекарня «Уют»", handle: "@pekarnya_uyut" };
+
+  return (
+    <div className="dash" data-screen-label="04 Cabinet — Клиенты">
+      <Sidebar current="customers" business={business} />
+      <div className="work">
+        <TopBar />
+        <main className="pane">
+          <CuHeader onAdd={() => alert("Добавить клиента (заглушка)")} onImport={() => alert("Импорт CSV (заглушка)")} />
+          <CuKpis />
+          <CuToolbar
+            query={query} setQuery={setQuery}
+            tag={tag} setTag={setTag}
+            status={status} setStatus={setStatus}
+            sort={sort} setSort={setSort}
+          />
+          <CustomersGrid items={filtered} onOpen={setActive} />
+        </main>
+      </div>
+
+      <CuDrawer customer={active} onClose={() => setActive(null)} />
+      <BottomNav current="customers" />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<CustomersApp />);
+</script>
+</body>
+</html>

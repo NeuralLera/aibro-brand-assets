@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>СММ АЙБРО — Кабинет · Календарь публикаций</title>
+<link rel="icon" type="image/svg+xml" href="logos/favicon-light.svg" />
+<link rel="stylesheet" href="design/tokens.css" />
+<link rel="stylesheet" href="design/atoms.css" />
+<link rel="stylesheet" href="design/dashboard.css" />
+<link rel="stylesheet" href="design/orders.css" />
+<link rel="stylesheet" href="design/bookings.css" />
+<link rel="stylesheet" href="design/calendar.css" />
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+/* =====================================================================
+   Icon registry — fetches SVG text, strips width/height for currentColor.
+   ===================================================================== */
+const { useState, useEffect, useMemo, useRef } = React;
+const ICON_CACHE = new Map();
+
+function loadIcon(path) {
+  if (ICON_CACHE.has(path)) return ICON_CACHE.get(path);
+  const p = fetch(path)
+    .then((r) => (r.ok ? r.text() : ""))
+    .then((txt) => {
+      const clean = txt
+        .replace(/<\?xml[^>]*\?>/, "")
+        .replace(/<!--[\s\S]*?-->/g, "")
+        .replace(/(<svg[^>]*?)\swidth="[^"]*"/, "$1")
+        .replace(/(<svg[^>]*?)\sheight="[^"]*"/, "$1");
+      ICON_CACHE.set(path, clean);
+      return clean;
+    });
+  ICON_CACHE.set(path, p);
+  return p;
+}
+function SvgIcon({ path, size = 20, style, className }) {
+  const [html, setHtml] = useState(() => {
+    const v = ICON_CACHE.get(path);
+    return typeof v === "string" ? v : "";
+  });
+  useEffect(() => {
+    let alive = true;
+    Promise.resolve(loadIcon(path)).then((txt) => { if (alive) setHtml(txt); });
+    return () => { alive = false; };
+  }, [path]);
+  const s = typeof size === "number" ? `${size}px` : size;
+  return (
+    <span
+      className={className}
+      aria-hidden="true"
+      style={{ display: "inline-flex", width: s, height: s, flexShrink: 0, ...style }}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+function Ico({ name, size = 20, style, className }) {
+  return <SvgIcon path={`assets/icons/${name}.svg`} size={size} style={style} className={className} />;
+}
+function IcoCore({ name, size = 20, style, className }) {
+  return <SvgIcon path={`assets/icons/ui-core/${name}.svg`} size={size} style={style} className={className} />;
+}
+
+/* =====================================================================
+   Sidebar (matches Bookings.html / Customers.html, current=content)
+   ===================================================================== */
+const NAV_HREFS = {
+  home: "Dashboard.html",
+  orders: "Orders.html",
+  bookings: "Bookings.html",
+  customers: "Customers.html",
+};
+const NAV_PRIMARY = [
+  { id: "home", label: "Главная", icon: "icon-nav-home" },
+  { id: "orders", label: "Заказы", icon: "icon-crm-orders", badge: 7 },
+  { id: "bookings", label: "Записи", icon: "icon-crm-bookings", badge: 3 },
+  { id: "customers", label: "Клиенты", icon: "icon-crm-customers" },
+  { id: "products", label: "Товары и услуги", icon: "icon-nav-products" },
+];
+const NAV_GROWTH = [
+  { id: "content", label: "Контент", icon: "icon-nav-content" },
+  { id: "assistant", label: "ИИ‑ассистент", icon: "spark-ai", dot: true },
+  { id: "analytics", label: "Аналитика", icon: "icon-roadmap-analytics" },
+  { id: "marketing", label: "Маркетинг", icon: "icon-nav-quick-post" },
+];
+const NAV_SETUP = [
+  { id: "tariff", label: "Подписка", icon: "icon-nav-plan" },
+  { id: "settings", label: "Настройки", icon: "icon-nav-settings" },
+];
+
+function Sidebar({ current, business }) {
+  const biz = business || { ava: "У", name: "Пекарня «Уют»", handle: "@pekarnya_uyut" };
+  return (
+    <aside className="sb" aria-label="Главная навигация">
+      <a className="sb-brand" href="#" onClick={(e) => e.preventDefault()}>
+        <span className="sb-brand-tile">
+          <img src="logos/robot-icon-light.svg" alt="" />
+        </span>
+        <span className="sb-brand-word">СММ <b>АЙБРО</b></span>
+      </a>
+      <button type="button" className="sb-biz">
+        <span className="sb-biz-ava">{biz.ava}</span>
+        <span className="sb-biz-text">
+          <span className="sb-biz-name">{biz.name}</span>
+          <span className="sb-biz-handle">{biz.handle}</span>
+        </span>
+        <svg className="sb-biz-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M7 9l5-5 5 5" /><path d="M7 15l5 5 5-5" />
+        </svg>
+      </button>
+      <NavList items={NAV_PRIMARY} current={current} />
+      <div className="sb-nav-cap">Рост</div>
+      <NavList items={NAV_GROWTH} current={current} />
+      <div className="sb-nav-cap">Настройки</div>
+      <NavList items={NAV_SETUP} current={current} />
+      <div className="sb-foot">
+        ИП Мальцев В. В. · ИНН 519041916737<br />
+        Тариф 4 990 ₽/мес · <a href="#support">Поддержка</a>
+      </div>
+    </aside>
+  );
+}
+function NavList({ items, current }) {
+  return (
+    <React.Fragment>
+      {items.map((it) => {
+        const href = NAV_HREFS[it.id];
+        // "content/calendar" is the deep route; sidebar highlights "content" group
+        const isActive = current === it.id || (it.id === "content" && current && current.startsWith("content"));
+        const cls = `sb-item ${isActive ? "is-active" : ""}`;
+        const inner = (
+          <React.Fragment>
+            <Ico name={it.icon} size={18} />
+            <span className="lbl">{it.label}</span>
+            {it.badge ? <span className="badge">{it.badge}</span> : null}
+            {it.dot ? <span className="dot" /> : null}
+          </React.Fragment>
+        );
+        if (href) {
+          return <a key={it.id} className={cls} href={href} aria-current={isActive ? "page" : undefined}>{inner}</a>;
+        }
+        return <button key={it.id} type="button" className={cls}>{inner}</button>;
+      })}
+    </React.Fragment>
+  );
+}
+
+const BN_ITEMS = [
+  { id: "home", label: "Главная", icon: "icon-nav-home" },
+  { id: "orders", label: "Заказы", icon: "icon-crm-orders", badge: 7 },
+  { id: "content", label: "Контент", icon: "icon-nav-content" },
+  { id: "customers", label: "Клиенты", icon: "icon-crm-customers" },
+  { id: "more", label: "Ещё", icon: "icon-action-expand" },
+];
+function BottomNav({ current }) {
+  return (
+    <nav className="bn" aria-label="Мобильная навигация">
+      {BN_ITEMS.map((it) => {
+        const isActive = current === it.id || (it.id === "content" && current && current.startsWith("content"));
+        return (
+          <a key={it.id} className={`bn-item ${isActive ? "is-active" : ""}`} href={NAV_HREFS[it.id] || "#"}>
+            <Ico name={it.icon} size={22} style={{ width: 22, height: 22 }} />
+            <span>{it.label}</span>
+            {it.badge ? <span className="badge">{it.badge}</span> : null}
+          </a>
+        );
+      })}
+    </nav>
+  );
+}
+
+/* =====================================================================
+   TopBar — identical to Bookings/Customers
+   ===================================================================== */
+function TopBar() {
+  return (
+    <header className="topnav">
+      <button type="button" className="topnav-hamburger" aria-label="Меню">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="20" y2="17" />
+        </svg>
+      </button>
+      <div className="topnav-search">
+        <Ico name="icon-action-search" size={18} className="ico" />
+        <input type="search" placeholder="Поиск по постам, кампаниям, тегам…" aria-label="Поиск" />
+        <span className="topnav-kbd">⌘ K</span>
+      </div>
+      <div className="topnav-actions">
+        <button type="button" className="icon-btn" aria-label="Помощь">
+          <IcoCore name="help-circle" size={20} style={{ width: 20, height: 20 }} />
+        </button>
+        <button type="button" className="icon-btn" aria-label="Уведомления, 4 новых">
+          <Ico name="notification-bell" size={20} style={{ width: 20, height: 20 }} />
+          <span className="badge-dot">4</span>
+        </button>
+        <button type="button" className="topnav-avatar" aria-label="Профиль">
+          <span className="ava">АМ</span>
+          <span className="who">Анна Малинина<small>Владелец</small></span>
+        </button>
+      </div>
+    </header>
+  );
+}
+
+/* =====================================================================
+   Mock data — 35 постов на май 2026 для Пекарни «Уют»
+   ===================================================================== */
+const TODAY_DAY = 16; // 16 мая 2026 (суббота)
+
+// Post types: ai / quick / ord / promo / book
+const TYPES = {
+  ai:    { label: "Пост ИИ",        icon: "spark-ai",            dot: "ai" },
+  quick: { label: "Быстрый пост",   icon: "icon-nav-quick-post", dot: "quick" },
+  ord:   { label: "Рекламный (ОРД)", icon: "megaphone",          dot: "ord" },
+  promo: { label: "Промо‑акция",    icon: "gift-trial",          dot: "promo" },
+  book:  { label: "Запись клиента", icon: "icon-crm-bookings",   dot: "book" },
+};
+
+const PLATFORM = { label: "MAX‑канал", abbr: "M", handle: "@pekarnya_uyut" };
+
+// 35 posts spread across May 1-31, with most density mid-month around today (16)
+const POSTS = [
+  // Week 1 (May 1-3) — sent
+  { id: "P-3001", day:  1, time: "08:30", type: "ai",    title: "С праздником Весны и Труда!", preview: "Сегодня мы открыты с 8:00 до 18:00. Свежие булочки, кофе и тёплый хлеб ждут вас.", status: "sent",      img: true,  reach: 1240, eng: 87 },
+  { id: "P-3002", day:  2, time: "07:00", type: "ai",    title: "Утренняя выпечка готова",     preview: "Бородинский, рижский, итальянская чиабатта — всё свежее с 7:00.",                       status: "sent",      img: true,  reach: 980,  eng: 64 },
+  { id: "P-3003", day:  2, time: "12:00", type: "quick", title: "Обеденное меню",              preview: "Пирог с капустой, киш с курицей, штрудель — на выбор. Заказ через бот.",               status: "sent",      img: false, reach: 540,  eng: 32 },
+  { id: "P-3004", day:  3, time: "10:15", type: "ai",    title: "Воскресные круассаны",         preview: "По воскресеньям мы печём миндальные и шоколадные круассаны двойной слойки.",            status: "sent",      img: true,  reach: 1380, eng: 102 },
+
+  // Week 2 (May 5-9) — sent
+  { id: "P-3005", day:  5, time: "08:30", type: "ai",    title: "Хлеб дня — пшеничный на закваске", preview: "Брожение 18 часов, корочка с лёгкой кислинкой. Цена 220 ₽.",                       status: "sent",      img: true,  reach: 1120, eng: 78 },
+  { id: "P-3006", day:  5, time: "14:00", type: "ord",   title: "Доставка тортов по СПб",       preview: "Бесплатная доставка от 3 500 ₽. Курьер привезёт в течение 2 часов.",                    status: "sent",      img: true,  reach: 2340, eng: 156, erid: "Pb3XmK9p7Q" },
+  { id: "P-3007", day:  6, time: "08:30", type: "ai",    title: "Свежемолотый кофе",            preview: "Эспрессо из зерна Бразилия Серрадо. Чашка к булочке — 90 ₽.",                          status: "sent",      img: true,  reach: 890,  eng: 54 },
+  { id: "P-3008", day:  7, time: "11:00", type: "promo", title: "Скидка 15% на торты к 9 Мая",  preview: "С 7 по 9 мая — скидка на торты «Победа» и «Праздничный». Код в боте.",                  status: "sent",      img: true,  reach: 1980, eng: 134 },
+  { id: "P-3009", day:  8, time: "08:30", type: "ai",    title: "Новинка — фокачча с томатами", preview: "Итальянская фокачча с черри, оливками и розмарином. Только в выходные.",              status: "sent",      img: true,  reach: 1450, eng: 119 },
+  { id: "P-3010", day:  9, time: "10:00", type: "quick", title: "С Днём Победы!",               preview: "Поздравляем всех с Днём Победы! Хлеб бесплатно ветеранам по предъявлении удостоверения.", status: "sent",     img: true,  reach: 3120, eng: 287 },
+
+  // Week 3 (May 12-15) — sent, today is 16
+  { id: "P-3011", day: 12, time: "08:30", type: "ai",    title: "Понедельник — день выпечки",   preview: "Что испекли сегодня: бородинский, чиабатта, багет, ржаной на закваске.",              status: "sent",      img: true,  reach: 1100, eng: 71 },
+  { id: "P-3012", day: 12, time: "16:00", type: "ord",   title: "Завтрак к подписке",            preview: "Каждое утро 5 свежих круассанов с доставкой — 1 200 ₽/нед.",                          status: "sent",      img: true,  reach: 1870, eng: 92, erid: "Pb3XmK9q4R" },
+  { id: "P-3013", day: 13, time: "09:00", type: "ai",    title: "Чизкейк «Нью‑Йорк»",            preview: "Классический рецепт с филадельфией и ванильным песочным основанием. 1 900 ₽/торт.", status: "sent",      img: true,  reach: 1340, eng: 108 },
+  { id: "P-3014", day: 14, time: "08:30", type: "ai",    title: "Сезон ягод — клубничный тарт", preview: "Песочное тесто, заварной крем, свежая клубника. Только до конца мая.",                status: "sent",      img: true,  reach: 1620, eng: 137 },
+  { id: "P-3015", day: 14, time: "13:00", type: "quick", title: "Свободные слоты на завтра",    preview: "На 15 мая ещё свободны 2 слота на торты под заказ. Запись через бот.",                status: "sent",      img: false, reach: 420,  eng: 28 },
+  { id: "P-3016", day: 15, time: "08:30", type: "ai",    title: "Хлеб с семечками",              preview: "Многозерновой хлеб с подсолнечником, льном и тыквенными семечками. Богат клетчаткой.", status: "sent",     img: true,  reach: 980,  eng: 58 },
+
+  // TODAY (May 16) — mix of sent and scheduled
+  { id: "P-3017", day: 16, time: "08:30", type: "ai",    title: "Субботнее утро — свежая сдоба", preview: "Сегодня в духовке: сдобные булочки с корицей, ватрушки с творогом, синнабоны.",     status: "sent",      img: true,  reach: 760,  eng: 41 },
+  { id: "P-3018", day: 16, time: "12:30", type: "ord",   title: "Корпоративные заказы",          preview: "Свежая выпечка для офиса от 10 человек. Доставка к нужному времени.",                  status: "scheduled", img: true,  reach: null, eng: null, erid: "Pb3XmK9r8S" },
+  { id: "P-3019", day: 16, time: "17:00", type: "ai",    title: "Вечерний пирог с яблоками",     preview: "Только что испекли — пирог с антоновкой и корицей. Тёплый до 19:00.",                  status: "scheduled", img: true,  reach: null, eng: null },
+
+  // Week 4 (May 17-22) — scheduled
+  { id: "P-3020", day: 17, time: "09:00", type: "ai",    title: "Воскресные синнабоны",          preview: "Свежие булочки с корицей и сливочной глазурью. Только по воскресеньям.",              status: "scheduled", img: true,  reach: null, eng: null },
+  { id: "P-3021", day: 17, time: "15:00", type: "promo", title: "Скидка 20% после 17:00",        preview: "Каждое воскресенье свежая выпечка со скидкой 20% последний час работы.",               status: "scheduled", img: true,  reach: null, eng: null },
+  { id: "P-3022", day: 18, time: "08:30", type: "ai",    title: "Новый сорт круассанов — фисташка", preview: "Слоёное тесто двойной слойки с фисташковой пастой и хрустящей крошкой сверху.",   status: "scheduled", img: true,  reach: null, eng: null },
+  { id: "P-3023", day: 18, time: "14:00", type: "book",  title: "Запись Татьяны Берг — торт Медовик", preview: "Заказ #BK‑4012 на 18.05, готов к 14:00. Самовывоз.",                              status: "scheduled", img: false, reach: null, eng: null },
+  { id: "P-3024", day: 19, time: "08:30", type: "ai",    title: "Что мы пекли сегодня",          preview: "Каждый понедельник делимся свежим списком: 12 сортов хлеба, 8 видов пирожков.",      status: "scheduled", img: true,  reach: null, eng: null },
+  { id: "P-3025", day: 19, time: "11:00", type: "ord",   title: "Реклама — самовывоз на районе",  preview: "Заказ через MAX‑бот — забери у нас или в 3 пунктах самовывоза.",                      status: "scheduled", img: true,  reach: null, eng: null, erid: "Pb3XmK9s1T" },
+  { id: "P-3026", day: 20, time: "08:30", type: "ai",    title: "Тарт татен — перевёрнутый яблочный", preview: "Французская классика — карамель, антоновка, рассыпчатое тесто. По предзаказу.",  status: "scheduled", img: true,  reach: null, eng: null },
+  { id: "P-3027", day: 21, time: "08:30", type: "ai",    title: "Багет на закваске",              preview: "Французский багет с поджаристой коркой и кружевным мякишем. Цена 180 ₽.",            status: "scheduled", img: true,  reach: null, eng: null },
+  { id: "P-3028", day: 21, time: "16:00", type: "quick", title: "Свободные торты на выходные",    preview: "На 24-25 мая ещё свободны медовик, наполеон, чизкейк. Заказ в боте.",                 status: "scheduled", img: false, reach: null, eng: null },
+  { id: "P-3029", day: 22, time: "08:30", type: "ai",    title: "Пятничный ужин — пирог с лососем", preview: "По пятницам печём кулебяку с лососем и шпинатом. На 4-6 порций.",                  status: "scheduled", img: true,  reach: null, eng: null },
+  { id: "P-3030", day: 22, time: "13:00", type: "promo", title: "Привет другу — скидка 10%",      preview: "Приведи друга по реферальной ссылке в боте — обоим 10% на первый заказ.",             status: "scheduled", img: true,  reach: null, eng: null },
+
+  // Week 5 (May 25-31) — drafts and scheduled
+  { id: "P-3031", day: 25, time: "08:30", type: "ai",    title: "Воскресная панорама",            preview: "Что нового в нашей мастерской: меняем рецептуру слоёного теста, добавляем больше масла.", status: "draft",  img: false, reach: null, eng: null },
+  { id: "P-3032", day: 26, time: "08:30", type: "ai",    title: "Понедельник — обновлённое меню", preview: "Добавили: фокачча с базиликом, тарт с лимонным курдом, эклеры с фисташкой.",          status: "scheduled", img: true,  reach: null, eng: null },
+  { id: "P-3033", day: 28, time: "08:30", type: "ai",    title: "Лето на пороге — ягодные тарты", preview: "Малина, голубика, чёрная смородина — ягоды от фермеров Ленобласти.",                  status: "draft",     img: false, reach: null, eng: null },
+  { id: "P-3034", day: 29, time: "12:00", type: "ord",   title: "Кейтеринг на корпоратив",       preview: "Свежая выпечка на ваш ивент. От 30 персон. Расчёт за 2 дня.",                          status: "draft",     img: false, reach: null, eng: null, erid: "TBD" },
+  { id: "P-3035", day: 31, time: "10:00", type: "ai",    title: "Итоги мая — топ‑5 заказов",      preview: "Что вы заказывали чаще всего: медовик, бородинский, круассан, эклер, чизкейк.",         status: "scheduled", img: true,  reach: null, eng: null },
+];
+
+const TOP3 = [
+  { id: "P-3010", ttl: "С Днём Победы!", meta: "9 мая · быстрый пост", reach: 3120, eng: 287 },
+  { id: "P-3006", ttl: "Доставка тортов по СПб", meta: "5 мая · ОРД", reach: 2340, eng: 156 },
+  { id: "P-3008", ttl: "Скидка 15% на торты к 9 Мая", meta: "7 мая · промо‑акция", reach: 1980, eng: 134 },
+];
+
+/* =====================================================================
+   Helpers
+   ===================================================================== */
+const DOW_SHORT = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+const DOW_LONG  = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
+const MONTHS    = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+
+// May 2026: 1 мая — пятница (Пн=0…Вс=6 → пт=4)
+const MAY2026_OFFSET = 4; // weekday index of May 1
+const MAY2026_DAYS = 31;
+
+function dowOfDay(d) {
+  return (MAY2026_OFFSET + d - 1) % 7;
+}
+function isWeekend(d) {
+  const x = dowOfDay(d);
+  return x === 5 || x === 6;
+}
+function fmtDate(d) {
+  return `${d} мая 2026`;
+}
+function fmtNum(n) {
+  return new Intl.NumberFormat("ru-RU").format(n);
+}
+
+/* =====================================================================
+   Page header
+   ===================================================================== */
+function CalHeader({ autopostOn, onToggleAutopost, onSchedule }) {
+  const total = POSTS.length;
+  return (
+    <div className="cal-head">
+      <div>
+        <h1>Календарь публикаций</h1>
+        <div className="sub">
+          <span>Запланировано <b>{total}</b> постов на месяц</span>
+          <span className="pip"></span>
+          {autopostOn ? (
+            <span className="auto-pip"><span className="dot"></span>автопостинг включён · 5/день</span>
+          ) : (
+            <span className="auto-pip" style={{ background: "var(--bg-subtle)", color: "var(--fg-3)", borderColor: "var(--border-2)" }}>
+              <span className="dot" style={{ background: "var(--fg-4)", boxShadow: "none" }}></span>автопостинг выключен
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="head-actions">
+        <button type="button" className="cab-btn cab-btn--sm cab-btn--secondary">
+          <Ico name="icon-action-export" size={16} />
+          Экспорт
+        </button>
+        <button type="button" className="cab-btn cab-btn--sm cab-btn--primary" onClick={onSchedule}>
+          <Ico name="icon-action-add" size={16} />
+          Запланировать пост
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   Toolbar — view tabs + layer chips
+   ===================================================================== */
+function ViewTabs({ view, setView }) {
+  const VIEWS = [
+    { id: "month", label: "Месяц", icon: "calendar" },
+    { id: "week",  label: "Неделя", icon: "calendar-clock" },
+    { id: "list",  label: "Список", icon: "icon-action-sort" },
+  ];
+  return (
+    <div className="bk-tools" role="toolbar" aria-label="Управление видом">
+      <div className="bk-views" role="tablist" aria-label="Вид">
+        {VIEWS.map((v) => (
+          <button
+            key={v.id}
+            type="button"
+            className={view === v.id ? "is-on" : ""}
+            onClick={() => setView(v.id)}
+            role="tab"
+            aria-selected={view === v.id}
+          >
+            <Ico name={v.icon} size={14} />
+            {v.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="flt-search" style={{ flex: 1 }}>
+        <Ico name="icon-action-search" size={16} className="ico" />
+        <input type="search" placeholder="Поиск по постам или ключевым словам…" aria-label="Поиск" />
+      </div>
+
+      <div className="flt-actions">
+        <button type="button" className="cab-btn cab-btn--sm cab-btn--secondary">
+          <Ico name="icon-action-filter" size={14} />
+          Фильтры
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function LayerChips({ layers, toggleLayer }) {
+  const counts = useMemo(() => {
+    const c = { ai: 0, quick: 0, ord: 0, promo: 0, book: 0 };
+    POSTS.forEach((p) => { if (c[p.type] !== undefined) c[p.type]++; });
+    return c;
+  }, []);
+  const ITEMS = [
+    { id: "ai",    label: "Посты ИИ" },
+    { id: "quick", label: "Быстрые посты" },
+    { id: "ord",   label: "Рекламные ОРД", erid: true },
+    { id: "promo", label: "Промо‑акции" },
+    { id: "book",  label: "Записи клиентов" },
+  ];
+  return (
+    <div className="cal-layers" role="group" aria-label="Слои">
+      <span className="lbl">Слои:</span>
+      {ITEMS.map((it) => {
+        const on = layers[it.id];
+        return (
+          <button
+            key={it.id}
+            type="button"
+            className={`cal-chip ${on ? "is-on" : "is-off"}`}
+            data-layer={it.id}
+            onClick={() => toggleLayer(it.id)}
+            aria-pressed={on}
+          >
+            <span className="sw"></span>
+            {it.label}
+            {it.erid ? <span className="erid-mini">erid</span> : null}
+            <span className="n">{counts[it.id]}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* =====================================================================
+   Month nav (May 2026)
+   ===================================================================== */
+function MonthNav() {
+  return (
+    <div className="cal-monthnav">
+      <button type="button" className="bk-nav-btn" aria-label="Предыдущий месяц">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+      </button>
+      <button type="button" className="bk-nav-btn" aria-label="Следующий месяц">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+      </button>
+      <div className="range">Май 2026</div>
+      <span className="today-pill">Сегодня · 16 мая</span>
+      <div className="spacer"></div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   MONTH VIEW
+   ===================================================================== */
+function MonthGrid({ posts, onDayOpen }) {
+  // 5-row grid: Apr 27..30 + May 1..31 + Jun 1..7 (42 cells for guaranteed fit)
+  // Apr 2026: 30 days, so prev-month tail = Apr 27, 28, 29, 30  (4 days when May starts on Fri)
+  const cells = [];
+  for (let i = 0; i < MAY2026_OFFSET; i++) {
+    cells.push({ d: 27 + i, isOther: true });
+  }
+  for (let d = 1; d <= MAY2026_DAYS; d++) {
+    cells.push({ d, isOther: false });
+  }
+  // Fill trailing
+  let nextD = 1;
+  while (cells.length % 7 !== 0 || cells.length < 35) {
+    cells.push({ d: nextD++, isOther: true });
+  }
+  const byDay = useMemo(() => {
+    const m = {};
+    posts.forEach((p) => { (m[p.day] = m[p.day] || []).push(p); });
+    Object.keys(m).forEach((k) => m[k].sort((a, b) => a.time.localeCompare(b.time)));
+    return m;
+  }, [posts]);
+
+  return (
+    <div className="cal-month">
+      <div className="cal-month-hdr" role="row">
+        {DOW_SHORT.map((d, i) => (
+          <div key={d} className={`dow ${i >= 5 ? "weekend" : ""}`} role="columnheader">{d}</div>
+        ))}
+      </div>
+      <div className="cal-month-body">
+        {cells.map((c, i) => {
+          const isToday  = !c.isOther && c.d === TODAY_DAY;
+          const dayPosts = !c.isOther ? (byDay[c.d] || []) : [];
+          const weekend  = !c.isOther && isWeekend(c.d);
+          const visible  = dayPosts.slice(0, 3);
+          const overflow = Math.max(0, dayPosts.length - 3);
+          const klass = [
+            "cal-day",
+            c.isOther ? "is-other" : "",
+            isToday ? "is-today" : "",
+            weekend ? "is-weekend" : "",
+          ].filter(Boolean).join(" ");
+          return (
+            <button
+              key={i}
+              type="button"
+              className={klass}
+              onClick={() => !c.isOther && onDayOpen(c.d)}
+              aria-label={`${c.d} мая, ${dayPosts.length} постов`}
+            >
+              <div className="cal-day-top">
+                <span className="cal-day-n">{c.d}</span>
+                {!c.isOther && dayPosts.length > 0 ? (
+                  <span className={`cal-day-count ${isToday ? "" : ""}`}>
+                    <span className="dot"></span>
+                    {dayPosts.length}
+                  </span>
+                ) : null}
+              </div>
+              {visible.map((p) => (
+                <span
+                  key={p.id}
+                  className={`cal-mini ${p.status === "sent" ? "is-sent" : ""}`}
+                  data-type={p.type}
+                  title={p.title}
+                >
+                  <span className="t">{p.time}</span>
+                  <span className="ttl">{p.title}</span>
+                  {p.erid ? <span className="erid-mini">erid</span> : null}
+                </span>
+              ))}
+              {overflow > 0 ? (
+                <span className="cal-more">+ ещё {overflow}</span>
+              ) : null}
+              {!c.isOther && dayPosts.length === 0 ? (
+                <span className="cal-add-hint" aria-hidden="true">+</span>
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function Legend() {
+  const ITEMS = [
+    { id: "ai", label: "Посты ИИ" },
+    { id: "quick", label: "Быстрые" },
+    { id: "ord", label: "Рекламные (ОРД, erid)" },
+    { id: "promo", label: "Промо‑акции" },
+    { id: "book", label: "Записи клиентов" },
+  ];
+  return (
+    <div className="cal-legend" role="list" aria-label="Легенда">
+      {ITEMS.map((i) => (
+        <div key={i.id} className={`cal-legend-item ${i.id}`} role="listitem">
+          <span className="sw"></span>
+          {i.label}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* =====================================================================
+   WEEK VIEW (May 11-17, today is 16)
+   ===================================================================== */
+function WeekView({ posts, onOpen }) {
+  // Week: May 11 (Mon) .. May 17 (Sun)
+  const WEEK_DAYS = [11, 12, 13, 14, 15, 16, 17];
+  const HOURS = [];
+  for (let h = 8; h <= 22; h++) HOURS.push(h);
+
+  // Only show posts within this week
+  const weekPosts = posts.filter((p) => WEEK_DAYS.includes(p.day));
+
+  // Hour cell height = 56px (matches grid-auto-rows). One row per hour.
+  const ROW_H = 56;
+  // Now line: imagine current time is 14:35
+  const nowTopPx = (14 - 8) * ROW_H + (35 / 60) * ROW_H;
+
+  return (
+    <div>
+      <div className="cal-monthnav">
+        <button type="button" className="bk-nav-btn" aria-label="Предыдущая неделя">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+        </button>
+        <button type="button" className="bk-nav-btn" aria-label="Следующая неделя">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+        </button>
+        <div className="range">11 — 17 мая 2026</div>
+        <span className="today-pill">Эта неделя</span>
+        <div className="spacer"></div>
+      </div>
+
+      <div className="cal-week">
+        <div className="cal-week-hdr">
+          <div className="corner"></div>
+          {WEEK_DAYS.map((d) => {
+            const isToday = d === TODAY_DAY;
+            return (
+              <div key={d} className={`cell ${isToday ? "is-today" : ""}`}>
+                <span className="dow">{DOW_SHORT[dowOfDay(d)]}</span>
+                <span className="d">{d}</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="cal-week-grid" style={{ position: "relative" }}>
+          {HOURS.map((h) => (
+            <React.Fragment key={h}>
+              <div className="time">{String(h).padStart(2, "0")}:00</div>
+              {WEEK_DAYS.map((d) => {
+                const cellPosts = weekPosts.filter((p) => {
+                  const ph = parseInt(p.time.split(":")[0], 10);
+                  return p.day === d && ph === h;
+                });
+                const isToday = d === TODAY_DAY;
+                return (
+                  <div key={`${h}-${d}`} className={`cell ${isToday ? "is-today" : ""}`} onClick={() => cellPosts[0] && onOpen(cellPosts[0])}>
+                    <span className="plus" aria-hidden="true">+</span>
+                    {cellPosts.map((p) => {
+                      const m = parseInt(p.time.split(":")[1], 10);
+                      const topPct = (m / 60) * 100;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          className="cal-wpost"
+                          data-type={p.type}
+                          style={{ top: `${topPct}%`, height: "44px" }}
+                          onClick={(e) => { e.stopPropagation(); onOpen(p); }}
+                        >
+                          <span className="t">{p.time}</span>
+                          <span className="ttl">{p.title}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </React.Fragment>
+          ))}
+          <div className="cal-week-now" style={{ top: `${nowTopPx}px` }} aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <Legend />
+    </div>
+  );
+}
+
+/* =====================================================================
+   LIST VIEW
+   ===================================================================== */
+function ListView({ posts, onOpen }) {
+  const [tab, setTab] = useState("all");
+  const TABS = [
+    { id: "all",       label: "Все",         n: posts.length },
+    { id: "scheduled", label: "Запланировано", n: posts.filter((p) => p.status === "scheduled").length },
+    { id: "sent",      label: "Опубликовано", n: posts.filter((p) => p.status === "sent").length },
+    { id: "draft",     label: "Черновики",   n: posts.filter((p) => p.status === "draft").length },
+  ];
+  const filtered = tab === "all" ? posts : posts.filter((p) => p.status === tab);
+  const sorted = [...filtered].sort((a, b) => {
+    if (a.day !== b.day) return a.day - b.day;
+    return a.time.localeCompare(b.time);
+  });
+  const ST_LABEL = { sent: "Опубликовано", scheduled: "Запланировано", draft: "Черновик", failed: "Ошибка" };
+
+  return (
+    <div className="cal-list-card">
+      <div className="cal-list-tabs" role="tablist">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            className={`pill ${tab === t.id ? "is-on" : ""}`}
+            onClick={() => setTab(t.id)}
+            role="tab"
+            aria-selected={tab === t.id}
+          >
+            {t.label} <span className="n">{t.n}</span>
+          </button>
+        ))}
+      </div>
+      <div className="cal-list-wrap">
+        <table className="cal-list">
+          <thead>
+            <tr>
+              <th>Дата / Время</th>
+              <th>Тип</th>
+              <th>Заголовок</th>
+              <th>Платформа</th>
+              <th>Статус</th>
+              <th style={{ textAlign: "right" }}>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((p) => (
+              <tr key={p.id} onClick={() => onOpen(p)}>
+                <td>
+                  <div className="when">
+                    {String(p.day).padStart(2, "0")}.05
+                    <small>{DOW_SHORT[dowOfDay(p.day)]} · {p.time}</small>
+                  </div>
+                </td>
+                <td>
+                  <span className="type-cell">
+                    <span className={`dot ${p.type}`}></span>
+                    {TYPES[p.type].label}
+                    {p.erid ? <span className="erid-mini" style={{ marginLeft: 6 }}>erid: {p.erid}</span> : null}
+                  </span>
+                </td>
+                <td>
+                  <div className="ttl">{p.title}<small>{p.preview}</small></div>
+                </td>
+                <td>
+                  <span className="plat">
+                    <span className="glyph">M</span>
+                    MAX · {PLATFORM.handle}
+                  </span>
+                </td>
+                <td>
+                  <span className={`st ${p.status}`}>{ST_LABEL[p.status]}</span>
+                </td>
+                <td>
+                  <div className="acts" style={{ justifyContent: "flex-end" }} onClick={(e) => e.stopPropagation()}>
+                    <button type="button" className="act" aria-label="Редактировать" title="Редактировать">
+                      <Ico name="icon-action-edit" size={16} />
+                    </button>
+                    <button type="button" className="act" aria-label="Перенести" title="Перенести">
+                      <Ico name="calendar-clock" size={16} />
+                    </button>
+                    <button type="button" className="act" aria-label="Открыть в MAX" title="Открыть в MAX">
+                      <Ico name="icon-action-external-link" size={16} />
+                    </button>
+                    <button type="button" className="act danger" aria-label="Удалить" title="Удалить">
+                      <Ico name="icon-action-delete" size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   SIDE PANEL (right column)
+   ===================================================================== */
+function SidePanel({ onSchedule }) {
+  const sentN = POSTS.filter((p) => p.status === "sent").length;
+  const totalN = POSTS.length;
+  const pct = Math.round((sentN / totalN) * 100);
+
+  const upcoming = POSTS
+    .filter((p) => p.status === "scheduled")
+    .sort((a, b) => (a.day - b.day) || a.time.localeCompare(b.time))
+    .slice(0, 4);
+
+  return (
+    <aside className="cal-side" aria-label="Сводка недели">
+      <div className="cal-card progress-card">
+        <h3>На этой неделе <span className="sub">11 — 17 мая</span></h3>
+        <div className="progress-num">
+          <span className="big">28</span>
+          <span className="tot">/ 35 постов</span>
+          <span className="delta">+12 %</span>
+        </div>
+        <div className="progress-bar" role="progressbar" aria-valuenow={pct} aria-valuemin="0" aria-valuemax="100">
+          <span className="fill" style={{ width: `${pct}%` }}></span>
+        </div>
+        <div className="progress-meta">Охват <b style={{ color: "var(--fg-1)" }}>14 200</b> · вовлечённость <b style={{ color: "var(--fg-1)" }}>1 087</b></div>
+      </div>
+
+      <div className="cal-card">
+        <h3>Топ‑3 поста <span className="sub">за месяц</span></h3>
+        <div className="cal-top3">
+          {TOP3.map((t, i) => (
+            <div key={t.id} className="top3-row">
+              <span className="rank">{i + 1}</span>
+              <div className="ttl">
+                {t.ttl}
+                <small>{t.meta} · охват {fmtNum(t.reach)}</small>
+              </div>
+              <span className="met">{t.eng}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="cal-card">
+        <h3>Ближайшие <span className="sub">{upcoming.length} постов</span></h3>
+        <div className="cal-upcoming">
+          {upcoming.map((p) => (
+            <div key={p.id} className="up-row">
+              <div className="when">
+                {p.time}
+                <small>{String(p.day).padStart(2,"0")} {MONTHS[4]}</small>
+              </div>
+              <div className="info">
+                <div className="ttl">{p.title}</div>
+                <div className="meta">
+                  <span className={`type-pip ${p.type}`}></span>
+                  {TYPES[p.type].label}
+                  {p.erid ? <span style={{ marginLeft: 4 }}>· erid</span> : null}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="cal-side-cta">
+        <button type="button" className="cab-btn cab-btn--md cab-btn--primary" onClick={onSchedule}>
+          <Ico name="icon-action-add" size={16} />
+          Запланировать пост
+        </button>
+        <button type="button" className="cab-btn cab-btn--md cab-btn--secondary">
+          <Ico name="icon-nav-quick-post" size={16} />
+          Открыть автопостинг
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+/* =====================================================================
+   Empty state — autopost off CTA
+   ===================================================================== */
+function AutopostEmpty({ onEnable }) {
+  return (
+    <div className="cal-empty" role="status">
+      <span className="glyph">
+        <Ico name="icon-nav-quick-post" size={24} />
+      </span>
+      <div className="body">
+        <h4>Автопостинг выключен</h4>
+        <p>Включите автопостинг — ИИ будет публиковать <b>5 постов в день</b> из вашего каталога товаров и услуг, по расписанию.</p>
+      </div>
+      <button type="button" className="cab-btn cab-btn--sm cab-btn--primary" onClick={onEnable}>
+        <Ico name="status-checkmark-done" size={14} />
+        Включить автопостинг
+      </button>
+    </div>
+  );
+}
+
+/* =====================================================================
+   Day drawer — list of posts for clicked day
+   ===================================================================== */
+function DayDrawer({ day, onClose, onOpenPost }) {
+  const isOpen = day != null;
+  const dayPosts = useMemo(() => {
+    if (day == null) return [];
+    return POSTS.filter((p) => p.day === day).sort((a, b) => a.time.localeCompare(b.time));
+  }, [day]);
+
+  const ST_LABEL = { sent: "Опубликовано", scheduled: "Запланировано", draft: "Черновик", failed: "Ошибка" };
+  const dowLabel = day != null ? DOW_LONG[dowOfDay(day)] : "";
+
+  return (
+    <React.Fragment>
+      <div className={`dw-scrim ${isOpen ? "is-open" : ""}`} onClick={onClose}></div>
+      <aside className={`dw ${isOpen ? "is-open" : ""}`} aria-hidden={!isOpen} aria-label="Посты дня">
+        <div className="dw-head">
+          <div className="title-stack">
+            <div className="num">{day != null ? fmtDate(day) : ""}</div>
+            <div className="title">{dowLabel}</div>
+            <div className="head-pills">
+              <span className="cab-chip cab-chip--brand">{dayPosts.length} постов</span>
+              {dayPosts.filter((p) => p.status === "scheduled").length > 0 ? (
+                <span className="cab-chip cab-chip--info">{dayPosts.filter((p) => p.status === "scheduled").length} в очереди</span>
+              ) : null}
+              {dayPosts.filter((p) => p.erid).length > 0 ? (
+                <span className="cab-chip cab-chip--warn">{dayPosts.filter((p) => p.erid).length} ОРД</span>
+              ) : null}
+            </div>
+          </div>
+          <button type="button" className="dw-close" aria-label="Закрыть" onClick={onClose}>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="6" y1="6" x2="18" y2="18" /><line x1="6" y1="18" x2="18" y2="6" />
+            </svg>
+          </button>
+        </div>
+        <div className="dw-body">
+          {dayPosts.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "32px 0", color: "var(--fg-3)" }}>
+              <Ico name="calendar" size={32} style={{ opacity: 0.4, marginBottom: 8 }} />
+              <p style={{ margin: 0, fontSize: 14 }}>На этот день постов не запланировано</p>
+            </div>
+          ) : (
+            <div className="cal-day-list">
+              {dayPosts.map((p) => (
+                <div key={p.id} className="cal-day-item">
+                  <div className="when">
+                    {p.time}
+                    <small>{ST_LABEL[p.status]}</small>
+                  </div>
+                  <div className="body">
+                    <div className="row1">
+                      <span className="cab-chip" style={{
+                        background: p.type === "ai"    ? "rgba(16,185,129,0.12)"
+                                : p.type === "quick" ? "rgba(59,130,246,0.10)"
+                                : p.type === "ord"   ? "rgba(245,158,11,0.12)"
+                                : p.type === "promo" ? "rgba(139,92,246,0.10)"
+                                                     : "rgba(6,182,212,0.10)",
+                        color: p.type === "ai"    ? "var(--brand-700)"
+                             : p.type === "quick" ? "var(--info-700)"
+                             : p.type === "ord"   ? "var(--warning-700)"
+                             : p.type === "promo" ? "#6d28d9"
+                                                  : "#0e7490",
+                        borderColor: "transparent",
+                      }}>
+                        {TYPES[p.type].label}
+                      </span>
+                      {p.erid ? <span className="erid-mini">erid: {p.erid}</span> : null}
+                      <span className="ttl">{p.title}</span>
+                    </div>
+                    <p className="preview">{p.preview}</p>
+                    <div className="acts">
+                      <button type="button" className="lnk brand">
+                        <Ico name="icon-action-edit" size={14} />
+                        Редактировать
+                      </button>
+                      <button type="button" className="lnk">
+                        <Ico name="calendar-clock" size={14} />
+                        Перенести
+                      </button>
+                      <button type="button" className="lnk">
+                        <Ico name="icon-action-external-link" size={14} />
+                        Просмотр в MAX
+                      </button>
+                      <button type="button" className="lnk danger">
+                        <Ico name="icon-action-delete" size={14} />
+                        Удалить
+                      </button>
+                    </div>
+                  </div>
+                  <div className={`thumb ${p.img ? p.type : "muted"}`}>
+                    {p.img ? (
+                      <Ico name={p.type === "ord" ? "megaphone" : p.type === "promo" ? "gift-trial" : p.type === "quick" ? "icon-nav-quick-post" : p.type === "book" ? "icon-crm-bookings" : "image"} size={22} />
+                    ) : (
+                      <Ico name="image" size={22} />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="dw-foot">
+          <button type="button" className="cab-btn cab-btn--md cab-btn--primary grow">
+            <Ico name="icon-action-add" size={16} />
+            Добавить пост на {day != null ? `${day} мая` : ""}
+          </button>
+        </div>
+      </aside>
+    </React.Fragment>
+  );
+}
+
+/* =====================================================================
+   App
+   ===================================================================== */
+function CalendarApp() {
+  const [view, setView] = useState("month");
+  const [layers, setLayers] = useState({ ai: true, quick: true, ord: true, promo: true, book: false });
+  const [autopostOn, setAutopostOn] = useState(true);
+  const [activeDay, setActiveDay] = useState(null);
+  // ESC closes drawer
+  useEffect(() => {
+    function onKey(e) { if (e.key === "Escape") setActiveDay(null); }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const toggleLayer = (id) => setLayers((s) => ({ ...s, [id]: !s[id] }));
+  const filtered = useMemo(() => POSTS.filter((p) => layers[p.type]), [layers]);
+
+  const onSchedule = () => alert("Открыть форму планирования поста (в макете)");
+  const onOpenPost = (p) => alert(`Открыть пост ${p.id}: ${p.title} (в макете)`);
+
+  const business = { ava: "У", name: "Пекарня «Уют»", handle: "@pekarnya_uyut" };
+
+  return (
+    <div className="dash" data-screen-label="07 Cabinet — Контент · Календарь">
+      <Sidebar current="content" business={business} />
+      <div className="work">
+        <TopBar />
+        <main className="pane">
+          <CalHeader
+            autopostOn={autopostOn}
+            onToggleAutopost={() => setAutopostOn((v) => !v)}
+            onSchedule={onSchedule}
+          />
+
+          {!autopostOn ? (
+            <AutopostEmpty onEnable={() => setAutopostOn(true)} />
+          ) : null}
+
+          <ViewTabs view={view} setView={setView} />
+          <LayerChips layers={layers} toggleLayer={toggleLayer} />
+
+          {view === "month" ? (
+            <div className="cal-grid">
+              <div>
+                <MonthNav />
+                <MonthGrid posts={filtered} onDayOpen={setActiveDay} />
+                <Legend />
+              </div>
+              <SidePanel onSchedule={onSchedule} />
+            </div>
+          ) : view === "week" ? (
+            <div className="cal-grid">
+              <WeekView posts={filtered} onOpen={onOpenPost} />
+              <SidePanel onSchedule={onSchedule} />
+            </div>
+          ) : (
+            <div className="cal-grid">
+              <ListView posts={filtered} onOpen={onOpenPost} />
+              <SidePanel onSchedule={onSchedule} />
+            </div>
+          )}
+        </main>
+      </div>
+
+      <DayDrawer day={activeDay} onClose={() => setActiveDay(null)} onOpenPost={onOpenPost} />
+      <BottomNav current="content" />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<CalendarApp />);
+</script>
+</body>
+</html>

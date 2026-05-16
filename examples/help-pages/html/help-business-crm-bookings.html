@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Запись на услуги — Справка СММ АЙБРО</title>
+<meta name="description" content="Как работает запись клиентов на услуги через ИИ-ассистента в MAX: расписание мастеров, слоты времени, push-уведомления, перенос и отмена.">
+<link rel="icon" href="../assets/logos/favicon-light.svg">
+<link rel="stylesheet" href="../css/colors_and_type.css">
+<link rel="stylesheet" href="../css/help-article.css">
+</head>
+<body>
+
+<a href="#main" class="skip">К содержимому</a>
+
+<!-- ───────────────────────── HEADER ───────────────────────── -->
+<header class="pub-header">
+  <div class="pub-header-inner">
+    <a href="index.html" class="pub-brand" aria-label="СММ АЙБРО — на главную">
+      <span class="pub-brand-tile" aria-hidden="true">
+        <img src="../assets/logos/robot-icon-light.svg" alt="">
+      </span>
+      <span class="pub-brand-word">СММ <em>АЙБРО</em></span>
+    </a>
+    <nav class="pub-nav" aria-label="Основная навигация">
+      <a href="#">Возможности</a>
+      <a href="#">Примеры</a>
+      <a href="#">Тариф</a>
+      <a href="#">Партнёрам</a>
+      <a href="index.html" class="is-current" aria-current="page">Справка</a>
+    </nav>
+    <div class="pub-header-actions">
+      <a href="#" class="pub-btn pub-btn--ghost pub-btn--sm">Войти</a>
+      <a href="#" class="pub-btn pub-btn--primary pub-btn--sm">Пробный период</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <div class="shell">
+
+    <!-- ───────────────────────── SIDEBAR ───────────────────────── -->
+    <aside class="sidebar" aria-label="Навигация по разделу CRM">
+
+      <a href="index.html" class="sidebar-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>
+        Все разделы справки
+      </a>
+
+      <div class="sidebar-group">
+        <div class="sidebar-label">CRM в&nbsp;кабинете</div>
+        <ul class="sidebar-list">
+          <li>
+            <a href="help-business-crm.html">
+              <span class="ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.73l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8z"></path>
+                  <path d="m3.3 7 8.7 5 8.7-5"></path>
+                  <path d="M12 22V12"></path>
+                </svg>
+              </span>
+              Обзор CRM
+            </a>
+          </li>
+          <li>
+            <a href="help-business-crm-orders.html">
+              <span class="ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 8h14l-1.2 11.1A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.9L5 8z"></path>
+                  <path d="M8.5 8V6a3.5 3.5 0 0 1 7 0v2"></path>
+                </svg>
+              </span>
+              Заказы (товары)
+            </a>
+          </li>
+          <li>
+            <a href="help-business-crm-bookings.html" class="is-current" aria-current="page">
+              <span class="ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4.5" width="18" height="17" rx="2"></rect>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                  <line x1="8" y1="2.5" x2="8" y2="6.5"></line>
+                  <line x1="16" y1="2.5" x2="16" y2="6.5"></line>
+                  <path d="M12 14v3l2 1.5"></path>
+                </svg>
+              </span>
+              Запись на&nbsp;услуги
+            </a>
+          </li>
+          <li>
+            <a href="help-business-crm-customers.html">
+              <span class="ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </span>
+              Клиенты
+            </a>
+          </li>
+          <li>
+            <a href="help-business-crm-settings.html">
+              <span class="ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1A2 2 0 1 1 4.3 17l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1A2 2 0 1 1 7 4.3l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1A2 2 0 1 1 19.7 7l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path>
+                </svg>
+              </span>
+              Настройки CRM
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-label">Содержание статьи</div>
+        <ul class="sidebar-list">
+          <li><a href="#what">Что это</a></li>
+          <li><a href="#how">Как это работает</a></li>
+          <li><a href="#includes">Что включает</a></li>
+          <li><a href="#not-includes">Что не&nbsp;включает</a></li>
+          <li><a href="#setup">Настройка за&nbsp;10&nbsp;минут</a></li>
+          <li><a href="#scenarios">Типичные сценарии</a></li>
+          <li><a href="#faq">Частые вопросы</a></li>
+        </ul>
+      </div>
+
+    </aside>
+
+    <!-- ───────────────────────── ARTICLE ───────────────────────── -->
+    <article class="article">
+
+      <!-- Breadcrumbs -->
+      <nav class="crumbs" aria-label="Хлебные крошки">
+        <a href="#">Главная</a>
+        <span class="sep" aria-hidden="true"></span>
+        <a href="index.html">Справка</a>
+        <span class="sep" aria-hidden="true"></span>
+        <a href="#">Бизнес</a>
+        <span class="sep" aria-hidden="true"></span>
+        <a href="help-business-crm.html">CRM</a>
+        <span class="sep" aria-hidden="true"></span>
+        <span class="current" aria-current="page">Запись на&nbsp;услуги</span>
+      </nav>
+
+      <!-- Header -->
+      <div class="article-eyebrow">
+        <span class="dot" aria-hidden="true"></span>
+        Бизнес&nbsp;· CRM
+      </div>
+      <h1>Запись клиентов на&nbsp;услуги через ИИ‑ассистента</h1>
+
+      <div class="article-meta">
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+          6&nbsp;мин чтения
+        </span>
+        <span class="meta-sep" aria-hidden="true"></span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 16-5.7L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-16 5.7L3 16"></path><path d="M3 21v-5h5"></path></svg>
+          Обновлено 14.05.2026
+        </span>
+        <span class="meta-sep" aria-hidden="true"></span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+          Соответствует 168‑ФЗ
+        </span>
+      </div>
+
+      <p class="article-lead">
+        Запись на&nbsp;услуги&nbsp;— для бизнесов, которые продают время мастера: салоны, фитнес, тренеры, мастера, врачи. ИИ‑ассистент в&nbsp;MAX принимает запись на&nbsp;конкретное время к&nbsp;конкретному мастеру, проверяет свободные слоты и&nbsp;ведёт календарь за&nbsp;вас.
+      </p>
+
+      <!-- ─── Что это ─── -->
+      <h2 id="what">Что это</h2>
+      <p>
+        Сценарий, когда клиент пишет в&nbsp;ваш канал в&nbsp;MAX: «Хочу записаться на&nbsp;маникюр», «Есть свободное время в&nbsp;субботу?» или «На&nbsp;стрижку к&nbsp;Илье можно&nbsp;завтра?». ИИ‑ассистент уточняет услугу, мастера и&nbsp;время, проверяет занятость по&nbsp;расписанию и&nbsp;фиксирует запись в&nbsp;кабинете. Вы&nbsp;получаете push‑уведомление в&nbsp;MAX и&nbsp;дальше работаете уже&nbsp;офлайн.
+      </p>
+      <p>
+        Подходит барбершопам и&nbsp;парикмахерским, мастерам ногтевого сервиса, фитнес‑тренерам, репетиторам, массажистам, психологам, юристам, автосервисам, медцентрам, салонам красоты.
+      </p>
+
+      <!-- ─── Как это работает ─── -->
+      <h2 id="how">Как это работает (3&nbsp;шага)</h2>
+
+      <ol class="steps">
+        <li>
+          <span class="step-title">Клиент пишет ассистенту</span>
+          <p class="step-desc">«Хочу записаться на&nbsp;маникюр» — в&nbsp;любой формулировке, на&nbsp;живом русском. Ассистент работает 24/7 в&nbsp;вашем канале&nbsp;в&nbsp;MAX.</p>
+        </li>
+        <li>
+          <span class="step-title">Бот ведёт по&nbsp;шагам: услуга&nbsp;→ мастер&nbsp;→ дата&nbsp;→ время&nbsp;→ подтверждение</span>
+          <p class="step-desc">ИИ предлагает только доступные слоты — с&nbsp;учётом расписания мастера, длительности услуги и&nbsp;уже сделанных записей. Двойная запись на&nbsp;один слот невозможна.</p>
+        </li>
+        <li>
+          <span class="step-title">Запись попадает в&nbsp;календарь — а&nbsp;вы&nbsp;получаете push</span>
+          <p class="step-desc">В&nbsp;кабинете на&nbsp;вкладке <b>Записи</b> сразу видны новая запись, мастер и&nbsp;слот. Мастер и&nbsp;владелец получают push в&nbsp;MAX. Клиенту автоматически уходит подтверждение и&nbsp;напоминания за&nbsp;24&nbsp;часа и&nbsp;за&nbsp;1&nbsp;час.</p>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+        </span>
+        <div>
+          <b>Все сообщения&nbsp;— на&nbsp;русском, по&nbsp;168‑ФЗ.</b> Бот не&nbsp;использует латинские аббревиатуры&nbsp;в&nbsp;интерфейсе клиента — пишет «запись», «услуга», «мастер», «ИИ‑ассистент».
+        </div>
+      </div>
+
+      <!-- ─── Что включает ─── -->
+      <h2 id="includes">Что включает</h2>
+
+      <ul class="feature-list">
+        <li>
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4.5" width="18" height="17" rx="2"></rect>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+              <line x1="8" y1="2.5" x2="8" y2="6.5"></line>
+              <line x1="16" y1="2.5" x2="16" y2="6.5"></line>
+            </svg>
+          </span>
+          <div class="body">
+            <span class="ttl">Каталог услуг</span>
+            <p class="dsc">Название, длительность (30 / 60 / 90&nbsp;мин), цена. Сколько услуг — столько и&nbsp;добавляете. Лимит каталога — 1&nbsp;000&nbsp;позиций.</p>
+          </div>
+        </li>
+        <li>
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </span>
+          <div class="body">
+            <span class="ttl">Мастера и&nbsp;их&nbsp;специализации</span>
+            <p class="dsc">Каждому мастеру указываете имя, контакт и&nbsp;список услуг, которые он&nbsp;ведёт. Бот предлагает клиенту только тех, кто умеет нужное.</p>
+          </div>
+        </li>
+        <li>
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4.5" width="18" height="17" rx="2"></rect>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+              <path d="M12 14v3l2 1.5"></path>
+            </svg>
+          </span>
+          <div class="body">
+            <span class="ttl">Расписание мастеров</span>
+            <p class="dsc">Рабочие дни, часы, перерывы (обед, тренировка). У&nbsp;каждого мастера&nbsp;— своё. Боту достаточно один раз задать&nbsp;— дальше всё считает сам.</p>
+          </div>
+        </li>
+        <li>
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 7v5l3 2"></path>
+            </svg>
+          </span>
+          <div class="body">
+            <span class="ttl">Слоты времени&nbsp;— автоматически</span>
+            <p class="dsc">Длительность услуги + расписание мастера + уже сделанные записи&nbsp;= список доступных слотов. Клиент видит только то, что реально свободно.</p>
+          </div>
+        </li>
+        <li>
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+              <path d="M10 21a2 2 0 0 0 4 0"></path>
+            </svg>
+          </span>
+          <div class="body">
+            <span class="ttl">Push‑уведомления</span>
+            <p class="dsc">Клиенту&nbsp;— подтверждение, напоминания за&nbsp;24&nbsp;часа и&nbsp;за&nbsp;1&nbsp;час до&nbsp;визита. Мастеру и&nbsp;владельцу&nbsp;— push в&nbsp;MAX о&nbsp;новой записи.</p>
+          </div>
+        </li>
+        <li>
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 16-5.7L21 8"></path>
+              <path d="M21 3v5h-5"></path>
+              <path d="M21 12a9 9 0 0 1-16 5.7L3 16"></path>
+              <path d="M3 21v-5h5"></path>
+            </svg>
+          </span>
+          <div class="body">
+            <span class="ttl">Переносы и&nbsp;отмены</span>
+            <p class="dsc">Клиент может попросить перенести запись&nbsp;— бот предложит ближайший свободный слот того&nbsp;же мастера. Отмена освобождает слот мгновенно.</p>
+          </div>
+        </li>
+        <li>
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 8h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8z"></path>
+              <path d="M9 8V6a3 3 0 0 1 6 0v2"></path>
+              <path d="M9 12h6"></path>
+              <path d="M9 16h4"></path>
+            </svg>
+          </span>
+          <div class="body">
+            <span class="ttl">История клиента</span>
+            <p class="dsc">Все записи клиента&nbsp;— в&nbsp;его карточке: даты, услуги, мастера, статус «пришёл&nbsp;/ не&nbsp;пришёл». Видите постоянных и&nbsp;тех, кто&nbsp;часто срывает.</p>
+          </div>
+        </li>
+      </ul>
+
+      <!-- ─── Что НЕ включает ─── -->
+      <h2 id="not-includes">Что не&nbsp;включает</h2>
+      <p>
+        В&nbsp;релизе 8&nbsp;июня 2026&nbsp;года записи работают как описано выше. Двух вещей в&nbsp;них сознательно нет:
+      </p>
+
+      <div class="not-included">
+        <div class="not-included-label">Чего нет</div>
+        <ul>
+          <li><b>Предоплата онлайн.</b> Клиент оплачивает услугу у&nbsp;вас на&nbsp;месте&nbsp;— наличными, картой через ваш терминал, переводом по&nbsp;СБП. Мы&nbsp;не&nbsp;платёжный агент и&nbsp;не&nbsp;выпускаем чеки 54‑ФЗ.</li>
+          <li><b>Видео‑консультации.</b> Пока только физический визит к&nbsp;мастеру. Онлайн‑созвоны не&nbsp;планируем в&nbsp;этом году.</li>
+        </ul>
+      </div>
+
+      <div class="callout is-info">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+        </span>
+        <div>
+          Хотите принимать предоплату? Дайте ссылку на&nbsp;вашу кассу или СБП в&nbsp;ответе мастера&nbsp;— или попросите ИИ‑ассистента упоминать её&nbsp;в&nbsp;подтверждении (настраивается на&nbsp;вкладке <b>Коммуникации&nbsp;→ ИИ‑ассистент</b>).
+        </div>
+      </div>
+
+      <!-- ─── Настройка ─── -->
+      <h2 id="setup">Настройка за&nbsp;10&nbsp;минут</h2>
+
+      <ol class="steps">
+        <li>
+          <span class="step-title">Кабинет&nbsp;→ CRM&nbsp;→ Настройки&nbsp;→ «Запись на&nbsp;услуги»</span>
+          <p class="step-desc">Включите тип бизнеса «услуги». Если у&nbsp;вас и&nbsp;товары, и&nbsp;услуги&nbsp;— включите оба, бот разберётся.</p>
+        </li>
+        <li>
+          <span class="step-title">Добавьте мастеров</span>
+          <p class="step-desc">Имя, специализация (стрижки, окрашивание, маникюр), телефон. Если работаете один&nbsp;— добавьте себя одним мастером.</p>
+        </li>
+        <li>
+          <span class="step-title">Задайте расписание</span>
+          <p class="step-desc">Пример: Пн‑Пт&nbsp;09:00‑21:00, Сб&nbsp;10:00‑18:00, Вс&nbsp;выходной. Перерыв на&nbsp;обед 13:00‑14:00. У&nbsp;каждого мастера&nbsp;— своё.</p>
+        </li>
+        <li>
+          <span class="step-title">Привяжите услуги к&nbsp;мастерам</span>
+          <p class="step-desc">Илья&nbsp;— стрижки и&nbsp;борода. Аня&nbsp;— окрашивание и&nbsp;уход. Бот будет предлагать клиенту только тех, кто умеет нужное.</p>
+        </li>
+        <li>
+          <span class="step-title">Готово&nbsp;— ИИ принимает записи 24/7</span>
+          <p class="step-desc">Можно открыть свой&nbsp;же канал в&nbsp;MAX и&nbsp;написать боту «Хочу записаться»&nbsp;— увидите путь клиента глазами клиента.</p>
+        </li>
+      </ol>
+
+      <!-- ─── Сценарии ─── -->
+      <h2 id="scenarios">Типичные сценарии</h2>
+      <p>Три примера из&nbsp;демо‑бизнесов в&nbsp;кабинете&nbsp;— возьмите за&nbsp;шаблон.</p>
+
+      <ul class="scenarios">
+        <li>
+          <span class="sc-tag">Парикмахерская</span>
+          <span class="sc-ttl">3&nbsp;мастера, 5&nbsp;услуг</span>
+          <span class="sc-desc">Стрижки, окрашивание, борода, укладка, уход. Рабочие дни Пн‑Сб&nbsp;10‑20. Боковые слоты по&nbsp;30&nbsp;и&nbsp;90&nbsp;минут.</span>
+        </li>
+        <li>
+          <span class="sc-tag">Косметолог‑индивидуал</span>
+          <span class="sc-ttl">1&nbsp;мастер, 8&nbsp;услуг</span>
+          <span class="sc-desc">Чистки, пилинги, инъекции. Только по&nbsp;записи. Расписание гибкое — мастер открывает слоты вручную на&nbsp;неделю вперёд.</span>
+        </li>
+        <li>
+          <span class="sc-tag">Студия йоги</span>
+          <span class="sc-ttl">4&nbsp;тренера, групп.&nbsp;+ инд.</span>
+          <span class="sc-desc">Групповые занятия по&nbsp;расписанию&nbsp;+ индивидуальные слоты. Клиент видит и&nbsp;то, и&nbsp;другое в&nbsp;одном списке.</span>
+        </li>
+      </ul>
+
+      <!-- ─── FAQ ─── -->
+      <h2 id="faq">Частые вопросы</h2>
+
+      <div class="faq" id="faq-bookings">
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="fqb-a-1" id="fqb-q-1">
+            <span>А&nbsp;если клиент хочет записаться к&nbsp;конкретному мастеру&nbsp;— это можно?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="fqb-a-1" role="region" aria-labelledby="fqb-q-1">
+            <div class="faq-a-inner">
+              <p>Да. Если клиент пишет «к&nbsp;Илье на&nbsp;стрижку», бот сразу покажет свободные слоты Ильи. Если пишет просто «хочу стрижку»&nbsp;— предложит выбрать из&nbsp;мастеров, которые ведут стрижки.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="fqb-a-2" id="fqb-q-2">
+            <span>Что будет, если два клиента одновременно выберут один слот?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="fqb-a-2" role="region" aria-labelledby="fqb-q-2">
+            <div class="faq-a-inner">
+              <p>Слот достанется тому, кто первым подтвердил запись (миллисекундная защита на&nbsp;уровне базы данных). Второму бот сразу предложит ближайший свободный&nbsp;— обычно соседний 30‑минутный слот того&nbsp;же мастера или такое&nbsp;же время у&nbsp;другого.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="fqb-a-3" id="fqb-q-3">
+            <span>Как отменить или перенести запись&nbsp;— и&nbsp;кто это делает?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="fqb-a-3" role="region" aria-labelledby="fqb-q-3">
+            <div class="faq-a-inner">
+              <p>Клиент пишет боту «отмени запись» или «перенеси на&nbsp;другое время»&nbsp;— бот сам обработает. Вы&nbsp;тоже можете изменить статус записи в&nbsp;кабинете на&nbsp;вкладке <b>Записи</b>: «подтверждена», «выполнена», «отменена», «не&nbsp;пришёл». Освободившийся слот сразу становится доступным другим.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="fqb-a-4" id="fqb-q-4">
+            <span>Можно настроить разную длительность одной услуги для разных мастеров?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="fqb-a-4" role="region" aria-labelledby="fqb-q-4">
+            <div class="faq-a-inner">
+              <p>Да. У&nbsp;стажёра стрижка&nbsp;— 60&nbsp;минут, у&nbsp;старшего мастера&nbsp;— 40. Заведите услугу «стрижка» и&nbsp;в&nbsp;карточке мастера переопределите длительность. Цену тоже можно сделать индивидуальной.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="fqb-a-5" id="fqb-q-5">
+            <span>Можно ли брать предоплату через бота?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="fqb-a-5" role="region" aria-labelledby="fqb-q-5">
+            <div class="faq-a-inner">
+              <p>Через нас&nbsp;— нет. СММ АЙБРО не&nbsp;платёжный агент, мы&nbsp;не&nbsp;обрабатываем чеки 54‑ФЗ. Но&nbsp;вы&nbsp;можете попросить ассистента отправлять клиенту ссылку на&nbsp;вашу кассу (Т‑Касса, ЮKassa, СБП‑ссылка). Настройка&nbsp;— в&nbsp;разделе <b>Коммуникации&nbsp;→ ИИ‑ассистент</b>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" aria-expanded="false">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="fqb-a-6" id="fqb-q-6">
+            <span>Сколько записей в&nbsp;месяц можно принять&nbsp;— есть лимит?</span>
+            <span class="caret" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="fqb-a-6" role="region" aria-labelledby="fqb-q-6">
+            <div class="faq-a-inner">
+              <p>Лимита по&nbsp;количеству записей нет&nbsp;— столько, сколько физически вмещается в&nbsp;расписание ваших мастеров. В&nbsp;тариф 4&nbsp;990&nbsp;₽/мес входит вся CRM, ИИ‑ответы клиентам и&nbsp;каталог до&nbsp;1&nbsp;000 услуг. Аддонов и&nbsp;доплат за&nbsp;объём нет.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ─── Related articles ─── -->
+      <div class="related-block">
+        <div class="related-block-label">См.&nbsp;также</div>
+        <div class="related-grid">
+
+          <a href="help-business-crm-orders.html" class="related-card">
+            <span class="rc-tag">CRM</span>
+            <span class="rc-ttl">Заказы (товары)</span>
+            <span class="rc-arrow">
+              Открыть
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>
+            </span>
+          </a>
+
+          <a href="help-business-crm-customers.html" class="related-card">
+            <span class="rc-tag">CRM</span>
+            <span class="rc-ttl">Карточки клиентов</span>
+            <span class="rc-arrow">
+              Открыть
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>
+            </span>
+          </a>
+
+          <a href="help-business-crm-settings.html" class="related-card">
+            <span class="rc-tag">CRM</span>
+            <span class="rc-ttl">Настройки CRM</span>
+            <span class="rc-arrow">
+              Открыть
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>
+            </span>
+          </a>
+
+        </div>
+      </div>
+
+    </article>
+
+  </div>
+
+</main>
+
+<!-- ───────────────────────── FOOTER ───────────────────────── -->
+<footer class="pub-footer">
+  <div class="pub-footer-inner">
+    <div class="footer-cols">
+      <div class="footer-brand">
+        <a href="index.html" class="pub-brand" aria-label="СММ АЙБРО — на главную">
+          <span class="pub-brand-tile" aria-hidden="true">
+            <img src="../assets/logos/robot-icon-light.svg" alt="">
+          </span>
+          <span class="pub-brand-word">СММ <em>АЙБРО</em></span>
+        </a>
+        <p>ИИ‑автоматизация бизнеса в&nbsp;мессенджере MAX: ассистент клиентам 24/7, автопостинг, приём заказов и&nbsp;мини‑CRM.</p>
+      </div>
+      <div>
+        <h5>Продукт</h5>
+        <ul>
+          <li><a href="#">Возможности</a></li>
+          <li><a href="#">Демо по&nbsp;нишам</a></li>
+          <li><a href="#">Тариф</a></li>
+          <li><a href="#">Пробный период</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Помощь</h5>
+        <ul>
+          <li><a href="index.html">Все статьи</a></li>
+          <li><a href="help-faq.html">Частые вопросы</a></li>
+          <li><a href="#">Канал поддержки</a></li>
+          <li><a href="#">Статус сервиса</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Компания</h5>
+        <ul>
+          <li><a href="#">Партнёрам</a></li>
+          <li><a href="#">Реквизиты</a></li>
+          <li><a href="#">Договор‑оферта</a></li>
+          <li><a href="#">Политика данных</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>ИП Мальцев Валерий Валерьевич · ИНН 519041916737 · УСН 6% · Т‑Банк Санкт‑Петербург. Услуги оказываются на&nbsp;территории Российской Федерации.</p>
+      <p>© 2026 СММ АЙБРО</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ───── Accordion ───── */
+  (function () {
+    const items = document.querySelectorAll('.faq-item');
+    items.forEach((item) => {
+      const btn = item.querySelector('.faq-q');
+      const ans = item.querySelector('.faq-a');
+      if (!btn || !ans) return;
+      btn.addEventListener('click', () => {
+        const open = item.getAttribute('aria-expanded') === 'true';
+        if (open) {
+          item.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-expanded', 'false');
+          ans.style.maxHeight = '0px';
+        } else {
+          item.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-expanded', 'true');
+          ans.style.maxHeight = ans.scrollHeight + 'px';
+        }
+      });
+    });
+  })();
+
+  /* ───── Active-section sidebar highlight on scroll ───── */
+  (function () {
+    const links = document.querySelectorAll('.sidebar-list a[href^="#"]');
+    if (!links.length) return;
+    const map = new Map();
+    links.forEach((a) => {
+      const id = a.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) map.set(target, a);
+    });
+    if (!('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        const a = map.get(e.target);
+        if (!a) return;
+        if (e.isIntersecting) {
+          links.forEach((x) => x.classList.remove('is-current'));
+          a.classList.add('is-current');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+    map.forEach((_, target) => io.observe(target));
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Партнёрский кабинет — Выплаты</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/colors_and_type.css">
+  <link rel="stylesheet" href="design/partners-dashboard.css">
+  <link rel="stylesheet" href="design/partners-payouts.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const ICO = "design/assets/icons/";
+const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+const fmtRub = (n) => fmt(n) + " ₽";
+const Ic = ({name,size=18,style})=><img src={`${ICO}${name}.svg`} alt="" aria-hidden="true" style={{width:size,height:size,display:"block",...style}}/>;
+
+const NAV_MAIN = [
+  {id:"home",label:"Главная",icon:"icon-nav-home",href:"Partners Dashboard.html"},
+  {id:"referrals",label:"Рефералы",icon:"icon-nav-team",href:"Partners Referrals.html",badge:47},
+  {id:"income",label:"Доход",icon:"icon-nav-finance",href:"Partners Earnings.html"},
+  {id:"payouts",label:"Выплаты",icon:"shield-check",href:"Partners Payouts.html"},
+  {id:"materials",label:"Материалы",icon:"icon-nav-documents",href:"Partners Materials.html"},
+];
+const NAV_FOOT = [
+  {id:"settings",label:"Настройки",icon:"icon-nav-settings",href:"Partners Settings.html"},
+  {id:"help",label:"Поддержка",icon:"icon-nav-help"},
+];
+
+const PAYOUTS = [
+  {id:"PAY-2026-04",date:"10.05.2026",gross:12000,ndfl:1560,net:10440,status:"paid"},
+  {id:"PAY-2026-03",date:"10.04.2026",gross:11250,ndfl:1463,net:9787,status:"paid"},
+  {id:"PAY-2026-02",date:"10.03.2026",gross:10120,ndfl:1316,net:8804,status:"paid"},
+  {id:"PAY-2026-01",date:"10.02.2026",gross:8420,ndfl:1095,net:7325,status:"paid"},
+  {id:"PAY-2025-12",date:"10.01.2026",gross:6890,ndfl:896,net:5994,status:"paid"},
+  {id:"PAY-NEXT",date:"10.06.2026",gross:8230,ndfl:1070,net:7160,status:"scheduled"},
+];
+const NDFL_STEPS = [
+  {range:"до 2,4 млн / год",rate:"13 %",fixed:0,active:true},
+  {range:"2,4 – 5 млн",rate:"15 %",fixed:312000},
+  {range:"5 – 20 млн",rate:"18 %",fixed:702000},
+  {range:"20 – 50 млн",rate:"20 %",fixed:3400000},
+  {range:"свыше 50 млн",rate:"22 %",fixed:9400000},
+];
+const PAY_STATUS = {
+  paid:{label:"Выплачено",cls:"pay-paid",icon:"shield-check"},
+  scheduled:{label:"Запланировано",cls:"pay-scheduled",icon:"clock"},
+};
+
+function Sidebar({current}){
+  return (
+    <aside className="pd-side">
+      <a className="pd-brand" href="Partners Dashboard.html">
+        <span className="pd-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt=""/></span>
+        <span>
+          <span className="pd-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="pd-brand-meta">Партнёры</div>
+        </span>
+      </a>
+      <div className="pd-biz">
+        <div className="pd-biz-ava">И</div>
+        <div>
+          <div className="pd-biz-name">Иван Петров</div>
+          <div className="pd-biz-handle">@ivan-petrov · ФЛ</div>
+        </div>
+        <div className="pd-biz-pill">L2</div>
+      </div>
+      {NAV_MAIN.map(it=>{
+        const cls = `pd-nav-item ${current===it.id?"active":""}`;
+        const body = <><span className="ico"><Ic name={it.icon} size={20}/></span><span>{it.label}</span>{it.badge?<span className="badge">{it.badge}</span>:null}</>;
+        return <a key={it.id} className={cls} href={it.href}>{body}</a>;
+      })}
+      <div className="pd-nav-caption">Аккаунт</div>
+      {NAV_FOOT.map(it=>(
+        <a key={it.id} className="pd-nav-item" href={it.href||"#"}><span className="ico"><Ic name={it.icon} size={20}/></span><span>{it.label}</span></a>
+      ))}
+      <div className="pd-side-foot">ИП Мальцев · единый тариф <b style={{color:"var(--fg-2)",fontWeight:600}}>4 990 ₽/мес</b><br/>Партнёрская программа · <a href="#terms">правила</a></div>
+    </aside>
+  );
+}
+
+function TopBar(){
+  return (
+    <header className="pd-top">
+      <button className="pd-burger" aria-label="Меню"><span></span></button>
+      <div><div className="crumb">Партнёры / Выплаты</div><h1>Выплаты</h1></div>
+      <div className="pd-top-actions">
+        <button className="pd-iconbtn"><Ic name="icon-nav-notifications" size={20}/><span className="dot"></span></button>
+        <div className="pd-profile" tabIndex="0"><div className="ava">И</div><div className="meta"><span className="name">Иван П.</span><span className="role">Партнёр · L2</span></div></div>
+      </div>
+    </header>
+  );
+}
+
+function App(){
+  return (
+    <div className="pd-shell">
+      <Sidebar current="payouts"/>
+      <main className="pd-main">
+        <TopBar/>
+        <div className="pd-content">
+          <div className="payouts-top">
+            <section className="payout-card payout-next">
+              <div className="payout-card-head">
+                <span className="payout-card-eyebrow">К выплате сейчас</span>
+                <span className="payout-chip-ready"><Ic name="status-checkmark-done" size={14}/>Готово</span>
+              </div>
+              <div className="payout-big-amount">{fmtRub(8230)}</div>
+              <div className="payout-card-meta">
+                Следующая выплата · <b>10 июня 2026</b>
+                <span className="payout-card-sub">после НДФЛ 13 %: <b>{fmtRub(7160)}</b></span>
+              </div>
+              <div className="payout-card-actions">
+                <button className="btn btn-primary">Запросить выплату сейчас</button>
+                <span className="payout-auto-hint">Автовыплата · 10-го числа каждого месяца</span>
+              </div>
+            </section>
+
+            <section className="payout-card payout-tax">
+              <div className="payout-card-head">
+                <span className="payout-card-eyebrow">Налоговый статус</span>
+                <span className="payout-chip-warn"><Ic name="toast-warning" size={14}/>НПД не оформлен</span>
+              </div>
+              <div className="payout-tax-row"><span className="payout-tax-lbl">НПД</span><span className="payout-tax-val">не подтверждено</span></div>
+              <div className="payout-tax-row"><span className="payout-tax-lbl">Удерживаем НДФЛ</span><span className="payout-tax-val payout-tax-strong">13 %</span></div>
+              <div className="payout-tax-row"><span className="payout-tax-lbl">Резидентство</span><span className="payout-tax-val">Резидент РФ</span></div>
+              <div className="payout-tax-info"><Ic name="info" size={16}/><span>Оформите НПД через <a href="https://lknpd.nalog.ru" target="_blank" rel="noopener">Мой Налог</a> — мы прекратим удержание.</span></div>
+              <button className="btn btn-secondary">Изменить статус</button>
+            </section>
+
+            <section className="payout-card payout-bank">
+              <div className="payout-card-head">
+                <span className="payout-card-eyebrow">Реквизиты для выплат</span>
+                <span className="payout-chip-ok"><Ic name="shield-check" size={14}/>Проверено</span>
+              </div>
+              <div className="payout-bank-row">
+                <Ic name="credit-card" size={20}/>
+                <div><div className="payout-bank-num">•••• 4521</div><div className="payout-bank-sub">Т-Банк · карта получателя</div></div>
+              </div>
+              <div className="payout-tax-row"><span className="payout-tax-lbl">ФИО</span><span className="payout-tax-val">Иван Иванович Петров</span></div>
+              <div className="payout-tax-row"><span className="payout-tax-lbl">ИНН</span><span className="payout-tax-val">7707083893</span></div>
+              <button className="btn btn-ghost">Изменить реквизиты</button>
+            </section>
+          </div>
+
+          <section className="payouts-tbl-wrap">
+            <div className="payouts-tbl-head">
+              <h2>История выплат</h2>
+              <div className="payouts-tbl-actions">
+                <button className="btn btn-ghost"><Ic name="icon-action-download" size={16}/>Все чеки PDF</button>
+                <button className="btn btn-ghost"><Ic name="icon-action-export" size={16}/>CSV</button>
+              </div>
+            </div>
+            <div className="payouts-tbl-scroll">
+              <table className="payouts-tbl">
+                <thead><tr><th>Дата</th><th>ID</th><th className="num">Начислено ₽</th><th className="num">НДФЛ ₽</th><th className="num">К получению ₽</th><th>Статус</th><th>Чек</th></tr></thead>
+                <tbody>
+                  {PAYOUTS.map(p=>{
+                    const st = PAY_STATUS[p.status];
+                    return (
+                      <tr key={p.id}>
+                        <td className="payouts-tbl-date"><b>{p.date}</b></td>
+                        <td><code>{p.id}</code></td>
+                        <td className="num">{fmt(p.gross)}</td>
+                        <td className="num payouts-tbl-ndfl">−{fmt(p.ndfl)}</td>
+                        <td className="num payouts-tbl-net">{fmt(p.net)}</td>
+                        <td><span className={`pay-status ${st.cls}`}><Ic name={st.icon} size={14}/>{st.label}</span></td>
+                        <td>{p.status==="paid" ? <a className="payouts-tbl-pdf" href="#"><Ic name="receipt" size={14}/>PDF</a> : <span className="payouts-tbl-mute">—</span>}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section className="ndfl-card">
+            <div className="ndfl-head">
+              <div>
+                <h3>Прогрессивная шкала НДФЛ</h3>
+                <p>Действует с 01.01.2026 · ФЛ без НПД</p>
+              </div>
+              <span className="ndfl-current"><Ic name="status-checkmark-done" size={14}/>Сейчас 13 %</span>
+            </div>
+            <div className="ndfl-tbl">
+              <div className="ndfl-row ndfl-row-head"><span>Годовой доход</span><span className="num">Ставка</span><span className="num">+ фикс. налог</span></div>
+              {NDFL_STEPS.map((s,i)=>(
+                <div key={i} className={`ndfl-row ${s.active?"ndfl-active":""}`}>
+                  <span>{s.range}</span>
+                  <span className="num"><b>{s.rate}</b></span>
+                  <span className="num">{s.fixed ? fmtRub(s.fixed) : "—"}</span>
+                </div>
+              ))}
+            </div>
+            <div className="ndfl-note"><Ic name="info" size={16}/>Автоматически рассчитываем НДФЛ с каждой выплаты по суммарному доходу года.</div>
+          </section>
+        </div>
+      </main>
+    </div>
+  );
+}
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App/>);
+</script>
+</body>
+</html>

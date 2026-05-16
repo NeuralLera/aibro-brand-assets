@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Кабинет — Настройка</title>
+  <link rel="icon" type="image/svg+xml" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/cabinet.css">
+  <link rel="stylesheet" href="design/onboarding.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo } = React;
+const ICO = "design/assets/icons/";
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+/* ========================================================
+   STEP DEFINITIONS
+======================================================== */
+const STEPS = [
+  { id: 1, key: "business", label: "О бизнесе" },
+  { id: 2, key: "channel",  label: "MAX-канал" },
+  { id: 3, key: "catalog",  label: "Каталог" },
+  { id: 4, key: "ai",       label: "ИИ-ассистент" },
+  { id: 5, key: "launch",   label: "Запуск" },
+];
+
+const NICHES = [
+  { id: "bakery",     label: "Пекарня / еда",  icon: "icon-niche-bakery" },
+  { id: "fitness",    label: "Фитнес / спорт", icon: "icon-niche-fitness" },
+  { id: "insurance",  label: "Страхование",    icon: "icon-niche-insurance" },
+  { id: "services",   label: "Услуги / салон", icon: "icon-niche-services" },
+  { id: "travel",     label: "Туризм",         icon: "icon-niche-travel" },
+  { id: "other",      label: "Другое",         icon: "icon-action-add" },
+];
+
+const BOTS = [
+  {
+    id: "platform-public",
+    title: "Платформенный бот + общедоступный канал",
+    desc: "Самый быстрый старт. Канал виден всем в поиске MAX.",
+    icon: "icon-max-channel",
+    recommended: true,
+  },
+  {
+    id: "platform-private",
+    title: "Платформенный бот + приватный канал",
+    desc: "Канал только по приглашению. Подходит для закрытых клубов.",
+    icon: "icon-max-product-bot",
+  },
+  {
+    id: "byo-public",
+    title: "Свой бот (BYO) + общедоступный канал",
+    desc: "Если у вас уже есть бот в MAX, который вы хотите использовать.",
+    icon: "icon-max-community-group",
+  },
+  {
+    id: "byo-private",
+    title: "Свой бот (BYO) + приватный канал",
+    desc: "Полный контроль над ботом и закрытый канал.",
+    icon: "icon-max-support-bot",
+  },
+];
+
+const CAT_OPTIONS = [
+  {
+    id: "site",
+    title: "Импорт с сайта",
+    desc: "ИИ распарсит ваш сайт и создаст каталог автоматически.",
+    icon: "icon-action-import",
+    recommended: true,
+  },
+  {
+    id: "csv",
+    title: "CSV / Excel загрузка",
+    desc: "Если у вас уже есть готовый прайс-лист в файле.",
+    icon: "icon-action-upload",
+  },
+  {
+    id: "manual",
+    title: "Добавить вручную",
+    desc: "Подходит если 10–20 позиций. Откроется редактор в кабинете.",
+    icon: "icon-action-add",
+  },
+];
+
+const TONES = [
+  { id: "formal",   label: "Формальный (на «Вы»)" },
+  { id: "friendly", label: "Дружелюбный (рекомендовано)" },
+  { id: "casual",   label: "Неформальный" },
+];
+
+/* ========================================================
+   TOP NAV
+======================================================== */
+function TopNav({ onSkip }) {
+  return (
+    <header className="ob-top">
+      <a href="Dashboard.html" className="ob-brand">
+        <span className="ob-brand-tile">
+          <img src="design/assets/logos/robot-icon-light.svg" alt="" />
+        </span>
+        <span>
+          <span className="ob-brand-word">СММ <em>АЙБРО</em></span>
+          <div className="ob-brand-meta">Настройка кабинета</div>
+        </span>
+      </a>
+      <div className="ob-top-actions">
+        <button type="button" className="ob-top-link" onClick={onSkip}>
+          Пропустить настройку →
+        </button>
+        <a href="#" className="ob-top-link">Выйти</a>
+      </div>
+    </header>
+  );
+}
+
+/* ========================================================
+   PROGRESS BAR
+======================================================== */
+function ProgressBar({ current }) {
+  const fillPct = ((current - 1) / (STEPS.length - 1)) * 80; // 80% = from 10% to 90%
+  return (
+    <div className="ob-progress-wrap">
+      <div className="ob-progress">
+        <div className="ob-progress-fill" style={{ width: `${fillPct}%` }}></div>
+        {STEPS.map((s) => {
+          const done = s.id < current;
+          const active = s.id === current;
+          return (
+            <div key={s.id}
+                 className={`ob-step ${done ? "done" : ""} ${active ? "active" : ""}`}>
+              <div className="ob-step-num">Шаг {s.id}</div>
+              <div className="ob-step-dot">
+                {done
+                  ? <Ic name="icon-status-success" size={18} style={{filter:"brightness(0) invert(1)"}} />
+                  : s.id}
+              </div>
+              <div className="ob-step-label">{s.label}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ========================================================
+   STEP 1 — БИЗНЕС
+======================================================== */
+function StepBusiness({ data, update }) {
+  return (
+    <>
+      <div className="ob-head">
+        <h2>Расскажите о своём бизнесе</h2>
+        <p>Это поможет ИИ-ассистенту правильно отвечать клиентам и работать в нужной нише.</p>
+      </div>
+      <div className="ob-body">
+        <div className="ob-field">
+          <label>Название бизнеса <span className="req">*</span></label>
+          <input type="text" placeholder="Пекарня Уют"
+                 value={data.bizName}
+                 onChange={(e) => update("bizName", e.target.value)} />
+        </div>
+
+        <div className="ob-field">
+          <label>Ниша <span className="req">*</span></label>
+          <div className="ob-niche">
+            {NICHES.map(n => (
+              <button key={n.id} type="button"
+                      className={`ob-niche-btn ${data.niche === n.id ? "active" : ""}`}
+                      onClick={() => update("niche", n.id)}>
+                <Ic name={n.icon} size={20} />
+                <span>{n.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="ob-field">
+          <label>Описание бизнеса</label>
+          <textarea rows="3"
+                    placeholder="Чем вы занимаетесь, что предлагаете клиентам"
+                    value={data.bizDesc}
+                    onChange={(e) => update("bizDesc", e.target.value)}></textarea>
+          <span className="ob-field-hint">2–3 предложения. ИИ будет опираться на это при ответах клиентам.</span>
+        </div>
+
+        <div className="ob-field-row">
+          <div className="ob-field">
+            <label>Город <span className="req">*</span></label>
+            <input type="text" placeholder="Санкт-Петербург"
+                   value={data.city}
+                   onChange={(e) => update("city", e.target.value)} />
+          </div>
+          <div className="ob-field">
+            <label>Сайт <span className="ob-field-hint" style={{display:"inline", marginLeft:"6px"}}>необязательно</span></label>
+            <input type="url" placeholder="https://pekarnya-uyut.ru"
+                   value={data.site}
+                   onChange={(e) => update("site", e.target.value)} />
+          </div>
+        </div>
+
+        <div className="ob-ai-card">
+          <div className="ob-ai-card-ico">
+            <Ic name="spark-ai" size={22} />
+          </div>
+          <div className="ob-ai-card-text">
+            <b>Уже есть сайт?</b>
+            <p>ИИ автоматически загрузит описание, контакты и нишу вашего бизнеса за минуту.</p>
+          </div>
+          <div className="ob-ai-card-action">
+            <button type="button" className="ob-btn ob-btn-secondary">
+              <Ic name="icon-action-import" size={14} />
+              Загрузить с сайта
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ========================================================
+   STEP 2 — MAX-КАНАЛ
+======================================================== */
+function StepChannel({ data, update }) {
+  const selected = BOTS.find(b => b.id === data.botType) || BOTS[0];
+  return (
+    <>
+      <div className="ob-head">
+        <h2>Подключите MAX-канал</h2>
+        <p>4 способа подключения · выберите подходящий для вашего бизнеса.</p>
+      </div>
+      <div className="ob-body">
+        <div className="ob-bots">
+          {BOTS.map(b => (
+            <button key={b.id} type="button"
+                    className={`ob-bot-card ${data.botType === b.id ? "active" : ""}`}
+                    onClick={() => update("botType", b.id)}>
+              <div className="ob-bot-card-head">
+                <div className="ob-bot-card-ico">
+                  <Ic name={b.icon} size={20} />
+                </div>
+                <div className="ob-bot-card-title">{b.title}</div>
+                {b.recommended && <span className="ob-bot-card-rec">Рекомендовано</span>}
+              </div>
+              <div className="ob-bot-card-desc">{b.desc}</div>
+              <div className="ob-bot-card-check">
+                <Ic name="icon-status-success" size={14} style={{filter:"brightness(0) invert(1)"}} />
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <div className="ob-connect">
+          <div className="ob-connect-h">
+            <Ic name="icon-nav-integrations" size={16} />
+            <span>Подключение: «{selected.title}»</span>
+            <span className="ob-tag">Выбрано</span>
+          </div>
+
+          <div className="ob-field">
+            <label>Username вашего канала в MAX</label>
+            <input type="text" placeholder="@pekarnya_uyut"
+                   value={data.channelHandle}
+                   onChange={(e) => update("channelHandle", e.target.value)} />
+            <span className="ob-field-hint">Например, @pekarnya_uyut — без https://</span>
+          </div>
+
+          <button type="button" className="ob-btn ob-btn-primary">
+            <Ic name="icon-nav-integrations" size={14} style={{filter:"brightness(0) invert(1)"}} />
+            Сгенерировать deep-link для подключения
+          </button>
+
+          <div className="ob-connect-hint">
+            <Ic name="icon-status-info" size={14} />
+            <span>Откроется бот @aibro_bot в MAX — нажмите <b>Start</b> — готово.</span>
+          </div>
+
+          <a className="ob-tutorial" href="#tutorial">
+            <Ic name="post" size={14} />
+            3-минутный гид по подключению →
+          </a>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ========================================================
+   STEP 3 — КАТАЛОГ
+======================================================== */
+function StepCatalog({ data, update }) {
+  return (
+    <>
+      <div className="ob-head">
+        <h2>Загрузите товары и услуги</h2>
+        <p>ИИ обучится на каталоге и сможет точно отвечать клиентам про ваши товары, цены и условия.</p>
+      </div>
+      <div className="ob-body">
+        <div className="ob-cat-options">
+          {CAT_OPTIONS.map(opt => (
+            <div key={opt.id}
+                 className={`ob-cat-card ${data.catalogMode === opt.id ? "active" : ""}`}
+                 onClick={() => update("catalogMode", opt.id)}>
+              <div className="ob-cat-head">
+                <div className="ob-cat-radio"></div>
+                <div className="ob-cat-title">
+                  <Ic name={opt.icon} size={18} />
+                  <span>{opt.title}</span>
+                  {opt.recommended && <span className="ob-cat-rec">Рекомендовано</span>}
+                </div>
+              </div>
+              <div className="ob-cat-desc">{opt.desc}</div>
+
+              {data.catalogMode === opt.id && (
+                <div className="ob-cat-body">
+                  {opt.id === "site" && (
+                    <>
+                      <div className="ob-cat-url">
+                        <input type="url" placeholder="https://pekarnya-uyut.ru"
+                               value={data.catalogUrl}
+                               onChange={(e) => update("catalogUrl", e.target.value)}
+                               onClick={(e) => e.stopPropagation()} />
+                        <button type="button" className="ob-btn ob-btn-primary"
+                                onClick={(e) => e.stopPropagation()}>
+                          Импортировать
+                        </button>
+                      </div>
+                      <span className="ob-field-hint">Бесплатно: 3 импорта в месяц.</span>
+                      {data.catalogUrl && (
+                        <>
+                          <div className="ob-cat-progress">
+                            <div className="ob-cat-progress-fill"></div>
+                          </div>
+                          <div className="ob-cat-preview">
+                            <Ic name="spark-ai" size={16} />
+                            <span>Парсим: найдено <b>47 товаров</b> · <b>4 услуги</b> · <b>7 категорий</b></span>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )}
+                  {opt.id === "csv" && (
+                    <div className="ob-dropzone">
+                      <Ic name="icon-action-upload" size={28} />
+                      <b>Перетащите CSV или Excel файл сюда</b>
+                      <span>или нажмите чтобы выбрать · до 5 МБ</span>
+                      <div className="ob-dropzone-actions">
+                        <a href="#" onClick={(e) => e.stopPropagation()}>Скачать шаблон CSV</a>
+                        <a href="#" onClick={(e) => e.stopPropagation()}>Шаблон Excel</a>
+                      </div>
+                    </div>
+                  )}
+                  {opt.id === "manual" && (
+                    <button type="button" className="ob-btn ob-btn-secondary"
+                            onClick={(e) => e.stopPropagation()}>
+                      <Ic name="icon-action-edit" size={14} />
+                      Открыть редактор каталога
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ========================================================
+   STEP 4 — ИИ-АССИСТЕНТ
+======================================================== */
+function StepAI({ data, update }) {
+  const tone = data.tone || "friendly";
+  const greeting = useMemo(() => {
+    if (tone === "formal") return "Здравствуйте! Сегодня в наличии медовик, наполеон и морковный торт. С чем могу помочь?";
+    if (tone === "casual") return "Привет! Свежак — медовик, наполеон, морковный 🥕. Что подсказать?";
+    return "Доброе утро! Сегодня свежий медовик, наполеон, морковный торт. Что подсказать?";
+  }, [tone]);
+
+  return (
+    <>
+      <div className="ob-head">
+        <h2>Настройте ИИ-ассистента</h2>
+        <p>Как ИИ должен общаться с вашими клиентами в MAX-канале.</p>
+      </div>
+      <div className="ob-body">
+        <div className="ob-two-col">
+          {/* LEFT — Settings */}
+          <div>
+            <h4 className="ob-col-h">Тон общения</h4>
+            <div className="ob-radio-group" style={{marginBottom: 22}}>
+              {TONES.map(t => (
+                <div key={t.id}
+                     className={`ob-radio ${tone === t.id ? "active" : ""}`}
+                     onClick={() => update("tone", t.id)}>
+                  <div className="ob-radio-dot"></div>
+                  <span>{t.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="ob-field" style={{marginBottom: 22}}>
+              <label>Имя ассистента</label>
+              <input type="text" placeholder="Помощник Уюта"
+                     value={data.aiName}
+                     onChange={(e) => update("aiName", e.target.value)} />
+              <span className="ob-field-hint">Например: «Анна-бот», «Помощник Уюта». Так ИИ представится клиенту.</span>
+            </div>
+
+            <h4 className="ob-col-h">Поведение</h4>
+            <div className="ob-toggle-row">
+              <div>
+                <b>Знание ваших цен</b>
+                <span className="h">Автоматически из каталога — ИИ всегда знает актуальные цены</span>
+              </div>
+              <label className="cab-switch">
+                <input type="checkbox" checked={data.knowsPrices}
+                       onChange={(e) => update("knowsPrices", e.target.checked)} />
+                <span className="cab-switch-track"><span className="cab-switch-thumb"></span></span>
+              </label>
+            </div>
+            <div className="ob-toggle-row">
+              <div>
+                <b>Отвечать на нерелевантные вопросы</b>
+                <span className="h">{data.offTopic ? "Да — вежливо переводит на тему бизнеса" : "Нет — отвечает только про ваш бизнес"}</span>
+              </div>
+              <label className="cab-switch">
+                <input type="checkbox" checked={data.offTopic}
+                       onChange={(e) => update("offTopic", e.target.checked)} />
+                <span className="cab-switch-track"><span className="cab-switch-thumb"></span></span>
+              </label>
+            </div>
+            <div className="ob-toggle-row">
+              <div>
+                <b>Голосовые сообщения</b>
+                <span className="h">Понимает голосовые от клиентов и отвечает текстом</span>
+              </div>
+              <label className="cab-switch">
+                <input type="checkbox" checked={data.voiceEnabled}
+                       onChange={(e) => update("voiceEnabled", e.target.checked)} />
+                <span className="cab-switch-track"><span className="cab-switch-thumb"></span></span>
+              </label>
+            </div>
+            <div className="ob-toggle-row">
+              <div>
+                <b>Развёрнутые ответы</b>
+                <span className="h">Длинные ответы с деталями (вместо коротких)</span>
+              </div>
+              <label className="cab-switch">
+                <input type="checkbox" checked={data.longAnswers}
+                       onChange={(e) => update("longAnswers", e.target.checked)} />
+                <span className="cab-switch-track"><span className="cab-switch-thumb"></span></span>
+              </label>
+            </div>
+          </div>
+
+          {/* RIGHT — Live phone mockup */}
+          <div>
+            <h4 className="ob-col-h">Превью диалога</h4>
+            <div className="ob-phone">
+              <div className="ob-phone-screen">
+                <div className="ob-phone-head">
+                  <div className="ob-phone-ava">
+                    <Ic name="spark-ai" size={16} />
+                  </div>
+                  <div className="ob-phone-meta">
+                    {data.aiName || "Помощник"}
+                    <span className="status">● онлайн</span>
+                  </div>
+                </div>
+
+                <div className="ob-msg ob-msg-user">Здравствуйте, что у вас есть свежее?</div>
+                <div className="ob-msg ob-msg-bot">{greeting}</div>
+                <div className="ob-msg ob-msg-user">Сколько стоит медовик целиком?</div>
+                <div className="ob-msg ob-msg-bot">
+                  {data.knowsPrices
+                    ? "Медовик 1.5 кг — 1 850 ₽, 2 кг — 2 400 ₽. Доставим завтра до 12:00 ✓"
+                    : "Уточню у владельца и вернусь с ответом в течение часа."}
+                </div>
+                <div className="ob-phone-chip">Обновляется в реальном времени</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ========================================================
+   STEP 5 — ЗАПУСК
+======================================================== */
+function StepLaunch({ data, onLaunch }) {
+  const nicheLabel = (NICHES.find(n => n.id === data.niche) || {}).label || "—";
+  const botLabel = (BOTS.find(b => b.id === data.botType) || {}).title || "—";
+  const catLabel = (CAT_OPTIONS.find(c => c.id === data.catalogMode) || {}).title || "—";
+  const toneLabel = (TONES.find(t => t.id === data.tone) || {}).label || "Дружелюбный";
+
+  return (
+    <>
+      <div className="ob-head">
+        <h2>Готово! Запускаем</h2>
+        <p>Проверьте настройки и активируйте пробный период — 5 дней полного доступа без карты.</p>
+      </div>
+      <div className="ob-body">
+        <div className="ob-summary-grid">
+          <div className="ob-summary-card">
+            <div className="ob-summary-ico">
+              <Ic name="tag" size={18} />
+            </div>
+            <div className="ob-summary-text">
+              <b>Бизнес</b>
+              <span>{data.bizName || "Без названия"} · {nicheLabel} · {data.city || "—"}</span>
+            </div>
+            <a href="#" className="ob-summary-edit">Изм.</a>
+          </div>
+
+          <div className="ob-summary-card">
+            <div className="ob-summary-ico">
+              <Ic name="icon-max-channel" size={18} />
+            </div>
+            <div className="ob-summary-text">
+              <b>MAX-канал</b>
+              <span>{data.channelHandle || "@не указан"} · {botLabel}</span>
+            </div>
+            <a href="#" className="ob-summary-edit">Изм.</a>
+          </div>
+
+          <div className="ob-summary-card">
+            <div className="ob-summary-ico">
+              <Ic name="inventory" size={18} />
+            </div>
+            <div className="ob-summary-text">
+              <b>Каталог</b>
+              <span>{catLabel} {data.catalogUrl ? "· 47 товаров + 4 услуги" : ""}</span>
+            </div>
+            <a href="#" className="ob-summary-edit">Изм.</a>
+          </div>
+
+          <div className="ob-summary-card">
+            <div className="ob-summary-ico">
+              <Ic name="spark-ai" size={18} />
+            </div>
+            <div className="ob-summary-text">
+              <b>ИИ-ассистент</b>
+              <span>{data.aiName || "Помощник"} · {toneLabel.split(" ")[0].toLowerCase()} · 24/7</span>
+            </div>
+            <a href="#" className="ob-summary-edit">Изм.</a>
+          </div>
+        </div>
+
+        <div className="ob-trial-card">
+          <div className="ob-trial-chip">
+            <Ic name="gift-trial" size={12} style={{filter:"brightness(0) invert(1)"}} />
+            5 дней бесплатно
+          </div>
+          <h3 className="ob-trial-h">Пробный период начинается сейчас</h3>
+          <p className="ob-trial-p">
+            Полный доступ ко всему функционалу. Без привязки карты. Отмена в один клик в любой момент.
+          </p>
+
+          <ul className="ob-trial-list">
+            <li><Ic name="icon-status-success" size={16} /> ИИ-ассистент · 1 000 ответов</li>
+            <li><Ic name="icon-status-success" size={16} /> 2 автопоста + 2 быстрых поста в день</li>
+            <li><Ic name="icon-status-success" size={16} /> До 50 товаров и услуг</li>
+            <li><Ic name="icon-status-success" size={16} /> CRM-light (с 08.06.2026)</li>
+          </ul>
+
+          <button type="button" className="ob-btn ob-btn-lg ob-btn-launch" onClick={onLaunch}>
+            <Ic name="icon-roadmap-now" size={18} style={{filter:"brightness(0) invert(1)"}} />
+            Запустить пробный период
+          </button>
+
+          <div className="ob-trial-post">
+            После 5 дней вы решите — продолжить за <b>4 990 ₽/мес</b> или отменить.<br/>
+            ИП Мальцев Валерий Валерьевич · ИНН 519041916737.
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ========================================================
+   ROOT APP
+======================================================== */
+function App() {
+  const [step, setStep] = useState(1);
+  const [data, setData] = useState({
+    bizName: "Пекарня Уют",
+    niche: "bakery",
+    bizDesc: "Семейная пекарня в Санкт-Петербурге. Печём свежий хлеб, торты на заказ и кейтеринг для офисов.",
+    city: "Санкт-Петербург",
+    site: "",
+    botType: "platform-public",
+    channelHandle: "@pekarnya_uyut",
+    catalogMode: "site",
+    catalogUrl: "",
+    tone: "friendly",
+    aiName: "Помощник Уюта",
+    knowsPrices: true,
+    offTopic: true,
+    voiceEnabled: true,
+    longAnswers: true,
+  });
+
+  function update(k, v) {
+    setData(prev => ({ ...prev, [k]: v }));
+  }
+
+  function next() {
+    if (step < STEPS.length) setStep(step + 1);
+  }
+  function prev() {
+    if (step > 1) setStep(step - 1);
+  }
+  function skip() {
+    if (confirm("Пропустить настройку? Вы сможете завершить её позже в кабинете.")) {
+      window.location.href = "Dashboard.html";
+    }
+  }
+  function launch() {
+    alert("🚀 Пробный период активирован. Переход в кабинет.");
+    window.location.href = "Dashboard.html";
+  }
+
+  return (
+    <div className="ob-shell">
+      <TopNav onSkip={skip} />
+      <ProgressBar current={step} />
+
+      <main className="ob-main">
+        <div className="ob-card">
+          {step === 1 && <StepBusiness data={data} update={update} />}
+          {step === 2 && <StepChannel  data={data} update={update} />}
+          {step === 3 && <StepCatalog  data={data} update={update} />}
+          {step === 4 && <StepAI       data={data} update={update} />}
+          {step === 5 && <StepLaunch   data={data} onLaunch={launch} />}
+
+          <div className="ob-foot">
+            <span className="ob-foot-status">
+              <Ic name="icon-status-success" size={14} />
+              Автосохранение включено
+            </span>
+            <div className="ob-foot-actions">
+              {step > 1 && (
+                <button type="button" className="ob-btn ob-btn-ghost" onClick={prev}>
+                  ← Назад
+                </button>
+              )}
+              {step < STEPS.length && (
+                <button type="button" className="ob-btn ob-btn-primary" onClick={next}>
+                  Продолжить →
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

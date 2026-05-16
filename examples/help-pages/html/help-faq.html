@@ -1,0 +1,1467 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Частые вопросы — Справка СММ АЙБРО</title>
+<link rel="icon" href="assets/logos/favicon-light.svg">
+<link rel="stylesheet" href="assets/colors_and_type.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────
+     FAQ page — local styles. Tokens from colors_and_type.css only.
+     ───────────────────────────────────────────────────────────── */
+
+  body {
+    background: var(--bg-base);
+    background-image: var(--tile-bg-light);
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-size: 240px 240px;
+  }
+  @media (max-width: 768px) {
+    body { background-attachment: scroll; background-size: 200px 200px; }
+  }
+
+  .skip {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--fg-1); color: var(--fg-inverse);
+    padding: 10px 14px; border-radius: 8px; z-index: 200;
+  }
+  .skip:focus { left: 16px; top: 12px; }
+
+  /* ───── Header (same as help.html) ───── */
+  .pub-header {
+    position: sticky; top: 0; z-index: 60;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    background: rgba(250, 250, 250, 0.82);
+    border-bottom: 1px solid var(--border-1);
+  }
+  .pub-header-inner {
+    max-width: 1280px; margin: 0 auto;
+    height: 64px; padding: 0 24px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .pub-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .pub-brand-tile {
+    width: 32px; height: 32px; border-radius: 9px; overflow: hidden;
+    background: var(--bg-elevated); border: 1px solid var(--border-1);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pub-brand-tile img { width: 26px; height: 26px; display: block; }
+  .pub-brand-word {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 17px;
+    letter-spacing: -0.02em; color: var(--fg-1); white-space: nowrap;
+  }
+  .pub-brand-word em { font-style: normal; color: var(--brand-700); }
+  .pub-nav { display: flex; align-items: center; gap: 22px; margin-left: 14px; }
+  .pub-nav a {
+    font-family: var(--font-body); font-size: 14px; color: var(--fg-2);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+  .pub-nav a:hover { color: var(--fg-1); text-decoration: none; }
+  .pub-nav a.is-current { color: var(--fg-1); font-weight: 500; }
+  .pub-header-actions {
+    margin-left: auto; display: flex; align-items: center; gap: 10px;
+  }
+  @media (max-width: 720px) { .pub-nav { display: none; } }
+
+  /* ───── Buttons (canonical) ───── */
+  .pub-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border-radius: 12px;
+    font-family: var(--font-display); font-weight: 600;
+    cursor: pointer; border: 1px solid transparent;
+    transition: background var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard);
+    text-decoration: none; white-space: nowrap;
+  }
+  .pub-btn--md { height: 44px; padding: 0 18px; font-size: 15px; }
+  .pub-btn--sm { height: 36px; padding: 0 14px; font-size: 14px; }
+  .pub-btn--lg { height: 52px; padding: 0 24px; font-size: 16px; }
+  .pub-btn--primary { background: var(--brand-500); color: white; }
+  .pub-btn--primary:hover { background: var(--brand-600); text-decoration: none; }
+  .pub-btn--secondary { background: var(--bg-elevated); color: var(--fg-1); border-color: var(--border-2); }
+  .pub-btn--secondary:hover { background: var(--bg-subtle); border-color: var(--border-3); text-decoration: none; }
+  .pub-btn--ghost { background: transparent; color: var(--fg-1); }
+  .pub-btn--ghost:hover { background: var(--bg-subtle); text-decoration: none; }
+  .pub-btn:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }
+
+  /* ───── Page wrapper ───── */
+  main { padding-bottom: 64px; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  /* ───── Breadcrumbs ───── */
+  .crumbs {
+    padding: 24px 0 0;
+    font-size: 14px; color: var(--fg-3);
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .crumbs a { color: var(--fg-3); }
+  .crumbs a:hover { color: var(--fg-1); text-decoration: none; }
+  .crumbs .sep {
+    width: 4px; height: 4px; border-radius: 999px;
+    background: var(--fg-4); display: inline-block;
+  }
+  .crumbs .current { color: var(--fg-1); font-weight: 500; }
+
+  /* ───── Page header ───── */
+  .page-head { padding: 28px 0 24px; }
+  .page-head h1 {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(32px, 4vw, 44px);
+    line-height: 1.08; letter-spacing: -0.02em;
+    color: var(--fg-1); margin: 0 0 10px; text-wrap: balance;
+  }
+  .page-head p {
+    font-size: 17px; line-height: 1.55;
+    color: var(--fg-2); margin: 0; max-width: 640px; text-wrap: pretty;
+  }
+
+  /* ───── Sticky search ───── */
+  .sticky-tools {
+    position: sticky;
+    top: 64px;
+    z-index: 40;
+    background: rgba(250, 250, 250, 0.86);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-1);
+    margin: 0 -24px;
+    padding: 14px 24px 12px;
+  }
+  .sticky-tools-inner {
+    max-width: 880px; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .search {
+    position: relative;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 12px;
+    box-shadow: var(--shadow-1);
+    display: flex; align-items: center;
+    transition: border-color var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-fast) var(--ease-standard);
+  }
+  .search:focus-within {
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+  }
+  .search-ico {
+    flex-shrink: 0;
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--fg-3);
+  }
+  .search input {
+    flex: 1; height: 48px; border: 0;
+    background: transparent;
+    font-family: var(--font-body); font-size: 15px;
+    color: var(--fg-1); outline: 0;
+    padding: 0 4px 0 4px;
+  }
+  .search input::placeholder { color: var(--fg-4); }
+  .search-clear {
+    border: 0; background: transparent;
+    width: 44px; height: 48px;
+    color: var(--fg-3); cursor: pointer;
+    display: none; align-items: center; justify-content: center;
+  }
+  .search-clear:hover { color: var(--fg-1); }
+  .search-clear.is-visible { display: inline-flex; }
+
+  /* ───── Filter chips ───── */
+  .chips {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    align-items: center;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    height: 34px; padding: 0 14px;
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    color: var(--fg-1);
+    font-family: var(--font-display); font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard);
+    white-space: nowrap;
+  }
+  .chip:hover { border-color: var(--border-3); background: var(--bg-subtle); }
+  .chip:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }
+  .chip svg { width: 14px; height: 14px; }
+  .chip .count {
+    font-size: 11px;
+    color: var(--fg-3);
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--bg-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+  .chip.is-active {
+    background: var(--brand-500);
+    color: white;
+    border-color: var(--brand-500);
+  }
+  .chip.is-active .count {
+    background: rgba(255, 255, 255, 0.22);
+    color: white;
+  }
+
+  /* ───── Body ───── */
+  .body { padding-top: 36px; }
+
+  /* meta: result count */
+  .results-meta {
+    font-size: 13px; color: var(--fg-3);
+    margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .results-meta button {
+    border: 0; background: none; padding: 0;
+    color: var(--brand-700); font-weight: 600;
+    font-family: var(--font-display); font-size: 13px;
+    cursor: pointer;
+  }
+  .results-meta button:hover { text-decoration: underline; }
+
+  /* ───── Category group ───── */
+  .group { margin-bottom: 40px; scroll-margin-top: 200px; }
+  .group.is-hidden { display: none; }
+  .group-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-1);
+  }
+  .group-head .icowrap {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--brand-700);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .group-head .icowrap svg { width: 16px; height: 16px; }
+  .group-head h2 {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 22px; letter-spacing: -0.01em;
+    color: var(--fg-1); margin: 0;
+  }
+  .group-head .count {
+    margin-left: auto;
+    font-size: 12px; color: var(--fg-3);
+    font-family: var(--font-display); font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .group-head .crm-chip {
+    margin-left: 8px;
+    display: inline-flex; align-items: center;
+    height: 22px; padding: 0 8px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--brand-700);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+
+  /* ───── Accordion ───── */
+  .faq {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-2);
+    border-radius: 14px;
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+  }
+  .faq-item { border-bottom: 1px solid var(--border-1); }
+  .faq-item:last-child { border-bottom: 0; }
+  .faq-item.is-hidden { display: none; }
+  .faq-q {
+    width: 100%;
+    background: transparent; border: 0;
+    text-align: left;
+    padding: 18px 22px;
+    cursor: pointer;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 16px; line-height: 1.4;
+    color: var(--fg-1);
+    transition: background var(--dur-fast) var(--ease-standard);
+  }
+  .faq-q:hover { background: var(--bg-subtle); }
+  .faq-q:focus-visible { outline: 2px solid var(--brand-500); outline-offset: -2px; }
+  .faq-q .caret {
+    flex-shrink: 0;
+    color: var(--fg-3);
+    transition: transform var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard);
+    margin-top: 2px;
+  }
+  .faq-item[aria-expanded="true"] .faq-q .caret {
+    transform: rotate(180deg);
+    color: var(--brand-700);
+  }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--dur-base) var(--ease-standard);
+  }
+  .faq-a-inner {
+    padding: 4px 22px 22px;
+    font-family: var(--font-body);
+    font-size: 15px; line-height: 1.65;
+    color: var(--fg-2);
+  }
+  .faq-a-inner p { margin: 0 0 12px; }
+  .faq-a-inner p:last-child { margin-bottom: 0; }
+  .faq-a-inner b { color: var(--fg-1); font-weight: 600; }
+  .faq-a-inner a { color: var(--brand-700); font-weight: 500; }
+  .faq-a-inner ul {
+    margin: 0 0 14px;
+    padding: 0;
+    list-style: none;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .faq-a-inner ul li {
+    padding-left: 18px;
+    position: relative;
+  }
+  .faq-a-inner ul li::before {
+    content: "";
+    position: absolute;
+    left: 4px; top: 10px;
+    width: 5px; height: 5px;
+    border-radius: 999px;
+    background: var(--brand-500);
+  }
+
+  /* code block */
+  .codeblock {
+    margin: 6px 0 14px;
+    background: var(--bg-inverse);
+    color: #d8dde6;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 13px; line-height: 1.5;
+    overflow-x: auto;
+  }
+  .codeblock .k { color: var(--brand-300); }
+  .codeblock .c { color: #6b7079; }
+
+  /* callout */
+  .callout {
+    margin: 4px 0 14px;
+    padding: 12px 14px;
+    background: var(--bg-subtle);
+    border-radius: 10px;
+    border-left: 2px solid var(--brand-500);
+    font-size: 14px; line-height: 1.55;
+    color: var(--fg-2);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .callout .ico {
+    flex-shrink: 0; color: var(--brand-700);
+    width: 18px; height: 18px;
+    display: inline-flex; align-items: center;
+  }
+  .callout b { color: var(--fg-1); font-weight: 600; }
+
+  /* mock screenshot */
+  .mock {
+    margin: 8px 0 14px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-2);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .mock-bar {
+    display: flex; align-items: center; gap: 6px;
+    padding-bottom: 10px; margin-bottom: 12px;
+    border-bottom: 1px solid var(--border-1);
+  }
+  .mock-bar .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--fg-4); }
+  .mock-bar .name {
+    font-family: var(--font-display); font-weight: 600; font-size: 12px;
+    color: var(--fg-3); margin-left: 6px;
+  }
+  .mock-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-1);
+    margin-bottom: 6px;
+  }
+  .mock-row .av {
+    width: 28px; height: 28px; border-radius: 999px;
+    background: var(--brand-500);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 700; font-size: 11px;
+  }
+  .mock-row .meta { flex: 1; font-size: 13px; }
+  .mock-row .meta .n { color: var(--fg-1); font-weight: 600; }
+  .mock-row .meta .s { color: var(--fg-3); font-size: 12px; }
+  .mock-row .amt {
+    font-family: var(--font-display); font-weight: 700; font-size: 13px;
+    color: var(--fg-1); font-variant-numeric: tabular-nums;
+  }
+
+  /* related */
+  .related {
+    margin: 14px 0 0;
+    padding: 14px 16px;
+    background: var(--bg-subtle);
+    border-radius: 10px;
+  }
+  .related-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--fg-3);
+    margin-bottom: 6px;
+  }
+  .related ul { gap: 4px; }
+  .related ul li::before { background: var(--fg-4); }
+
+  /* ───── Empty state ───── */
+  .empty {
+    display: none;
+    padding: 40px 24px;
+    text-align: center;
+    background: var(--bg-elevated);
+    border: 1px dashed var(--border-2);
+    border-radius: 14px;
+  }
+  .empty.is-visible { display: block; }
+  .empty h3 {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 20px; color: var(--fg-1);
+    margin: 0 0 8px;
+  }
+  .empty p { color: var(--fg-2); margin: 0 0 16px; font-size: 15px; }
+
+  /* ───── Support CTA ───── */
+  .support {
+    margin-top: 56px;
+    position: relative; overflow: hidden;
+    border-radius: 20px;
+    background: var(--bg-inverse);
+    color: var(--fg-inverse);
+    padding: 36px 36px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center; gap: 24px;
+  }
+  .support::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 30%, rgba(16, 185, 129, 0.22) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 80%, rgba(16, 185, 129, 0.12) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .support > * { position: relative; }
+  .support h2 {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 24px; line-height: 1.2; letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+  .support p {
+    margin: 0; font-size: 15px; line-height: 1.55;
+    color: rgba(250, 250, 250, 0.72);
+    max-width: 480px;
+  }
+  .support .max-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--brand-500); color: white;
+    padding: 0 22px; height: 48px;
+    border-radius: 12px;
+    font-family: var(--font-display); font-weight: 600; font-size: 15px;
+    text-decoration: none;
+    transition: background var(--dur-fast) var(--ease-standard);
+    white-space: nowrap;
+  }
+  .support .max-cta:hover { background: var(--brand-600); text-decoration: none; }
+  .support .max-cta img { width: 22px; height: 22px; display: block; }
+  @media (max-width: 720px) {
+    .support { grid-template-columns: 1fr; padding: 28px 22px; }
+  }
+
+  /* ───── Footer ───── */
+  .pub-footer {
+    background: var(--bg-subtle);
+    padding: 48px 24px 28px;
+    border-top: 1px solid var(--border-1);
+    margin-top: 64px;
+  }
+  .pub-footer-inner { max-width: 1080px; margin: 0 auto; }
+  .footer-cols {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 720px) { .footer-cols { grid-template-columns: 1fr 1fr; } }
+  .footer-brand { display: flex; flex-direction: column; gap: 12px; max-width: 280px; }
+  .footer-brand p { font-size: 13px; line-height: 1.55; color: var(--fg-3); margin: 0; }
+  .pub-footer h5 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 14px; margin: 0 0 14px; color: var(--fg-1);
+  }
+  .pub-footer ul {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .pub-footer a { color: var(--fg-2); font-size: 14px; }
+  .pub-footer a:hover { color: var(--fg-1); text-decoration: none; }
+  .footer-legal {
+    margin-top: 36px; padding-top: 20px;
+    border-top: 1px solid var(--border-1);
+    display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+    font-size: 12px; color: var(--fg-3); line-height: 1.6;
+  }
+  .footer-legal p { margin: 0; max-width: 640px; }
+
+  /* ───── highlight ───── */
+  mark.hl {
+    background: rgba(16, 185, 129, 0.22);
+    color: inherit;
+    padding: 0 2px; border-radius: 3px;
+  }
+
+  /* ───── Mobile ───── */
+  @media (max-width: 720px) {
+    .sticky-tools { padding: 12px 24px 10px; }
+    .page-head h1 { font-size: 28px; }
+    .faq-q { font-size: 15px; padding: 16px 18px; }
+    .faq-a-inner { padding: 4px 18px 20px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip">К содержимому</a>
+
+<!-- ───────────────────────── HEADER ───────────────────────── -->
+<header class="pub-header">
+  <div class="pub-header-inner">
+    <a href="help.html" class="pub-brand" aria-label="СММ АЙБРО — на главную">
+      <span class="pub-brand-tile" aria-hidden="true">
+        <img src="assets/logos/robot-icon-light.svg" alt="">
+      </span>
+      <span class="pub-brand-word">СММ <em>АЙБРО</em></span>
+    </a>
+    <nav class="pub-nav" aria-label="Основная навигация">
+      <a href="#">Возможности</a>
+      <a href="#">Примеры</a>
+      <a href="#">Тариф</a>
+      <a href="#">Партнёрам</a>
+      <a href="help.html" class="is-current" aria-current="page">Справка</a>
+    </nav>
+    <div class="pub-header-actions">
+      <a href="#" class="pub-btn pub-btn--ghost pub-btn--sm">Войти</a>
+      <a href="#" class="pub-btn pub-btn--primary pub-btn--sm">Пробный период</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <div class="wrap">
+
+    <!-- Breadcrumbs -->
+    <nav class="crumbs" aria-label="Хлебные крошки">
+      <a href="#">Главная</a>
+      <span class="sep" aria-hidden="true"></span>
+      <a href="help.html">Справка</a>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="current" aria-current="page">Частые вопросы</span>
+    </nav>
+
+    <!-- Page header -->
+    <div class="page-head">
+      <h1>Частые вопросы</h1>
+      <p>Если ответа нет — напишите в&nbsp;поддержку в&nbsp;MAX, отвечаем в&nbsp;течение часа в&nbsp;рабочее время.</p>
+    </div>
+
+    <!-- Sticky tools (search + chips) -->
+    <div class="sticky-tools">
+      <div class="sticky-tools-inner">
+        <div class="search" role="search">
+          <span class="search-ico" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+          </span>
+          <input
+            id="faq-search"
+            type="search"
+            placeholder="Найти ответ на&nbsp;вопрос…"
+            aria-label="Поиск по&nbsp;частым вопросам"
+            autocomplete="off">
+          <button class="search-clear" type="button" id="search-clear" aria-label="Очистить поиск">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="chips" role="tablist" aria-label="Категории вопросов" id="chips">
+          <button class="chip is-active" data-cat="all" role="tab" aria-selected="true">
+            Все вопросы
+            <span class="count">35</span>
+          </button>
+          <button class="chip" data-cat="onboarding" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6"/><path d="M15 2v6"/><path d="M6 8h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8z"/><path d="M12 17v5"/></svg>
+            Подключение
+            <span class="count">4</span>
+          </button>
+          <button class="chip" data-cat="content" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 14-5v12L3 13v-2z"/><path d="M17 7.5v9"/><path d="M17 8a3 3 0 0 1 0 6"/><path d="M11.5 17.2a3 3 0 1 1-5.6-1.7"/></svg>
+            Контент
+            <span class="count">5</span>
+          </button>
+          <button class="chip" data-cat="crm" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.73l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            CRM
+            <span class="count">6</span>
+          </button>
+          <button class="chip" data-cat="ai" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 13.5 7l4.5 1.5L13.5 10 12 14.5 10.5 10 6 8.5 10.5 7 12 2.5z"/><path d="M19 14.5 19.7 16.5 21.5 17.2 19.7 17.9 19 19.9 18.3 17.9 16.5 17.2 18.3 16.5 19 14.5z"/></svg>
+            ИИ
+            <span class="count">4</span>
+          </button>
+          <button class="chip" data-cat="billing" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><line x1="2.5" y1="10" x2="21.5" y2="10"/><line x1="6" y1="15" x2="9" y2="15"/></svg>
+            Оплата
+            <span class="count">7</span>
+          </button>
+          <button class="chip" data-cat="partners" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Партнёрка
+            <span class="count">5</span>
+          </button>
+          <button class="chip" data-cat="ord" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 14.5 5h3.5v3.5L20.5 11 18 13.5V17h-3.5L12 19.5 9.5 17H6v-3.5L3.5 11 6 8.5V5h3.5L12 2.5z"/><path d="m9 11 2.2 2.2L15 9.5"/></svg>
+            ОРД и&nbsp;законы
+            <span class="count">4</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────────────── BODY ───────────────────────── -->
+    <div class="body">
+
+      <div class="results-meta">
+        <span id="results-meta-text">Показано 35&nbsp;вопросов в&nbsp;7&nbsp;разделах</span>
+        <button type="button" id="expand-all" hidden>Развернуть все</button>
+      </div>
+
+      <!-- ─── Подключение ─── -->
+      <section class="group" data-cat="onboarding" id="g-onboarding">
+        <div class="group-head">
+          <span class="icowrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6"/><path d="M15 2v6"/><path d="M6 8h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8z"/><path d="M12 17v5"/></svg>
+          </span>
+          <h2>Подключение</h2>
+          <span class="count">4 вопроса</span>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Как подключить канал в&nbsp;MAX?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>В&nbsp;кабинете СММ АЙБРО на&nbsp;шаге «Подключение» нажмите «Создать бизнес‑канал». Мастер откроет MAX, попросит подтвердить владение номером и&nbsp;дать боту права администратора.</p>
+              <p>Боту нужны три права: <b>публикация постов</b>, <b>чтение входящих сообщений</b>, <b>отправка ответов от&nbsp;имени канала</b>. Без них автопостинг и&nbsp;ассистент работать не&nbsp;будут.</p>
+              <div class="callout">
+                <span class="ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+                <span><b>Уже есть канал?</b> Можно подключить существующий — добавьте бота администратором, и&nbsp;кабинет подхватит историю автоматически.</span>
+              </div>
+              <div class="related">
+                <div class="related-label">См. также</div>
+                <ul>
+                  <li><a href="#">Подробная инструкция по&nbsp;подключению со&nbsp;скриншотами</a></li>
+                  <li><a href="#">Что делать, если бот не&nbsp;виден в&nbsp;списке участников</a></li>
+                </ul>
+              </div>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Сколько времени занимает подключение?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>В&nbsp;среднем 10–15&nbsp;минут от&nbsp;регистрации до&nbsp;первого ответа ассистента клиенту.</p>
+              <p>Что занимает время: ввод названия и&nbsp;ниши бизнеса (3&nbsp;минуты), создание/привязка канала в&nbsp;MAX (5&nbsp;минут), загрузка прайс‑листа или каталога (5&nbsp;минут). ИИ‑ассистент готов отвечать сразу, как только бот получит права администратора.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Можно ли подключить несколько каналов?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Один тариф 4&nbsp;990&nbsp;₽/мес покрывает <b>один бизнес‑канал</b>. Если у&nbsp;вас несколько направлений (например, пекарня и&nbsp;кофейня) — каждое подключается отдельной подпиской, кабинеты у&nbsp;них тоже разные.</p>
+              <p>Это сделано намеренно: ИИ‑ассистент учится под одну нишу, один прайс, один тон голоса. На&nbsp;двух нишах сразу качество ответов падает.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Что делать, если бот не&nbsp;отвечает?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Сначала проверьте в&nbsp;кабинете на&nbsp;вкладке «Статус» — там видно, читает&nbsp;ли бот сообщения. В&nbsp;90% случаев причина одна из&nbsp;трёх:</p>
+              <ul>
+                <li>У&nbsp;бота отозваны права администратора в&nbsp;MAX</li>
+                <li>Закончился пробный период или истёк оплаченный месяц</li>
+                <li>Сработал лимит «честного использования» (более 5&nbsp;000 ответов за&nbsp;час)</li>
+              </ul>
+              <p>Если статус «всё в&nbsp;порядке», а&nbsp;бот молчит — напишите в&nbsp;поддержку с&nbsp;ID&nbsp;канала, разберём за&nbsp;час.</p>
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── Контент ─── -->
+      <section class="group" data-cat="content" id="g-content">
+        <div class="group-head">
+          <span class="icowrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 14-5v12L3 13v-2z"/><path d="M17 7.5v9"/><path d="M17 8a3 3 0 0 1 0 6"/><path d="M11.5 17.2a3 3 0 1 1-5.6-1.7"/></svg>
+          </span>
+          <h2>Контент и&nbsp;посты</h2>
+          <span class="count">5 вопросов</span>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Как работает автопостинг?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Раз в&nbsp;сутки ИИ собирает контент‑план на&nbsp;завтра, исходя из&nbsp;ниши, прайса, праздников и&nbsp;ваших настроек. Утром (по&nbsp;умолчанию в&nbsp;9:00 МСК, можно менять) посты публикуются в&nbsp;канале автоматически.</p>
+              <p>Шаблоны постов: «акция дня», «новинка», «полезный совет», «отзыв клиента», «закулисье». Соотношение типов — настраиваемое.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Сколько постов в&nbsp;день генерирует ИИ?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>До&nbsp;<b>5&nbsp;постов в&nbsp;день</b> в&nbsp;автоматическом режиме. Это разумный максимум — больше алгоритм MAX начинает понижать охваты канала.</p>
+              <p>В&nbsp;настройках можно поставить меньше: 1, 2 или 3&nbsp;поста в&nbsp;день. Для&nbsp;большинства ниш мы&nbsp;рекомендуем 2–3.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Можно ли модерировать посты перед публикацией?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Да. Включите в&nbsp;настройках «Премодерация» — и&nbsp;готовые посты падают на&nbsp;утверждение в&nbsp;MAX вам лично. Одобряете кнопкой, редактируете или отклоняете.</p>
+              <p>Если в&nbsp;течение 2&nbsp;часов вы&nbsp;не&nbsp;успели подтвердить, пост уходит автоматически (это можно отключить, но&nbsp;тогда канал может молчать днями).</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Что такое «быстрый пост» и&nbsp;сколько их&nbsp;в&nbsp;день?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Быстрый пост — это разовая публикация, которую вы&nbsp;ставите в&nbsp;кабинете руками: «срочно нужны бариста», «сегодня скидка 20%», «новый рецепт». ИИ&nbsp;помогает написать текст по&nbsp;вашему черновику.</p>
+              <p>Лимита нет&nbsp;— быстрые посты не&nbsp;учитываются в&nbsp;5&nbsp;автопостов в&nbsp;день. Но&nbsp;помните про правило MAX: больше 8 постов в&nbsp;сутки — риск понижения охватов.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Как ИИ выбирает картинки?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Три источника, в&nbsp;таком порядке: <b>ваша библиотека</b> (фото товаров/услуг, которые вы&nbsp;загрузили), <b>фотобанк</b> (стоковые фото под нишу) и&nbsp;<b>геометрические плашки</b> с&nbsp;брендовыми цветами — fallback, когда подходящего фото нет.</p>
+              <p>Что мы&nbsp;<b>не&nbsp;используем</b>: сгенерированные ИИ изображения, фото без прав, фото с&nbsp;чужими лицами. Это сделано осознанно — стоковые ИИ‑картинки выглядят пластиково и&nbsp;снижают доверие клиентов.</p>
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── CRM ─── -->
+      <section class="group" data-cat="crm" id="g-crm">
+        <div class="group-head">
+          <span class="icowrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.73l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          </span>
+          <h2>CRM: заказы и&nbsp;записи</h2>
+          <span class="crm-chip">релиз 08.06.2026</span>
+          <span class="count">6 вопросов</span>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Что такое CRM‑light?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Мини‑CRM встроенная в&nbsp;кабинет: заказы, записи на&nbsp;услуги, карточки клиентов, история переписки и&nbsp;покупок. <b>Light</b> — потому что без воронок продаж, без сделок на&nbsp;тысячи строк, без сложных интеграций.</p>
+              <p>Создана под малый бизнес: пекарню, кофейню, мастера маникюра, фитнес‑тренера. Если вам нужен AmoCRM&nbsp;— это не&nbsp;к&nbsp;нам.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Как принимать заказы через ИИ?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Включите в&nbsp;настройках раздел «Заказы». Ассистент начнёт уточнять у&nbsp;клиента позиции из&nbsp;каталога, считать сумму и&nbsp;фиксировать имя&nbsp;+ контакт. Готовый заказ появится в&nbsp;разделе «Заказы» с&nbsp;историей диалога.</p>
+              <div class="mock" aria-label="Пример карточки заказа">
+                <div class="mock-bar">
+                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                  <span class="name">Заказы · сегодня</span>
+                </div>
+                <div class="mock-row">
+                  <span class="av">АП</span>
+                  <span class="meta">
+                    <div class="n">Анна П. · морковный торт, 8 персон</div>
+                    <div class="s">№&nbsp;1284 · через 12&nbsp;минут</div>
+                  </span>
+                  <span class="amt">2 400 ₽</span>
+                </div>
+                <div class="mock-row">
+                  <span class="av">ИС</span>
+                  <span class="meta">
+                    <div class="n">Игорь С. · 4 круассана</div>
+                    <div class="s">№&nbsp;1283 · самовывоз 15:30</div>
+                  </span>
+                  <span class="amt">560 ₽</span>
+                </div>
+              </div>
+              <p>Можно отвечать прямо из&nbsp;кабинета или продолжить переписку в&nbsp;MAX&nbsp;— всё синхронизировано.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Как настроить запись на&nbsp;услуги?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>В&nbsp;разделе «Услуги» добавьте позиции (например, «маникюр», «педикюр», «массаж»), длительность и&nbsp;цену. Затем включите расписание: дни недели, рабочие часы, перерывы.</p>
+              <p>Ассистент покажет клиенту свободные слоты и&nbsp;запишет. Запись попадает в&nbsp;ваш календарь, клиент получает напоминание за&nbsp;день и&nbsp;за&nbsp;час до&nbsp;визита.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Видит&nbsp;ли клиент мою скидку?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>По&nbsp;умолчанию&nbsp;— нет. В&nbsp;ответе клиенту ассистент показывает только итоговую цену. Это сделано осознанно: «скидка 50%» в&nbsp;тексте смотрится подозрительно, итоговая цифра вызывает больше доверия.</p>
+              <p>Если хотите показывать «было&nbsp;— стало», включите в&nbsp;настройках «Показывать старую цену». Перечеркнутая цена будет в&nbsp;ответе и&nbsp;в&nbsp;карточке товара.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Как настроить доставку и&nbsp;самовывоз?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>В&nbsp;разделе «Доставка» включите нужные способы: <b>самовывоз</b>, <b>курьер</b>, <b>почта</b>. Для&nbsp;каждого&nbsp;— задайте зону и&nbsp;цену. Можно указать бесплатную доставку от&nbsp;суммы заказа.</p>
+              <p>Ассистент при оформлении заказа уточнит способ, адрес и&nbsp;время. Цена доставки добавится к&nbsp;сумме.</p>
+              <div class="callout">
+                <span class="ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+                <span>Своих курьеров мы&nbsp;не&nbsp;предоставляем. Вы&nbsp;либо привлекаете своего, либо договариваетесь с&nbsp;курьерской службой&nbsp;— расчёт&nbsp;с&nbsp;ней&nbsp;мимо нас.</span>
+              </div>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Принимаете&nbsp;ли вы&nbsp;оплату клиентов?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p><b>Нет.</b> СММ АЙБРО&nbsp;— это инструмент для&nbsp;общения с&nbsp;клиентом и&nbsp;ведения заказов. <b>Оплату клиент проводит мимо нас</b>: на&nbsp;вашей кассе, через ваш банк, по&nbsp;вашей ссылке оплаты, через СБП или наличными при получении.</p>
+              <p>Мы&nbsp;не&nbsp;платёжный агент и&nbsp;никогда им&nbsp;не&nbsp;станем&nbsp;— это другая бизнес‑модель с&nbsp;другими лицензиями. Вы&nbsp;сами разбираетесь с&nbsp;банком, ОФД и&nbsp;чеками для&nbsp;клиента.</p>
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── ИИ ─── -->
+      <section class="group" data-cat="ai" id="g-ai">
+        <div class="group-head">
+          <span class="icowrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 13.5 7l4.5 1.5L13.5 10 12 14.5 10.5 10 6 8.5 10.5 7 12 2.5z"/><path d="M19 14.5 19.7 16.5 21.5 17.2 19.7 17.9 19 19.9 18.3 17.9 16.5 17.2 18.3 16.5 19 14.5z"/></svg>
+          </span>
+          <h2>ИИ‑ассистент</h2>
+          <span class="count">4 вопроса</span>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Сколько ответов ИИ в&nbsp;месяц?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Без жёсткого лимита. Действует «честное использование»: до&nbsp;5&nbsp;000 ответов в&nbsp;час и&nbsp;до&nbsp;50&nbsp;000 в&nbsp;сутки. Реальный малый бизнес в&nbsp;эти рамки укладывается с&nbsp;большим запасом.</p>
+              <p>Если у&nbsp;вас бывают пики&nbsp;— рассылка, праздничный день, вирусный пост&nbsp;— напишите в&nbsp;поддержку до&nbsp;события, мы&nbsp;временно поднимем лимит. Платить за&nbsp;это не&nbsp;нужно.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Можно&nbsp;ли настроить промпт?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Да. В&nbsp;разделе «ИИ‑ассистент → Голос» вы&nbsp;можете задать тон («дружелюбный», «деловой», «соседский»), типовые фразы приветствия, запреты («не&nbsp;обсуждать политику», «не&nbsp;давать медицинские советы») и&nbsp;скрипт продажи.</p>
+              <p>Сырой системный промпт мы&nbsp;не&nbsp;показываем&nbsp;— он&nbsp;собирается из&nbsp;ваших настроек, чтобы случайной правкой не&nbsp;сломать ничего важного. Если нужна гибкость промпт‑инженера&nbsp;— это не&nbsp;к&nbsp;нам.</p>
+              <div class="codeblock"><span class="c"># Пример настройки голоса в кабинете</span>
+<span class="k">тон:</span>           дружелюбный, на «вы»
+<span class="k">обращение:</span>     по имени, если клиент представился
+<span class="k">запреты:</span>       политика, медицина, прогноз погоды
+<span class="k">скрипт:</span>        уточнить → предложить → закрыть на заказ</div>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Что такое ИИ‑коуч?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Каждую неделю ИИ читает ваши диалоги с&nbsp;клиентами и&nbsp;присылает в&nbsp;MAX короткий отчёт: что сработало, где клиенты «отвалились», какой вопрос повторился 30&nbsp;раз и&nbsp;стоит вынести в&nbsp;ЧЗВ.</p>
+              <p>Это не&nbsp;«ИИ‑консультант по&nbsp;бизнесу»&nbsp;— никаких советов «откройте маркетплейс». Только наблюдения по&nbsp;вашему конкретному каналу.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Что делать, если ИИ отвечает неправильно?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>В&nbsp;любом диалоге нажмите «Передать оператору»&nbsp;— ассистент остановится, вам в&nbsp;MAX придёт уведомление, и&nbsp;вы&nbsp;продолжите разговор сами.</p>
+              <p>Если ошибка системная (ассистент путает цены, не&nbsp;видит товар) — отметьте сообщение «👎» в&nbsp;истории диалога. Эти примеры попадают в&nbsp;недельный отчёт коуча, и&nbsp;мы&nbsp;дотюниваем промпт под вашу нишу.</p>
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── Оплата ─── -->
+      <section class="group" data-cat="billing" id="g-billing">
+        <div class="group-head">
+          <span class="icowrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><line x1="2.5" y1="10" x2="21.5" y2="10"/><line x1="6" y1="15" x2="9" y2="15"/></svg>
+          </span>
+          <h2>Оплата и&nbsp;тариф</h2>
+          <span class="count">7 вопросов</span>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Сколько стоит подписка?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Единый тариф&nbsp;— <b>4&nbsp;990&nbsp;₽/мес</b>. Один план, один счёт, никаких аддонов. В&nbsp;тариф входит весь продукт: ассистент, автопостинг (до&nbsp;5&nbsp;постов в&nbsp;день), CRM с&nbsp;заказами и&nbsp;записями, до&nbsp;30&nbsp;рекламных постов с&nbsp;ОРД‑маркировкой в&nbsp;месяц, до&nbsp;1&nbsp;000 товаров в&nbsp;каталоге.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Что такое пробный период?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>5&nbsp;дней полного доступа <b>без привязки банковской карты</b>. Подключаете канал, тестируете ассистента на&nbsp;настоящих клиентах, проверяете автопостинг и&nbsp;заказы.</p>
+              <p>Если подходит&nbsp;— на&nbsp;6‑й день оплачиваете тариф. Если нет&nbsp;— просто перестаёте пользоваться, никаких автосписаний.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Когда списываются деньги после триала?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Никогда автоматически. Поскольку при подключении триала <b>карта не&nbsp;запрашивается</b>, списать с&nbsp;вас нечего.</p>
+              <p>На&nbsp;5‑й день пробного периода в&nbsp;кабинет придёт уведомление: «продлить тариф?». Если вы&nbsp;нажмёте «Оплатить»&nbsp;— откроется страница оплаты, и&nbsp;вы&nbsp;сами выбираете способ. Если ничего не&nbsp;нажмёте, на&nbsp;6‑й день кабинет переходит в&nbsp;режим «только чтение».</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Какие способы оплаты?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Карты российских банков (МИР, Visa, Mastercard, выпущенные в&nbsp;РФ), СБП, оплата по&nbsp;счёту от&nbsp;юрлица. Эквайер&nbsp;— Т‑Банк.</p>
+              <p>Иностранные карты не&nbsp;принимаем. Криптовалюту тоже&nbsp;— нет&nbsp;юридического статуса в&nbsp;РФ для&nbsp;нашей деятельности.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Можно&nbsp;ли получить чек?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Да. Чек ОФД формируется автоматически после каждой оплаты и&nbsp;приходит на&nbsp;e‑mail из&nbsp;кабинета в&nbsp;течение 5&nbsp;минут. Все чеки также хранятся в&nbsp;разделе «Тариф → История платежей».</p>
+              <p>Для&nbsp;юрлиц после оплаты по&nbsp;счёту высылаем закрывающие документы (акт, счёт‑фактуру при необходимости).</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Как отменить подписку?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>В&nbsp;кабинете на&nbsp;вкладке «Тариф» нажмите «Отключить продление». Кнопка одна, без капканов в&nbsp;3 экрана.</p>
+              <p>Сервис продолжит работать до&nbsp;конца уже оплаченного периода. После окончания канал остаётся, но&nbsp;ассистент и&nbsp;автопостинг останавливаются. Восстановить можно в&nbsp;один клик в&nbsp;течение 90&nbsp;дней, все данные сохраняются.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Возврат денег</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Если вы&nbsp;отключили подписку до&nbsp;конца оплаченного периода&nbsp;— возвращаем остаток <b>пропорционально неиспользованным дням</b>. Возврат на&nbsp;ту&nbsp;же карту, с&nbsp;которой была оплата, в&nbsp;течение 5&nbsp;рабочих дней.</p>
+              <p>Если по&nbsp;нашей вине сервис не&nbsp;работал больше 24&nbsp;часов в&nbsp;течение месяца&nbsp;— компенсируем сутки тарифа за&nbsp;каждые потерянные сутки, продлевая подписку.</p>
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── Партнёрка ─── -->
+      <section class="group" data-cat="partners" id="g-partners">
+        <div class="group-head">
+          <span class="icowrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <h2>Партнёрская программа</h2>
+          <span class="count">5 вопросов</span>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Как стать партнёром?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>В&nbsp;кабинете СММ АЙБРО перейдите на&nbsp;вкладку «Партнёрам» и&nbsp;нажмите «Стать партнёром». Согласие на&nbsp;партнёрскую оферту, реквизиты для&nbsp;выплат (ИП, самозанятый или физлицо) — и&nbsp;всё, получаете персональную ссылку и&nbsp;промокод.</p>
+              <p>Подписка СММ АЙБРО для&nbsp;партнёрства не&nbsp;обязательна. Можно быть только агентом, без подключения собственного канала.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Сколько я&nbsp;получаю с&nbsp;каждого реферала?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p><b>10% lifetime</b> со&nbsp;всех платежей вашего клиента. С&nbsp;тарифа 4&nbsp;990&nbsp;₽/мес — это <b>499&nbsp;₽ каждый месяц</b>, пока клиент пользуется сервисом. 10&nbsp;клиентов&nbsp;— 4&nbsp;990&nbsp;₽/мес. 100&nbsp;клиентов&nbsp;— 49&nbsp;900&nbsp;₽/мес.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Что такое L1 и&nbsp;L2?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p><b>L1 (первый уровень)</b>&nbsp;— клиенты, которые подключились по&nbsp;вашему промокоду. С&nbsp;них вы&nbsp;получаете 10%.</p>
+              <p><b>L2 (второй уровень)</b>&nbsp;— партнёры, которые сами стали агентами по&nbsp;вашему промокоду. С&nbsp;их&nbsp;партнёрских выплат вы&nbsp;получаете ещё 10%. То&nbsp;есть, если ваш партнёр заработал 10&nbsp;000&nbsp;₽ за&nbsp;месяц со&nbsp;своих клиентов&nbsp;— вам идёт 1&nbsp;000&nbsp;₽ от&nbsp;этой суммы. Не&nbsp;«с&nbsp;его подписки», а&nbsp;«с&nbsp;его комиссии».</p>
+              <div class="callout">
+                <span class="ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+                <span>Уровней <b>только два</b>. Третий и&nbsp;дальше не&nbsp;считается&nbsp;— это сознательное решение, чтобы программа не&nbsp;превращалась в&nbsp;MLM.</span>
+              </div>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Когда выплачиваются деньги?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Раз в&nbsp;месяц, 10‑го числа следующего месяца. То&nbsp;есть комиссия за&nbsp;май уходит 10&nbsp;июня.</p>
+              <p>Минимальная сумма к&nbsp;выплате&nbsp;— 500&nbsp;₽. Если за&nbsp;месяц набралось меньше, остаток переносится на&nbsp;следующий период и&nbsp;копится.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Удерживаете&nbsp;ли вы&nbsp;НДФЛ?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Зависит от&nbsp;вашего статуса:</p>
+              <ul>
+                <li><b>ИП на&nbsp;УСН или самозанятый</b>&nbsp;— платите налог сами с&nbsp;полученной суммы, мы&nbsp;ничего не&nbsp;удерживаем.</li>
+                <li><b>Физлицо (без статуса самозанятого)</b>&nbsp;— мы&nbsp;удерживаем НДФЛ 13% при выплате и&nbsp;перечисляем в&nbsp;бюджет за&nbsp;вас. На&nbsp;руки приходит сумма после налога.</li>
+              </ul>
+              <p>Рекомендуем оформлять самозанятость&nbsp;— это быстро, бесплатно и&nbsp;экономит ~7% на&nbsp;каждой выплате.</p>
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── ОРД и законы ─── -->
+      <section class="group" data-cat="ord" id="g-ord">
+        <div class="group-head">
+          <span class="icowrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 14.5 5h3.5v3.5L20.5 11 18 13.5V17h-3.5L12 19.5 9.5 17H6v-3.5L3.5 11 6 8.5V5h3.5L12 2.5z"/><path d="m9 11 2.2 2.2L15 9.5"/></svg>
+          </span>
+          <h2>ОРД и&nbsp;законы</h2>
+          <span class="count">4 вопроса</span>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Что такое ОРД?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>ОРД&nbsp;— оператор рекламных данных. Это организация, аккредитованная Роскомнадзором, которая принимает данные о&nbsp;каждом рекламном креативе в&nbsp;интернете и&nbsp;передаёт их&nbsp;в&nbsp;единый реестр. По&nbsp;закону любая интернет‑реклама в&nbsp;РФ должна проходить через ОРД и&nbsp;получать уникальный токен <b>erid</b>.</p>
+              <p>СММ АЙБРО интегрирован с&nbsp;ОРД напрямую: вам ничего регистрировать вручную не&nbsp;нужно.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Зачем маркировать рекламу?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Маркировка обязательна с&nbsp;1&nbsp;сентября 2022&nbsp;года. Без неё рекламный пост — это нарушение, штраф для&nbsp;ИП до&nbsp;100&nbsp;000&nbsp;₽, для&nbsp;юрлица до&nbsp;500&nbsp;000&nbsp;₽. Штрафы реальные, проверки идут.</p>
+              <p>Когда вы&nbsp;в&nbsp;кабинете отмечаете пост как рекламный, СММ АЙБРО автоматически: регистрирует креатив в&nbsp;ОРД, получает erid, добавляет в&nbsp;текст поста плашку «Реклама. ИП Мальцев В.&nbsp;В., erid:&nbsp;XXX», передаёт статистику показов после публикации.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Сколько рекламных постов в&nbsp;месяц?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>До&nbsp;30&nbsp;постов с&nbsp;ОРД‑маркировкой в&nbsp;месяц. Это покрывает потребности 95% малых бизнесов: 30 рекламных публикаций&nbsp;— это примерно по&nbsp;1 в&nbsp;день.</p>
+              <p>Обычные посты (новинки, советы, отзывы) не&nbsp;считаются рекламой и&nbsp;не&nbsp;маркируются. Лимит касается только тех постов, которые продают конкретный товар или услугу с&nbsp;ценой.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" aria-expanded="false">
+            <button class="faq-q" type="button" aria-expanded="false">
+              <span>Что такое 168‑ФЗ?</span>
+              <span class="caret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+            </button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <p>Федеральный закон «О&nbsp;государственном языке Российской Федерации». В&nbsp;части интернет‑сервисов он&nbsp;требует, чтобы названия функций, кнопки, уведомления и&nbsp;другой пользовательский интерфейс были на&nbsp;русском языке.</p>
+              <p>Поэтому в&nbsp;СММ АЙБРО вы&nbsp;нигде не&nbsp;увидите «AI», «SMM», «FAQ», «PRO»&nbsp;— только «ИИ», «СММ», «ЧЗВ», «ПРО». Исключение&nbsp;— международные торговые марки (MAX) и&nbsp;общеотраслевые термины (CRM, MVP, ОРД, erid).</p>
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Empty state -->
+      <div class="empty" id="empty">
+        <h3>Ничего не&nbsp;нашли</h3>
+        <p>Попробуйте другие слова или напишите вопрос напрямую в&nbsp;поддержку.</p>
+        <a href="#" class="pub-btn pub-btn--primary pub-btn--md">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></svg>
+          Написать в&nbsp;поддержку
+        </a>
+      </div>
+
+      <!-- Support CTA -->
+      <section class="support" aria-labelledby="support-title">
+        <div>
+          <h2 id="support-title">Не&nbsp;нашли ответ?</h2>
+          <p>Напишите в&nbsp;поддержку в&nbsp;MAX&nbsp;— отвечаем в&nbsp;течение часа в&nbsp;рабочее время. По&nbsp;будням с&nbsp;9:00 до&nbsp;21:00&nbsp;МСК.</p>
+        </div>
+        <a href="#" class="max-cta">
+          <img src="assets/logos/max-glyph.svg" alt="">
+          Открыть канал поддержки в&nbsp;MAX
+        </a>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<!-- ───────────────────────── FOOTER ───────────────────────── -->
+<footer class="pub-footer">
+  <div class="pub-footer-inner">
+    <div class="footer-cols">
+      <div class="footer-brand">
+        <a href="help.html" class="pub-brand" aria-label="СММ АЙБРО — на главную">
+          <span class="pub-brand-tile" aria-hidden="true">
+            <img src="assets/logos/robot-icon-light.svg" alt="">
+          </span>
+          <span class="pub-brand-word">СММ <em>АЙБРО</em></span>
+        </a>
+        <p>ИИ‑автоматизация бизнеса в&nbsp;мессенджере MAX: ассистент клиентам 24/7, автопостинг, приём заказов и&nbsp;мини‑CRM.</p>
+      </div>
+      <div>
+        <h5>Продукт</h5>
+        <ul>
+          <li><a href="#">Возможности</a></li>
+          <li><a href="#">Демо по&nbsp;нишам</a></li>
+          <li><a href="#">Тариф</a></li>
+          <li><a href="#">Пробный период</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Помощь</h5>
+        <ul>
+          <li><a href="help.html">Центр помощи</a></li>
+          <li><a href="#" aria-current="page">Частые вопросы</a></li>
+          <li><a href="#">Канал поддержки</a></li>
+          <li><a href="#">Статус сервиса</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Компания</h5>
+        <ul>
+          <li><a href="#">Партнёрам</a></li>
+          <li><a href="#">Реквизиты</a></li>
+          <li><a href="#">Договор‑оферта</a></li>
+          <li><a href="#">Политика данных</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>ИП Мальцев Валерий Валерьевич · ИНН 519041916737 · УСН 6% · Т‑Банк Санкт‑Петербург. Услуги оказываются на&nbsp;территории Российской Федерации.</p>
+      <p>© 2026 СММ АЙБРО</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ───── Accordion (close other / smooth height) ───── */
+  (function () {
+    const items = document.querySelectorAll('.faq-item');
+    items.forEach((item) => {
+      const btn = item.querySelector('.faq-q');
+      const ans = item.querySelector('.faq-a');
+      btn.addEventListener('click', () => {
+        const open = item.getAttribute('aria-expanded') === 'true';
+        if (open) {
+          item.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-expanded', 'false');
+          ans.style.maxHeight = '0px';
+        } else {
+          item.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-expanded', 'true');
+          ans.style.maxHeight = ans.scrollHeight + 'px';
+        }
+      });
+    });
+    // Recompute open answers' height after window resize
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('.faq-item[aria-expanded="true"] .faq-a').forEach((a) => {
+        a.style.maxHeight = a.scrollHeight + 'px';
+      });
+    });
+  })();
+
+  /* ───── Filter (chips + search) ───── */
+  (function () {
+    const search = document.getElementById('faq-search');
+    const clearBtn = document.getElementById('search-clear');
+    const chips = document.querySelectorAll('.chip');
+    const items = document.querySelectorAll('.faq-item');
+    const groups = document.querySelectorAll('.group');
+    const empty = document.getElementById('empty');
+    const meta = document.getElementById('results-meta-text');
+    let activeCat = 'all';
+
+    function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+    function clearHighlights() {
+      document.querySelectorAll('mark.hl').forEach((m) => {
+        const t = document.createTextNode(m.textContent);
+        m.parentNode.replaceChild(t, m);
+      });
+      // normalize text nodes
+      document.querySelectorAll('.faq-q span:first-child, .faq-a-inner').forEach((el) => el.normalize());
+    }
+
+    function highlightText(root, q) {
+      if (!q) return;
+      const re = new RegExp(escapeRegex(q), 'gi');
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode: (n) => {
+          if (!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          const p = n.parentElement;
+          if (!p) return NodeFilter.FILTER_REJECT;
+          if (p.closest('script, style, mark')) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      const nodes = [];
+      let n;
+      while ((n = walker.nextNode())) nodes.push(n);
+      nodes.forEach((node) => {
+        const text = node.nodeValue;
+        if (!re.test(text)) return;
+        re.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let lastIdx = 0; let m;
+        while ((m = re.exec(text)) !== null) {
+          if (m.index > lastIdx) frag.appendChild(document.createTextNode(text.slice(lastIdx, m.index)));
+          const mark = document.createElement('mark');
+          mark.className = 'hl';
+          mark.textContent = m[0];
+          frag.appendChild(mark);
+          lastIdx = m.index + m[0].length;
+          if (m[0].length === 0) re.lastIndex++;
+        }
+        if (lastIdx < text.length) frag.appendChild(document.createTextNode(text.slice(lastIdx)));
+        node.parentNode.replaceChild(frag, node);
+      });
+    }
+
+    function apply() {
+      const q = (search.value || '').trim();
+      const qLow = q.toLowerCase();
+      clearHighlights();
+
+      let visible = 0;
+      let visibleGroups = new Set();
+
+      items.forEach((it) => {
+        const grp = it.closest('.group');
+        const cat = grp.dataset.cat;
+        const q1 = it.querySelector('.faq-q span:first-child').textContent.toLowerCase();
+        const a1 = it.querySelector('.faq-a-inner').textContent.toLowerCase();
+        const matchCat = (activeCat === 'all') || (cat === activeCat);
+        const matchSearch = !qLow || q1.includes(qLow) || a1.includes(qLow);
+
+        if (matchCat && matchSearch) {
+          it.classList.remove('is-hidden');
+          visible++;
+          visibleGroups.add(grp);
+          if (qLow) {
+            // Auto-open matching items when searching
+            it.setAttribute('aria-expanded', 'true');
+            it.querySelector('.faq-q').setAttribute('aria-expanded', 'true');
+            const ans = it.querySelector('.faq-a');
+            ans.style.maxHeight = ans.scrollHeight + 'px';
+            // highlight
+            highlightText(it.querySelector('.faq-q span:first-child'), q);
+            highlightText(it.querySelector('.faq-a-inner'), q);
+            // recompute height after highlight injected nodes
+            ans.style.maxHeight = ans.scrollHeight + 'px';
+          }
+        } else {
+          it.classList.add('is-hidden');
+        }
+      });
+
+      groups.forEach((g) => {
+        if (visibleGroups.has(g)) g.classList.remove('is-hidden');
+        else g.classList.add('is-hidden');
+      });
+
+      empty.classList.toggle('is-visible', visible === 0);
+
+      // Update meta
+      if (qLow) {
+        meta.textContent = visible === 0
+          ? 'По\u00a0запросу ничего не\u00a0нашли'
+          : `Найдено ${visible} ${plural(visible, 'вопрос', 'вопроса', 'вопросов')} по\u00a0запросу «${q}»`;
+      } else if (activeCat !== 'all') {
+        const chip = document.querySelector(`.chip[data-cat="${activeCat}"]`);
+        meta.textContent = `${visible} ${plural(visible, 'вопрос', 'вопроса', 'вопросов')} в\u00a0разделе «${chip.childNodes[chip.childNodes.length - 3]?.textContent?.trim() || ''}»`;
+      } else {
+        meta.textContent = `Показано ${visible} ${plural(visible, 'вопрос', 'вопроса', 'вопросов')} в\u00a07\u00a0разделах`;
+      }
+    }
+
+    function plural(n, one, few, many) {
+      const mod10 = n % 10, mod100 = n % 100;
+      if (mod100 >= 11 && mod100 <= 14) return many;
+      if (mod10 === 1) return one;
+      if (mod10 >= 2 && mod10 <= 4) return few;
+      return many;
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        activeCat = chip.dataset.cat;
+        chips.forEach((c) => {
+          const on = c === chip;
+          c.classList.toggle('is-active', on);
+          c.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        // scroll group into view if specific category
+        if (activeCat !== 'all') {
+          const g = document.getElementById('g-' + activeCat);
+          if (g) {
+            const top = window.scrollY + g.getBoundingClientRect().top - 200;
+            window.scrollTo({ top, behavior: 'smooth' });
+          }
+        }
+        apply();
+      });
+    });
+
+    let t;
+    search.addEventListener('input', () => {
+      clearBtn.classList.toggle('is-visible', !!search.value);
+      clearTimeout(t);
+      t = setTimeout(apply, 80);
+    });
+    clearBtn.addEventListener('click', () => {
+      search.value = '';
+      clearBtn.classList.remove('is-visible');
+      apply();
+      search.focus();
+    });
+
+    // ESC clears
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.activeElement === search) {
+        search.value = '';
+        clearBtn.classList.remove('is-visible');
+        apply();
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

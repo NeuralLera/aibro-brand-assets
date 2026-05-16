@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>СММ АЙБРО · admin · Поддержка</title>
+<link rel="icon" href="logos/aibro/favicon-light.svg">
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="support.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+// admin.smmaibro.ru — Support · Тикеты
+// Internal ops console — поддержка пользователей.
+
+const { useState, useMemo } = React;
+
+// ============================================================
+// Icon — SVG-via-CSS-mask, inherits currentColor
+// ============================================================
+function Icon({ name, size }) {
+  const style = { "--ic": `url(icons/${name}.svg)` };
+  if (size) style["--ic-size"] = typeof size === "number" ? `${size}px` : size;
+  return <span className="ic" style={style} aria-hidden="true" />;
+}
+
+// ============================================================
+// Sidebar (same as Dashboard / Users)
+// ============================================================
+const NAV = [
+  { id: "home",     label: "Главная",     icon: "dashboard", href: "Dashboard.html" },
+  { id: "users",    label: "Пользователи", icon: "icon-nav-customers", count: "285", href: "Users.html" },
+  { id: "finance",  label: "Финансы",     icon: "icon-nav-finance" },
+  { id: "taxes",    label: "Налоги",      icon: "icon-nav-taxes" },
+  { id: "partners", label: "Партнёрка",   icon: "icon-nav-partners" },
+  { id: "ord",      label: "ОРД",         icon: "badge-erid", count: "1.2k" },
+  { id: "support",  label: "Поддержка",   icon: "icon-nav-messages", count: "6", countTone: "p0", href: "Support.html" },
+  { id: "health",   label: "Health",      icon: "health", href: "Health.html" },
+  { id: "audit",    label: "Аудит log",   icon: "audit-log" },
+];
+
+function Sidebar({ current }) {
+  return (
+    <aside className="side">
+      <div className="side-brand">
+        <span className="tile">
+          <img src="icons/favicon-light.svg" alt="" onError={(e) => { e.target.style.display = 'none'; }} />
+        </span>
+        <div>
+          <div className="wm">СММ <span className="em">АЙБРО</span></div>
+          <div className="sub">admin · v 2.4.1</div>
+        </div>
+      </div>
+      <div className="side-cap">Операции</div>
+      {NAV.map((it) => (
+        <a key={it.id} href={it.href || "#"} className={`nav-item ${current === it.id ? "is-active" : ""}`}>
+          <Icon name={it.icon} />
+          <span>{it.label}</span>
+          {it.count && <span className={`badge ${it.countTone === "p0" ? "is-p0" : ""}`}>{it.count}</span>}
+        </a>
+      ))}
+      <div className="side-foot">
+        <span className="avatar">ВМ</span>
+        <div>
+          <div className="who">В. Мальцев</div>
+          <div className="meta">owner · мск 14:35</div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function TopNav({ crumb, title }) {
+  return (
+    <div className="topnav">
+      <div className="crumbs">
+        <span className="role"><span className="dot"></span>ADMIN</span>
+        <span className="path">{crumb}</span>
+      </div>
+      <h1>{title}</h1>
+      <div className="search">
+        <Icon name="icon-action-search" />
+        <input placeholder="Поиск по ID тикета, бизнесу, автору, теме…" />
+        <kbd>⌘K</kbd>
+      </div>
+      <button className="icon-btn" title="Обновить"><Icon name="icon-action-refresh" /></button>
+      <button className="icon-btn" title="Уведомления">
+        <Icon name="icon-nav-notifications" />
+        <span className="pulse" />
+      </button>
+      <button className="user">
+        <span className="avatar">ВМ</span>
+        <div>
+          <div className="name">Валерий Мальцев</div>
+          <div className="role-sub">owner · ip‑мальцев</div>
+        </div>
+      </button>
+    </div>
+  );
+}
+
+// ============================================================
+// Page header — title + sub-stats
+// ============================================================
+function PageHeader() {
+  return (
+    <div className="page-h">
+      <div className="ttl">
+        <h1>Поддержка · Тикеты</h1>
+        <div className="sub">
+          <span><b>6</b> открыто</span>
+          <span className="dot" />
+          <span><b>4</b> в работе</span>
+          <span className="dot" />
+          <span><b>12</b> сегодня закрыто</span>
+          <span className="dot" />
+          <span>SLA last 30d <b>92%</b></span>
+        </div>
+      </div>
+      <div className="actions">
+        <button className="btn btn--secondary"><Icon name="icon-action-export" />Экспорт CSV</button>
+        <button className="btn btn--primary"><Icon name="icon-action-add" />Новый тикет</button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// KPI 4 cards
+// ============================================================
+const SUP_KPI = [
+  { lbl: "Открыто",       val: "6",  meta: "из них 2 P0",          tone: "danger", icon: "icon-status-error" },
+  { lbl: "В работе",      val: "4",  meta: "ср. ответ 18 мин",     tone: "info",   icon: "clock" },
+  { lbl: "Сегодня закрыто", val: "12", meta: "+3 vs средняя",        tone: "accent", icon: "icon-status-success" },
+  { lbl: "SLA last 30d",  val: "92", unit: "%", meta: "цель 95%",   tone: "warn",   icon: "shield-check" },
+];
+
+function KpiRow() {
+  return (
+    <div className="sup-kpi-row">
+      {SUP_KPI.map((k) => (
+        <div key={k.lbl} className={`sup-kpi sup-kpi--${k.tone}`}>
+          <div className="head">
+            <span className="head-ic"><Icon name={k.icon} /></span>
+            <span className="lbl">{k.lbl}</span>
+          </div>
+          <div className="val">
+            {k.val}{k.unit && <span className="unit"> {k.unit}</span>}
+          </div>
+          <div className="foot">{k.meta}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
+// Top tabs
+// ============================================================
+const TOP_TABS = [
+  { id: "open",       label: "Открытые",      count: "6", countTone: "p0" },
+  { id: "inprogress", label: "В работе",      count: "4" },
+  { id: "closed",     label: "Закрытые",      count: "12" },
+  { id: "all",        label: "Все",            count: "1247" },
+];
+
+function TopTabs({ tab, onTab }) {
+  return (
+    <div className="tabs-row">
+      {TOP_TABS.map((t) => (
+        <button key={t.id} className={`tab ${tab === t.id ? "is-active" : ""}`} onClick={() => onTab(t.id)}>
+          <span>{t.label}</span>
+          <span className={`count ${t.countTone === "p0" ? "is-p0" : ""}`}>{t.count}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
+// Filters bar
+// ============================================================
+function Filters() {
+  return (
+    <div className="filters">
+      <button className="filter-select is-active">
+        <span className="key">Приор:</span> <b>все</b><span className="caret" />
+      </button>
+      <button className="filter-select">
+        <span className="key">Тема:</span> <b>все</b><span className="caret" />
+      </button>
+      <button className="filter-select">
+        <span className="key">Исполнитель:</span> <b>любой</b><span className="caret" />
+      </button>
+      <button className="filter-select">
+        <Icon name="calendar-clock" />
+        <span className="key">Возраст:</span> <b>30 дней</b><span className="caret" />
+      </button>
+      <span className="grow" />
+      <div className="right">
+        <button className="filter-select" title="Сохранённые виды">
+          <Icon name="icon-action-save" />Виды
+        </button>
+        <button className="filter-select">Сброс</button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Tickets data (12 mock)
+// ============================================================
+const TOPICS = {
+  billing:     { label: "Биллинг",       tone: "info" },
+  crm:         { label: "CRM",           tone: "ok" },
+  integration: { label: "Интеграция",    tone: "warn" },
+  account:     { label: "Аккаунт",       tone: "neutral" },
+  other:       { label: "Прочее",        tone: "neutral" },
+};
+
+const TICKETS = [
+  {
+    id: "#2891", prio: "P0",
+    subject: "MAX webhook не отдаёт сообщения",
+    biz: { initials: "ПУ", name: "Пекарня Уют", color: "is-emerald" },
+    author: "Анна Соколова",
+    topic: "integration",
+    assignee: { initials: "НШ", name: "Никита Ш.", color: "is-rose" },
+    age: "2 ч",
+    status: "open",
+  },
+  {
+    id: "#2890", prio: "P1",
+    subject: "Не приходит чек после оплаты",
+    biz: { initials: "ПФ", name: "Пульс Фитнес", color: "is-info" },
+    author: "Дмитрий Колесов",
+    topic: "billing",
+    assignee: { initials: "АБ", name: "Анна Б.", color: "is-emerald" },
+    age: "4 ч",
+    status: "open",
+  },
+  {
+    id: "#2889", prio: "P2",
+    subject: "Хочу импортировать товары из Авито",
+    biz: { initials: "СТ", name: "Смарт Тур", color: "is-info" },
+    author: "Елена Воронина",
+    topic: "crm",
+    assignee: null,
+    age: "6 ч",
+    status: "open",
+  },
+  {
+    id: "#2888", prio: "P0",
+    subject: "Двойное списание подписки 12.05",
+    biz: { initials: "CM", name: "Cargo Moscow", color: "is-rose" },
+    author: "Игорь Лапин",
+    topic: "billing",
+    assignee: { initials: "ВМ", name: "В. Мальцев", color: "is-emerald" },
+    age: "8 ч",
+    status: "open",
+  },
+  {
+    id: "#2887", prio: "P1",
+    subject: "ОРД маркировка падает с ошибкой 503",
+    biz: { initials: "АС", name: "Алексей Страхов · ОСАГО", color: "is-emerald" },
+    author: "Алексей Страхов",
+    topic: "integration",
+    assignee: { initials: "НШ", name: "Никита Ш.", color: "is-rose" },
+    age: "10 ч",
+    status: "inprogress",
+  },
+  {
+    id: "#2886", prio: "P2",
+    subject: "Как настроить запись клиентов на услуги",
+    biz: { initials: "DA", name: "Design Atelier", color: "is-emerald" },
+    author: "Татьяна Берг",
+    topic: "crm",
+    assignee: { initials: "АП", name: "Анна П.", color: "is-info" },
+    age: "12 ч",
+    status: "inprogress",
+  },
+  {
+    id: "#2885", prio: "P3",
+    subject: "Просьба продлить триал на 3 дня",
+    biz: { initials: "КС", name: "Краски СПб", color: "is-amber" },
+    author: "Михаил Якушев",
+    topic: "account",
+    assignee: { initials: "АБ", name: "Анна Б.", color: "is-emerald" },
+    age: "16 ч",
+    status: "inprogress",
+  },
+  {
+    id: "#2884", prio: "P1",
+    subject: "Не работает импорт CSV каталога",
+    biz: { initials: "БХ", name: "Бутик хлеба «Раннее»", color: "is-emerald" },
+    author: "Ольга Маркова",
+    topic: "crm",
+    assignee: { initials: "АП", name: "Анна П.", color: "is-info" },
+    age: "1 д",
+    status: "inprogress",
+  },
+  {
+    id: "#2883", prio: "P2",
+    subject: "Вопрос про лимит автопостов",
+    biz: { initials: "ЧД", name: "Чистый дом", color: "is-info" },
+    author: "Светлана Орлова",
+    topic: "account",
+    assignee: { initials: "ДК", name: "Дима К.", color: "is-amber" },
+    age: "1 д",
+    status: "closed",
+  },
+  {
+    id: "#2882", prio: "P3",
+    subject: "Добавить ТОО форму для Казахстана",
+    biz: { initials: "ФП", name: "Фитнес «Прайм»", color: "is-info" },
+    author: "Артём Лебедев",
+    topic: "other",
+    assignee: null,
+    age: "2 д",
+    status: "closed",
+  },
+  {
+    id: "#2881", prio: "P2",
+    subject: "Как сменить юр. реквизиты ИП",
+    biz: { initials: "ПУ", name: "Пекарня Уют", color: "is-emerald" },
+    author: "Анна Соколова",
+    topic: "account",
+    assignee: { initials: "АБ", name: "Анна Б.", color: "is-emerald" },
+    age: "2 д",
+    status: "open",
+  },
+  {
+    id: "#2880", prio: "P1",
+    subject: "YooKassa не подтверждает платёж",
+    biz: { initials: "AS", name: "Arch Studio", color: "is-amber" },
+    author: "Никита Гольдштейн",
+    topic: "billing",
+    assignee: { initials: "ВМ", name: "В. Мальцев", color: "is-emerald" },
+    age: "2 д",
+    status: "open",
+  },
+];
+
+// ============================================================
+// Tickets table
+// ============================================================
+function TicketsTable({ rows, openId, onOpen }) {
+  return (
+    <div className="card sup-tbl-card">
+      <table className="sup-tbl">
+        <thead>
+          <tr>
+            <th style={{ width: 56 }}>Приор</th>
+            <th style={{ width: 78 }}>ID</th>
+            <th>Тема</th>
+            <th>Бизнес</th>
+            <th className="hide-on-tablet">Автор</th>
+            <th style={{ width: 110 }}>Тема</th>
+            <th style={{ width: 130 }}>Исполнитель</th>
+            <th style={{ width: 66, textAlign: "right" }}>Возраст</th>
+            <th style={{ width: 90, textAlign: "center" }}>Статус</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => {
+            const topic = TOPICS[r.topic];
+            const isOpen = openId === r.id;
+            return (
+              <tr key={r.id} className={isOpen ? "is-open" : ""} onClick={() => onOpen(r.id)}>
+                <td><span className={`ticket-prio ticket-prio--${r.prio.toLowerCase()}`}>{r.prio}</span></td>
+                <td className="mono">{r.id}</td>
+                <td><div className="t-subject">{r.subject}</div></td>
+                <td>
+                  <div className="bz-cell">
+                    <span className={`avatar ${r.biz.color}`}>{r.biz.initials}</span>
+                    <span className="nm">{r.biz.name}</span>
+                  </div>
+                </td>
+                <td className="hide-on-tablet" style={{ color: "var(--fg-2)", fontSize: 12 }}>{r.author}</td>
+                <td>
+                  <span className={`topic-chip is-${topic.tone}`}>{topic.label}</span>
+                </td>
+                <td>
+                  {r.assignee ? (
+                    <div className="as-cell">
+                      <span className={`avatar-xs ${r.assignee.color}`}>{r.assignee.initials}</span>
+                      <span className="nm">{r.assignee.name}</span>
+                    </div>
+                  ) : (
+                    <span style={{ color: "var(--fg-4)", fontSize: 12 }}>— назначить —</span>
+                  )}
+                </td>
+                <td className="mono" style={{ textAlign: "right", color: "var(--fg-3)" }}>{r.age}</td>
+                <td style={{ textAlign: "center" }}>
+                  <span className={`status-chip status-chip--${r.status}`}>
+                    {r.status === "open" ? "Открыт" : r.status === "inprogress" ? "В работе" : "Закрыт"}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <div className="tbl-foot">
+        <span>Показано <b style={{ color: "var(--fg-1)" }}>1–12</b> из <b style={{ color: "var(--fg-1)" }}>12</b></span>
+        <div className="pager">
+          <span className="pg is-dis">‹</span>
+          <span className="pg is-on">1</span>
+          <span className="pg">›</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Right-side analytics panel
+// ============================================================
+function TopicDonut() {
+  // Topic distribution donut — pure SVG
+  const data = [
+    { label: "Биллинг",     value: 38, color: "#3b82f6" },
+    { label: "Интеграция",  value: 24, color: "#f59e0b" },
+    { label: "CRM",         value: 22, color: "#10b981" },
+    { label: "Аккаунт",     value: 12, color: "#6b7079" },
+    { label: "Прочее",      value:  4, color: "#a7f3d0" },
+  ];
+  const total = data.reduce((s, d) => s + d.value, 0);
+  const R = 52, C = 2 * Math.PI * R;
+  let offset = 0;
+
+  return (
+    <div className="topic-chart">
+      <div className="donut">
+        <svg viewBox="0 0 140 140" width="140" height="140">
+          <circle cx="70" cy="70" r={R} fill="none" stroke="var(--bg-subtle)" strokeWidth="14" />
+          {data.map((d, i) => {
+            const len = (d.value / total) * C;
+            const circle = (
+              <circle key={i} cx="70" cy="70" r={R} fill="none"
+                stroke={d.color} strokeWidth="14"
+                strokeDasharray={`${len} ${C - len}`}
+                strokeDashoffset={-offset}
+                transform="rotate(-90 70 70)"
+                strokeLinecap="butt"
+              />
+            );
+            offset += len;
+            return circle;
+          })}
+          <text x="70" y="68" textAnchor="middle" fontFamily="var(--font-display)"
+                fontSize="22" fontWeight="700" fill="var(--fg-1)">100%</text>
+          <text x="70" y="86" textAnchor="middle" fontFamily="var(--font-mono)"
+                fontSize="9" fill="var(--fg-3)" letterSpacing="0.1em">ВСЕ ТИКЕТЫ</text>
+        </svg>
+      </div>
+      <div className="legend">
+        {data.map((d) => (
+          <div key={d.label} className="lg-row">
+            <span className="sw" style={{ background: d.color }} />
+            <span className="lb">{d.label}</span>
+            <span className="vl">{d.value}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const TOP_ISSUES = [
+  { title: "MAX webhook timeouts",            count: 18, trend: "+5", dir: "up" },
+  { title: "Чеки после оплаты",                count: 14, trend: "+2", dir: "up" },
+  { title: "Импорт каталога",                  count:  9, trend: "−1", dir: "down" },
+  { title: "ОРД маркировка ошибки",            count:  7, trend: "+3", dir: "up" },
+  { title: "Продление триала",                 count:  5, trend: "0",  dir: "flat" },
+];
+
+function TopIssues() {
+  return (
+    <div className="top-issues">
+      {TOP_ISSUES.map((it, i) => (
+        <div key={i} className="ti-row">
+          <div className="rank">#{i + 1}</div>
+          <div className="body">
+            <div className="nm">{it.title}</div>
+            <div className="mt">{it.count} тикетов · за неделю</div>
+          </div>
+          <div className={`tr ${it.dir}`}>
+            {it.dir === "up" ? "▲" : it.dir === "down" ? "▼" : "—"} {it.trend}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SlaTimeline() {
+  // mini bar chart — SLA per week (8 weeks)
+  const SLA = [88, 91, 93, 92, 90, 89, 92, 92];
+  const W = 240, H = 100, PT = 14, PB = 22, PL = 4, PR = 4;
+  const innerW = W - PL - PR;
+  const innerH = H - PT - PB;
+  const barW = innerW / SLA.length - 6;
+  return (
+    <div className="sla-mini">
+      <div className="sla-head">
+        <div className="cap">SLA · последние 8 недель</div>
+        <div className="vl"><b>92%</b> <span>last 30d</span></div>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto" }}>
+        {/* threshold line 95% */}
+        <line x1={PL} y1={PT + innerH - (95 - 80) / 20 * innerH}
+              x2={W - PR} y2={PT + innerH - (95 - 80) / 20 * innerH}
+              stroke="var(--brand-500)" strokeWidth="1" strokeDasharray="3 3" opacity="0.4" />
+        <text x={W - PR} y={PT + innerH - (95 - 80) / 20 * innerH - 3}
+              textAnchor="end" fontFamily="var(--font-mono)" fontSize="9" fill="var(--brand-700)">95% цель</text>
+        {SLA.map((v, i) => {
+          const x = PL + i * (innerW / SLA.length) + 3;
+          const h = ((v - 80) / 20) * innerH;
+          const y = PT + innerH - h;
+          const tone = v >= 92 ? "var(--brand-500)" : v >= 90 ? "var(--warning-500)" : "var(--danger-500)";
+          return (
+            <g key={i}>
+              <rect x={x} y={y} width={barW} height={h} rx="2" fill={tone} opacity="0.85" />
+              <text x={x + barW / 2} y={H - 8} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize="9" fill="var(--fg-3)">W{i + 1}</text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function AnalyticsPanel() {
+  return (
+    <aside className="sup-side">
+      <div className="card">
+        <div className="card-h">
+          <h3>Распределение по темам</h3>
+          <span className="meta">за неделю</span>
+        </div>
+        <div style={{ padding: 18 }}>
+          <TopicDonut />
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-h">
+          <h3>Топ проблем недели</h3>
+          <span className="meta">5 главных</span>
+        </div>
+        <div style={{ padding: "4px 0" }}>
+          <TopIssues />
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-h">
+          <h3>SLA timeline</h3>
+          <span className="meta">8 недель</span>
+        </div>
+        <div style={{ padding: "12px 18px 18px" }}>
+          <SlaTimeline />
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+// ============================================================
+// Drawer — ticket details
+// ============================================================
+const MESSAGES = [
+  { t: "12:33", who: "Анна Соколова",  side: "client",
+    body: "Здравствуйте! С 12:00 ассистент не отвечает на сообщения в MAX. Подскажите, пожалуйста, что делать?" },
+  { t: "12:46", who: "Никита Ш.",  side: "support",
+    body: "Анна, здравствуйте. Мы проверяем — кажется, проблема на стороне MAX webhook. Дайте 15 минут на диагностику." },
+  { t: "13:02", who: "System",  side: "system",
+    body: "Тикет повышен до P0 · webhook ошибки подтверждены (12 за час)" },
+  { t: "13:18", who: "Никита Ш.",  side: "support",
+    body: "Запустил retry-очередь. Сейчас будем восстанавливать недоставленные ответы. Держим в курсе." },
+  { t: "14:25", who: "Анна Соколова",  side: "client",
+    body: "Ответы пошли! Спасибо большое." },
+];
+
+function Drawer({ ticket, onClose }) {
+  if (!ticket) return null;
+  const topic = TOPICS[ticket.topic];
+  return (
+    <>
+      <div className="drawer-scrim is-open" onClick={onClose} />
+      <aside className="drawer is-open">
+        <div className="drawer-h">
+          <div className="top">
+            <div className="ttl">
+              <div className="t-id"><span className={`ticket-prio ticket-prio--${ticket.prio.toLowerCase()}`}>{ticket.prio}</span><span className="mono">{ticket.id}</span></div>
+              <h2>{ticket.subject}</h2>
+              <div className="meta">
+                <span className="bz-cell">
+                  <span className={`avatar-xs ${ticket.biz.color}`}>{ticket.biz.initials}</span>
+                  <span className="nm">{ticket.biz.name}</span>
+                </span>
+                <span className="sep">·</span>
+                <span>{ticket.author}</span>
+                <span className="sep">·</span>
+                <span className={`topic-chip is-${topic.tone}`}>{topic.label}</span>
+                <span className="sep">·</span>
+                <span>возраст {ticket.age}</span>
+              </div>
+            </div>
+            <button className="close-btn" onClick={onClose}>×</button>
+          </div>
+
+          <div className="quick-actions">
+            <button className="btn btn--primary"><Icon name="message-circle" />Ответить</button>
+            <button className="btn btn--secondary"><Icon name="icon-nav-team" />Назначить</button>
+            <button className="btn btn--secondary"><Icon name="icon-status-success" />Закрыть</button>
+            <span style={{ flex: 1 }} />
+            <button className="btn btn--danger"><Icon name="icon-status-error" />Перевести в P0</button>
+          </div>
+        </div>
+
+        <div className="drawer-body">
+          <div className="dr-section">
+            <h4>Переписка · {MESSAGES.length} сообщений</h4>
+            <div className="timeline-msg">
+              {MESSAGES.map((m, i) => (
+                <div key={i} className={`msg msg--${m.side}`}>
+                  <div className="msg-h">
+                    <span className="who">{m.who}</span>
+                    <span className="t">{m.t}</span>
+                  </div>
+                  <div className="msg-body">{m.body}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="msg-reply">
+              <textarea placeholder="Напишите ответ автору тикета…" rows="4" />
+              <div className="reply-toolbar">
+                <button className="btn btn--ghost"><Icon name="attachment" />Файл</button>
+                <span style={{ flex: 1 }} />
+                <button className="btn btn--ghost">Шаблон</button>
+                <button className="btn btn--primary">Отправить</button>
+              </div>
+            </div>
+          </div>
+
+          <div className="dr-section">
+            <h4>Детали</h4>
+            <div className="kv-grid">
+              <div className="kv"><div className="k">ID тикета</div><div className="v" style={{ fontFamily: "var(--font-mono)" }}>{ticket.id}</div></div>
+              <div className="kv"><div className="k">Приоритет</div><div className="v"><span className={`ticket-prio ticket-prio--${ticket.prio.toLowerCase()}`}>{ticket.prio}</span></div></div>
+              <div className="kv"><div className="k">Создан</div><div className="v">15.05.2026 · 12:33 МСК</div></div>
+              <div className="kv"><div className="k">SLA до ответа</div><div className="v">в течение часа · <span style={{ color: "var(--success-700)" }}>в норме</span></div></div>
+              <div className="kv"><div className="k">Источник</div><div className="v">MAX в-аппе</div></div>
+              <div className="kv"><div className="k">Канал ответов</div><div className="v">e-mail + MAX</div></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+// ============================================================
+// App
+// ============================================================
+function App() {
+  const [tab, setTab] = useState("open");
+  const [openId, setOpenId] = useState(null);
+  const filtered = useMemo(() => {
+    if (tab === "all") return TICKETS;
+    if (tab === "open") return TICKETS.filter((t) => t.status === "open");
+    if (tab === "inprogress") return TICKETS.filter((t) => t.status === "inprogress");
+    return TICKETS;
+  }, [tab]);
+
+  const openTicket = openId ? TICKETS.find((t) => t.id === openId) : null;
+
+  return (
+    <div className="shell" data-screen-label="04 Admin — Поддержка">
+      <Sidebar current="support" />
+      <div className="workpane">
+        <TopNav crumb={<>admin / <b>поддержка</b></>} title="Поддержка" />
+        <main className="main">
+          <PageHeader />
+          <KpiRow />
+          <TopTabs tab={tab} onTab={setTab} />
+          <Filters />
+
+          <div className="sup-layout">
+            <TicketsTable rows={filtered} openId={openId} onOpen={setOpenId} />
+            <AnalyticsPanel />
+          </div>
+        </main>
+      </div>
+
+      <Drawer ticket={openTicket} onClose={() => setOpenId(null)} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
