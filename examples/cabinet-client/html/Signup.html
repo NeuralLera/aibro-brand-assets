@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Регистрация · Пробный период 5 дней</title>
+  <link rel="icon" type="image/svg+xml" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/auth.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo } = React;
+const ICO = "design/assets/icons/";
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+function TopNav() {
+  return (
+    <header className="au-top">
+      <a className="au-brand" href="/">
+        <span className="au-brand-tile">
+          <img src="design/assets/logos/robot-icon-light.svg" alt="" />
+        </span>
+        <span className="au-brand-word">СММ <em>АЙБРО</em></span>
+      </a>
+      <div className="au-top-actions">
+        <span className="au-top-link" style={{display: "inline-block"}}>Уже есть аккаунт?</span>
+        <a className="au-top-link brand" href="Login.html">Войти →</a>
+      </div>
+    </header>
+  );
+}
+
+function pwdStrength(pwd) {
+  if (!pwd) return 0;
+  let s = 0;
+  if (pwd.length >= 8) s++;
+  if (/[A-ZА-Я]/.test(pwd)) s++;
+  if (/\d/.test(pwd)) s++;
+  if (/[^A-Za-zА-Я0-9]/.test(pwd)) s++;
+  return Math.min(s, 3);
+}
+
+function App() {
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+    repeat: "",
+    name: "",
+    agreeOffer: false,
+    agreePrivacy: false,
+    agreePdn: false,
+    news: true,
+  });
+  const [showPwd, setShowPwd] = useState(false);
+
+  function up(k, v) { setData(p => ({ ...p, [k]: v })); }
+
+  const strength = useMemo(() => pwdStrength(data.password), [data.password]);
+  const strengthClass = strength === 0 ? "" : strength === 1 ? "active-weak" : strength === 2 ? "active-medium" : "active-strong";
+  const strengthLabel = strength === 0 ? "Введите пароль" : strength === 1 ? "Слабый" : strength === 2 ? "Средний" : "Надёжный";
+  const canSubmit = data.email && data.password && data.password === data.repeat && data.name && data.agreeOffer && data.agreePrivacy && data.agreePdn;
+
+  function submit(e) {
+    e.preventDefault();
+    alert("Регистрация… (демо) → редирект на Onboarding.html");
+    window.location.href = "Onboarding.html";
+  }
+
+  return (
+    <div className="au-shell">
+      <TopNav />
+      <main className="au-main">
+        {/* LEFT — form */}
+        <div className="au-card">
+          <div className="au-head">
+            <h1>Регистрация в СММ АЙБРО</h1>
+            <p>5 дней бесплатно. Без привязки карты. Отмена в один клик.</p>
+          </div>
+
+          <form className="au-form" onSubmit={submit}>
+            <div className="au-field">
+              <label className="au-field-label">Email <span className="hint">для входа и уведомлений</span></label>
+              <input type="email" className="au-input" placeholder="anna@pekarnya-uyut.ru"
+                     value={data.email} onChange={(e) => up("email", e.target.value)} required />
+            </div>
+
+            <div className="au-field">
+              <label className="au-field-label">Пароль</label>
+              <div className="au-input-wrap">
+                <input type={showPwd ? "text" : "password"} className="au-input" placeholder="Минимум 8 символов"
+                       value={data.password} onChange={(e) => up("password", e.target.value)} required />
+                <button type="button" className="au-input-toggle" onClick={() => setShowPwd(!showPwd)}>
+                  {showPwd ? "Скрыть" : "Показать"}
+                </button>
+              </div>
+              {data.password && (
+                <>
+                  <div className="au-pwd-strength">
+                    <div className={`au-pwd-strength-bar ${strength >= 1 ? strengthClass : ""}`}></div>
+                    <div className={`au-pwd-strength-bar ${strength >= 2 ? strengthClass : ""}`}></div>
+                    <div className={`au-pwd-strength-bar ${strength >= 3 ? strengthClass : ""}`}></div>
+                  </div>
+                  <span className="au-pwd-hint">{strengthLabel} · минимум 8 символов · буква + цифра</span>
+                </>
+              )}
+            </div>
+
+            <div className="au-field">
+              <label className="au-field-label">Повторите пароль</label>
+              <input type="password" className="au-input" placeholder="Тот же пароль"
+                     value={data.repeat} onChange={(e) => up("repeat", e.target.value)} required />
+              {data.repeat && data.password !== data.repeat && (
+                <span className="au-pwd-hint" style={{color: "#ef4444"}}>Пароли не совпадают</span>
+              )}
+            </div>
+
+            <div className="au-field">
+              <label className="au-field-label">Имя <span className="hint">как к вам обращаться</span></label>
+              <input type="text" className="au-input" placeholder="Анна"
+                     value={data.name} onChange={(e) => up("name", e.target.value)} required />
+            </div>
+
+            <div style={{display: "flex", flexDirection: "column", gap: 10, marginTop: 4}}>
+              <label className="au-check">
+                <input type="checkbox" checked={data.agreeOffer} onChange={(e) => up("agreeOffer", e.target.checked)} required />
+                <span>Согласен с <a href="/legal/offer">Офертой</a></span>
+              </label>
+              <label className="au-check">
+                <input type="checkbox" checked={data.agreePrivacy} onChange={(e) => up("agreePrivacy", e.target.checked)} required />
+                <span>Согласен с <a href="/legal/privacy">Политикой конфиденциальности</a></span>
+              </label>
+              <label className="au-check">
+                <input type="checkbox" checked={data.agreePdn} onChange={(e) => up("agreePdn", e.target.checked)} required />
+                <span>Согласен на <a href="/legal/pdn">обработку персональных данных (152-ФЗ)</a></span>
+              </label>
+              <label className="au-check">
+                <input type="checkbox" checked={data.news} onChange={(e) => up("news", e.target.checked)} />
+                <span>Получать новости и кейсы по работе с MAX <span style={{color: "var(--fg-3)"}}>(можно отписаться в кабинете)</span></span>
+              </label>
+            </div>
+
+            <button type="submit" className="au-btn au-btn-primary" disabled={!canSubmit}>
+              <Ic name="gift-trial" size={18} style={{filter:"brightness(0) invert(1)"}} />
+              Создать аккаунт и начать пробный период
+            </button>
+
+            <div className="au-divider">или</div>
+
+            <button type="button" className="au-btn au-btn-max">
+              <span className="max-tile">MAX</span>
+              Регистрация через MAX
+            </button>
+          </form>
+
+          <div className="au-foot">
+            После регистрации откроется <b>мастер настройки</b> — займёт 5 минут.
+          </div>
+        </div>
+
+        {/* RIGHT — buyer confidence chips */}
+        <aside className="au-aside">
+          <h3 style={{fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 22, letterSpacing: "-0.02em", margin: "0 0 14px"}}>
+            Почему вам спокойно с нами
+          </h3>
+          <div className="au-chips">
+            <div className="au-chip-card">
+              <div className="au-chip-ico"><Ic name="gift-trial" size={18} /></div>
+              <div className="au-chip-text">
+                <b>5 дней бесплатно</b>
+                <span>Полный доступ ко всему функционалу</span>
+              </div>
+            </div>
+            <div className="au-chip-card">
+              <div className="au-chip-ico"><Ic name="shield-check" size={18} /></div>
+              <div className="au-chip-text">
+                <b>Без карты</b>
+                <span>Не просим реквизиты при триале</span>
+              </div>
+            </div>
+            <div className="au-chip-card">
+              <div className="au-chip-ico"><Ic name="icon-status-success" size={18} /></div>
+              <div className="au-chip-text">
+                <b>Отмена в 1 клик</b>
+                <span>В любой момент в кабинете</span>
+              </div>
+            </div>
+            <div className="au-chip-card">
+              <div className="au-chip-ico"><Ic name="ui-core/briefcase" size={18} /></div>
+              <div className="au-chip-text">
+                <b>Российская компания</b>
+                <span>ИП РФ · 152-ФЗ · ОРД</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="au-testimonial" style={{marginTop: 4}}>
+            <div className="au-testimonial-text" style={{fontSize: 15}}>
+              «Триал реально без подвоха — карту не просили, после 5 дней просто прислали инвойс. Решение продлевать было лёгкое.»
+            </div>
+            <div className="au-testimonial-who">
+              <div className="au-testimonial-ava" style={{background: "linear-gradient(135deg, #bfdbfe, #93c5fd)", color: "#1e3a8a"}}>И</div>
+              <div className="au-testimonial-meta">
+                <b>Игорь Беляев</b>
+                <span>Барбершоп «Сила» · Москва</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

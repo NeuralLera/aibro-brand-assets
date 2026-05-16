@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Кабинет — Аналитика</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/atoms.css">
+  <link rel="stylesheet" href="design/cabinet.css">
+  <link rel="stylesheet" href="design/settings.css">
+  <link rel="stylesheet" href="design/bots.css">
+  <link rel="stylesheet" href="design/analytics.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+const ICO = "design/assets/icons/";
+
+function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+function fmtRub(n) { return fmt(n) + " ₽"; }
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+const NAV = [
+  { id: "home",      label: "Главная",         icon: "icon-nav-home",       href: "Dashboard.html" },
+  { id: "bots",      label: "Боты и каналы",   icon: "icon-nav-integrations", href: "Bots.html" },
+  { id: "orders",    label: "Заказы",          icon: "icon-crm-orders",     href: "Orders.html",    badge: 7 },
+  { id: "bookings",  label: "Записи",          icon: "icon-crm-bookings",   href: "Bookings.html",  badge: 12 },
+  { id: "customers", label: "Клиенты",         icon: "icon-crm-customers",  href: "Customers.html" },
+  { id: "products",  label: "Товары и услуги", icon: "icon-nav-products",   href: "Products.html" },
+  { id: "content",   label: "Контент",         icon: "icon-nav-content",    href: "Calendar.html" },
+  { id: "ai",        label: "ИИ-ассистент",    icon: "spark-ai",            href: "AI Assistant.html" },
+  { id: "analytics", label: "Аналитика",       icon: "chart-line" },
+  { id: "marketing", label: "Маркетинг",       icon: "megaphone" },
+  { id: "billing",   label: "Подписка",        icon: "price-tag-ruble",     href: "Billing.html" },
+  { id: "settings",  label: "Настройки",       icon: "icon-nav-settings",   href: "Settings.html" },
+];
+
+function Sidebar({ current }) {
+  return (
+    <aside className="cab-side" aria-label="Главная навигация">
+      <a className="cab-brand" href="Dashboard.html">
+        <span className="cab-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+        <span>
+          <span className="cab-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="cab-brand-meta">Кабинет</div>
+        </span>
+      </a>
+
+      <button className="cab-biz">
+        <div className="cab-biz-ava" style={{background:"#fed7aa", color:"#9a3412"}}>У</div>
+        <div>
+          <div className="cab-biz-name">Пекарня «Уют»</div>
+          <div className="cab-biz-handle">@pekarnya_uyut · Бакалея</div>
+        </div>
+        <Ic name="icon-action-expand" size={14} style={{opacity:0.4}} />
+      </button>
+
+      {NAV.map((it) => {
+        const cls = `cab-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="cab-side-foot">
+        Тариф «Единый» · <b>4 990 ₽/мес</b><br/>
+        До 24.06.2026 · <a href="Billing.html">Продлить</a>
+      </div>
+    </aside>
+  );
+}
+
+function TopBar() {
+  return (
+    <header className="cab-top">
+      <div>
+        <div className="crumb">Кабинет / Аналитика</div>
+        <h1>Аналитика</h1>
+      </div>
+      <div className="cab-top-actions">
+        <button className="cab-iconbtn" aria-label="Уведомления">
+          <Ic name="notification-bell" size={20} />
+          <span className="dot"></span>
+        </button>
+        <div className="cab-profile" tabIndex="0">
+          <div className="ava">А</div>
+          <div className="meta">
+            <span className="name">Анна П.</span>
+            <span className="role">Владелец</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ============================================================
+   CHART HELPERS
+============================================================ */
+function Sparkline({ data, color = "var(--brand-600)", up = true }) {
+  const w = 100, h = 28, pad = 2;
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const sx = (w - 2 * pad) / (data.length - 1);
+  const pts = data.map((v, i) => [pad + i * sx, h - pad - ((v - min) / range) * (h - 2 * pad)]);
+  const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const dArea = d + ` L ${w - pad} ${h - pad} L ${pad} ${h - pad} Z`;
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
+      <path d={dArea} fill={up ? "rgba(16, 185, 129, 0.12)" : "rgba(239, 68, 68, 0.12)"} />
+      <path d={d} stroke={up ? "var(--brand-600)" : "#b91c1c"} strokeWidth="1.5" fill="none" />
+    </svg>
+  );
+}
+
+function DualLineChart({ revenue, orders }) {
+  const w = 760, h = 240, pad = 36;
+  const maxR = Math.max(...revenue), maxO = Math.max(...orders);
+  const sx = (w - 2 * pad) / (revenue.length - 1);
+  const ptsR = revenue.map((v, i) => [pad + i * sx, h - pad - (v / maxR) * (h - 2 * pad)]);
+  const ptsO = orders.map((v, i)  => [pad + i * sx, h - pad - (v / maxO) * (h - 2 * pad)]);
+  const dR = ptsR.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const dO = ptsO.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const dArea = dR + ` L ${w - pad} ${h - pad} L ${pad} ${h - pad} Z`;
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="an-chart">
+      <defs>
+        <linearGradient id="rev-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="rgba(16, 185, 129, 0.28)" />
+          <stop offset="100%" stopColor="rgba(16, 185, 129, 0.02)" />
+        </linearGradient>
+      </defs>
+      <g className="grid">
+        <line x1={pad} y1={pad}                     x2={w - pad} y2={pad} />
+        <line x1={pad} y1={pad + (h - 2*pad) / 4}   x2={w - pad} y2={pad + (h - 2*pad) / 4} />
+        <line x1={pad} y1={pad + (h - 2*pad) / 2}   x2={w - pad} y2={pad + (h - 2*pad) / 2} />
+        <line x1={pad} y1={pad + 3*(h - 2*pad) / 4} x2={w - pad} y2={pad + 3*(h - 2*pad) / 4} />
+        <line x1={pad} y1={h - pad}                 x2={w - pad} y2={h - pad} />
+      </g>
+      <path d={dArea} fill="url(#rev-grad)" />
+      <path d={dR} stroke="var(--brand-600)" strokeWidth="2.5" fill="none" />
+      <path d={dO} stroke="#3b82f6" strokeWidth="2" strokeDasharray="4 4" fill="none" />
+
+      {/* Y axis left — revenue */}
+      <g className="axis-y">
+        <text x={pad - 6} y={pad + 4}                   textAnchor="end">{fmt(Math.round(maxR/1000))}k ₽</text>
+        <text x={pad - 6} y={pad + (h - 2*pad)/2 + 4}   textAnchor="end">{fmt(Math.round(maxR/2000))}k ₽</text>
+        <text x={pad - 6} y={h - pad + 4}               textAnchor="end">0</text>
+      </g>
+      {/* Y axis right — orders */}
+      <g className="axis-y">
+        <text x={w - pad + 6} y={pad + 4}               textAnchor="start" style={{fill:"#3b82f6"}}>{maxO}</text>
+        <text x={w - pad + 6} y={pad + (h - 2*pad)/2 + 4} textAnchor="start" style={{fill:"#3b82f6"}}>{Math.round(maxO/2)}</text>
+        <text x={w - pad + 6} y={h - pad + 4}           textAnchor="start" style={{fill:"#3b82f6"}}>0</text>
+      </g>
+      <g className="axis-x">
+        <text x={pad}         y={h - pad + 18}>16.04</text>
+        <text x={w/2 - 14}    y={h - pad + 18}>30.04</text>
+        <text x={w - pad - 28} y={h - pad + 18}>15.05</text>
+      </g>
+    </svg>
+  );
+}
+
+function Donut({ slices, size = 140, stroke = 22 }) {
+  const r = (size - stroke) / 2;
+  const C = 2 * Math.PI * r;
+  const total = slices.reduce((s, x) => s + x.v, 0);
+  let acc = 0;
+  return (
+    <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--bg-subtle)" strokeWidth={stroke} />
+      {slices.map((s, i) => {
+        const frac = s.v / total;
+        const dash = frac * C;
+        const off = -acc * C;
+        acc += frac;
+        return (
+          <circle key={i} cx={size/2} cy={size/2} r={r}
+                  fill="none" stroke={s.color} strokeWidth={stroke}
+                  strokeDasharray={`${dash} ${C - dash}`}
+                  strokeDashoffset={off}
+                  transform={`rotate(-90 ${size/2} ${size/2})`} />
+        );
+      })}
+      <text x={size/2} y={size/2 - 2} textAnchor="middle"
+            style={{fontFamily:"var(--font-display)", fontWeight:700, fontSize:20, fill:"var(--fg-1)"}}>
+        100%
+      </text>
+      <text x={size/2} y={size/2 + 16} textAnchor="middle"
+            style={{fontFamily:"var(--font-body)", fontSize:11, fill:"var(--fg-3)"}}>
+        источников
+      </text>
+    </svg>
+  );
+}
+
+/* ============================================================
+   KPI ROW
+============================================================ */
+const KPIS = [
+  { lbl: "Выручка",          val: "245 850 ₽", delta: "+18%", up: true,  spark: [120, 140, 130, 160, 155, 180, 175, 200, 195, 220, 215, 245] },
+  { lbl: "Заказы",           val: "132",        delta: "+12%", up: true,  spark: [8, 10, 9, 12, 11, 14, 13, 16, 14, 18, 17, 21] },
+  { lbl: "Записи",           val: "89",         delta: "+24%", up: true,  spark: [4, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16] },
+  { lbl: "Активные клиенты", val: "67",         delta: "+8%",  up: true,  spark: [40, 42, 44, 46, 48, 52, 55, 58, 60, 62, 64, 67] },
+  { lbl: "Средний чек",      val: "1 862 ₽",    delta: "+5%",  up: true,  spark: [1700, 1720, 1750, 1780, 1800, 1810, 1820, 1830, 1840, 1850, 1855, 1862] },
+];
+
+const REVENUE_30 = [
+  4800, 5200, 5500, 6100, 5800, 7200, 6800, 7500, 7200, 8100,
+  7800, 8400, 9000, 8600, 9300, 9000, 9800, 10200, 9700, 10500,
+  10800, 11200, 10900, 11600, 12000, 12500, 12200, 12800, 13100, 13400,
+];
+
+const ORDERS_30 = [
+  3, 4, 4, 5, 4, 6, 5, 6, 5, 6,
+  5, 6, 7, 6, 7, 6, 7, 8, 7, 8,
+  8, 9, 8, 9, 9, 10, 9, 10, 10, 11,
+];
+
+const TOP_SERVICES = [
+  { name: "Маникюр классический",   orders: 47, rev: 88200,  max: 100 },
+  { name: "Окрашивание в один тон", orders: 28, rev: 117600, max: 60 },
+  { name: "Стрижка женская",         orders: 22, rev: 44000,  max: 47 },
+  { name: "Педикюр",                 orders: 18, rev: 36000,  max: 38 },
+  { name: "Укладка вечерняя",        orders: 12, rev: 24000,  max: 26 },
+];
+
+/* ============================================================
+   COHORT (12 недель)
+============================================================ */
+const COHORTS = [
+  // cohort label, week-1..week-12 retention (% or null)
+  { label: "Когорта 03.03",  cells: [100, 68, 54, 46, 42, 40, 38, 36, 34, 33, 32, 31] },
+  { label: "Когорта 10.03",  cells: [100, 72, 58, 48, 43, 41, 39, 37, 35, 33, 32, null] },
+  { label: "Когорта 17.03",  cells: [100, 74, 60, 50, 45, 42, 40, 38, 36, 34, null, null] },
+  { label: "Когорта 24.03",  cells: [100, 70, 56, 47, 43, 41, 39, 36, 34, null, null, null] },
+  { label: "Когорта 31.03",  cells: [100, 76, 62, 53, 48, 45, 42, 39, null, null, null, null] },
+  { label: "Когорта 07.04",  cells: [100, 78, 65, 56, 51, 47, 44, null, null, null, null, null] },
+  { label: "Когорта 14.04",  cells: [100, 75, 63, 54, 49, 46, null, null, null, null, null, null] },
+  { label: "Когорта 21.04",  cells: [100, 80, 68, 58, 53, null, null, null, null, null, null, null] },
+  { label: "Когорта 28.04",  cells: [100, 82, 70, 60, null, null, null, null, null, null, null, null] },
+  { label: "Когорта 05.05",  cells: [100, 78, 66, null, null, null, null, null, null, null, null, null] },
+  { label: "Когорта 12.05",  cells: [100, 84, null, null, null, null, null, null, null, null, null, null] },
+];
+
+function cohortClass(v) {
+  if (v === null || v === undefined) return "cell empty";
+  if (v >= 80) return "cell l5";
+  if (v >= 60) return "cell l4";
+  if (v >= 45) return "cell l3";
+  if (v >= 35) return "cell l2";
+  return "cell l1";
+}
+
+/* ============================================================
+   LTV
+============================================================ */
+const LTV_TOP = [
+  { name: "Мария К.",     count: 14, ltv: 28400 },
+  { name: "Алексей Б.",   count: 12, ltv: 24600 },
+  { name: "Светлана М.",  count: 11, ltv: 22100 },
+  { name: "Иван Д.",      count: 10, ltv: 19800 },
+  { name: "Ольга Р.",      count:  9, ltv: 18200 },
+  { name: "Наталья И.",   count:  9, ltv: 17400 },
+  { name: "Дмитрий П.",   count:  8, ltv: 15800 },
+  { name: "Анна Л.",       count:  8, ltv: 14900 },
+  { name: "Сергей К.",     count:  7, ltv: 13600 },
+  { name: "Елена Т.",      count:  7, ltv: 12800 },
+];
+
+const LTV_HIST = [
+  { range: "< 1k ₽",   v: 12 },
+  { range: "1–2k",      v: 28 },
+  { range: "2–5k",      v: 18 },
+  { range: "5–10k",     v: 6 },
+  { range: "10k+",      v: 3 },
+];
+
+/* ============================================================
+   FUNNEL
+============================================================ */
+const FUNNEL = [
+  { name: "Запрос в MAX",                sub: "клиент написал боту",          v: 142, stage: "s1" },
+  { name: "Slot-filled (заказ собран)",  sub: "ИИ собрал имя/состав/адрес",   v: 89,  stage: "s2" },
+  { name: "Подтверждён владельцем",       sub: "получен push, нажат подтвердить", v: 76, stage: "s3" },
+  { name: "Оплачен / выполнен",          sub: "клиент оплатил и забрал",      v: 67,  stage: "s4" },
+];
+
+/* ============================================================
+   HEATMAP (7 days x 24 hours)
+============================================================ */
+const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+
+// 7x24 intensities 0..5, peak Tue 18:00
+function buildHeat() {
+  const out = [];
+  for (let d = 0; d < 7; d++) {
+    const row = [];
+    for (let h = 0; h < 24; h++) {
+      let v = 0;
+      // off-hours
+      if (h < 9 || h >= 22) v = 0;
+      // morning
+      else if (h < 12) v = 1 + ((d + h) % 2);
+      // lunch
+      else if (h < 14) v = 2 + ((d + h) % 2);
+      // afternoon
+      else if (h < 17) v = 2 + ((h + d) % 3);
+      // peak evening
+      else if (h < 20) v = 3 + ((d + h) % 3);
+      // late evening
+      else v = 2;
+
+      // weekend boost
+      if (d >= 5 && h >= 11 && h < 20) v = Math.min(5, v + 1);
+      // Tue peak amplify
+      if (d === 1 && h === 18) v = 5;
+      // Tue 17/19 strong
+      if (d === 1 && (h === 17 || h === 19)) v = 4;
+
+      row.push(v);
+    }
+    out.push(row);
+  }
+  return out;
+}
+const HEAT = buildHeat();
+
+/* ============================================================
+   ROOT
+============================================================ */
+function App() {
+  const [period, setPeriod] = useState("month");
+  const [compare, setCompare] = useState(true);
+
+  return (
+    <div className="cab-shell">
+      <Sidebar current="analytics" />
+      <main className="cab-main">
+        <TopBar />
+        <div className="cab-content">
+          <div style={{marginBottom:18}}>
+            <div className="cab-mute" style={{fontSize:13}}>
+              <b style={{color:"var(--fg-1)"}}>Динамика бизнеса</b> · ROI · клиентская база
+            </div>
+          </div>
+
+          {/* TOOLBAR */}
+          <div className="an-toolbar">
+            <div className="an-datepick" role="tablist">
+              {[
+                {id:"today",   label:"Сегодня"},
+                {id:"week",    label:"Неделя"},
+                {id:"month",   label:"Месяц"},
+                {id:"quarter", label:"Квартал"},
+                {id:"year",    label:"Год"},
+                {id:"custom",  label:"Custom"},
+              ].map(p => (
+                <button key={p.id}
+                        role="tab"
+                        aria-selected={period === p.id}
+                        className={period === p.id ? "active" : ""}
+                        onClick={() => setPeriod(p.id)}>
+                  {p.label}
+                </button>
+              ))}
+            </div>
+            <label className="an-compare">
+              <input type="checkbox"
+                     checked={compare}
+                     onChange={(e) => setCompare(e.target.checked)} />
+              Сравнить с прошлым периодом
+            </label>
+          </div>
+
+          {/* KPI ROW */}
+          <div className="an-kpi-row">
+            {KPIS.map((k, i) => (
+              <div className="an-kpi" key={i}>
+                <span className="lbl"><Ic name="target" size={12} /> {k.lbl}</span>
+                <span className="val">{k.val}</span>
+                <span className={`delta ${k.up ? "up" : "dn"}`}>
+                  {k.up ? "↑" : "↓"} {k.delta}
+                  {compare && <span className="vs">vs прошлый месяц</span>}
+                </span>
+                <div className="spark"><Sparkline data={k.spark} up={k.up} /></div>
+              </div>
+            ))}
+          </div>
+
+          {/* CHARTS ROW */}
+          <div className="an-charts-row">
+            {/* Revenue dual-axis line */}
+            <div className="an-chart-card">
+              <h3>Выручка и заказы</h3>
+              <div className="sub">За последние 30 дней · правая ось — заказы</div>
+              <DualLineChart revenue={REVENUE_30} orders={ORDERS_30} />
+              <div className="ai-chart-legend">
+                <span><span className="dot" style={{background:"var(--brand-600)"}}></span>Выручка ₽<span className="num">245 850</span></span>
+                <span><span className="dot" style={{background:"#3b82f6"}}></span>Заказы<span className="num">132</span></span>
+              </div>
+            </div>
+
+            {/* Source breakdown donut */}
+            <div className="an-chart-card">
+              <h3>Источники заказов</h3>
+              <div className="sub">Откуда приходят клиенты</div>
+              <div className="an-donut">
+                <Donut slices={[
+                  { name: "MAX-бот",   v: 67, color: "#10b981" },
+                  { name: "Сайт",       v: 18, color: "#34d399" },
+                  { name: "Вручную",   v: 15, color: "#a7f3d0" },
+                ]} />
+                <div className="an-donut-legend">
+                  <div className="row">
+                    <span className="sw" style={{background:"#10b981"}}></span>
+                    <span className="name">MAX-бот</span>
+                    <span className="num">67%</span>
+                  </div>
+                  <div className="row">
+                    <span className="sw" style={{background:"#34d399"}}></span>
+                    <span className="name">Сайт</span>
+                    <span className="num">18%</span>
+                  </div>
+                  <div className="row">
+                    <span className="sw" style={{background:"#a7f3d0"}}></span>
+                    <span className="name">Вручную</span>
+                    <span className="num">15%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Top services bars */}
+            <div className="an-chart-card">
+              <h3>Топ услуг</h3>
+              <div className="sub">5 самых заказываемых · по объёму</div>
+              <div className="an-bars">
+                {TOP_SERVICES.map((s, i) => (
+                  <div className="an-bar-row" key={i}>
+                    <span className="name">{s.name}</span>
+                    <span className="vol">{s.orders}<small>{fmtRub(s.rev)}</small></span>
+                    <div className="track"><span style={{width: ((s.orders / TOP_SERVICES[0].orders) * 100).toFixed(0) + "%"}}></span></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* COHORT ANALYSIS */}
+          <section className="cab-section">
+            <div className="cab-section-head">
+              <div>
+                <h3>Cohort retention · 12 недель</h3>
+                <p>Какой % клиентов возвращаются за повторной покупкой</p>
+              </div>
+              <button className="btn btn-ghost"><Ic name="icon-action-export" size={13} /> CSV</button>
+            </div>
+            <div className="cab-card an-cohort">
+              <table>
+                <thead>
+                  <tr>
+                    <th className="cohort-head">Когорта</th>
+                    {Array.from({length:12}).map((_, i) => (
+                      <th key={i}>W{i + 1}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {COHORTS.map((c, i) => (
+                    <tr key={i}>
+                      <td className="label">{c.label}</td>
+                      {c.cells.map((v, j) => (
+                        <td key={j} className={cohortClass(v)}>
+                          {v === null || v === undefined ? "" : v + "%"}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          {/* LTV BREAKDOWN */}
+          <section className="cab-section">
+            <div className="cab-section-head">
+              <div>
+                <h3>LTV — пожизненная ценность клиента</h3>
+                <p>Средняя сумма, которую клиент приносит за всё время</p>
+              </div>
+            </div>
+            <div className="cab-card">
+              <div className="an-ltv-headline">
+                <span className="v">4 200 ₽</span>
+                <span className="l">средний LTV по бизнесу · топ-10% клиентов — <b style={{color:"var(--fg-1)"}}>12 400 ₽</b></span>
+              </div>
+
+              <div className="an-ltv-row">
+                {/* Histogram */}
+                <div>
+                  <h4 style={{margin:"0 0 12px", fontFamily:"var(--font-display)", fontSize:13, fontWeight:700}}>Распределение LTV</h4>
+                  <div className="an-hist">
+                    {LTV_HIST.map((b, i) => {
+                      const maxV = Math.max(...LTV_HIST.map(x => x.v));
+                      const h = ((b.v / maxV) * 100).toFixed(0) + "%";
+                      return (
+                        <div className="an-hist-bar" key={i}>
+                          <span className="v">{b.v}</span>
+                          <div className="bar" style={{height: h}}></div>
+                          <span className="l">{b.range}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Top 10 */}
+                <div>
+                  <h4 style={{margin:"0 0 12px", fontFamily:"var(--font-display)", fontSize:13, fontWeight:700}}>Топ-10 клиентов по LTV</h4>
+                  <table className="cab-tbl">
+                    <thead>
+                      <tr>
+                        <th>Клиент</th>
+                        <th style={{textAlign:"right"}}>Заказов</th>
+                        <th style={{textAlign:"right"}}>LTV</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {LTV_TOP.map((c, i) => (
+                        <tr key={i}>
+                          <td><b>{c.name}</b></td>
+                          <td className="num">{c.count}</td>
+                          <td className="num"><b style={{color:"var(--brand-700)"}}>{fmtRub(c.ltv)}</b></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* FUNNEL */}
+          <section className="cab-section">
+            <div className="cab-section-head">
+              <div>
+                <h3>Воронка CRM</h3>
+                <p>От запроса в MAX до оплаченного заказа · за месяц</p>
+              </div>
+            </div>
+            <div className="cab-card">
+              <div className="an-funnel">
+                {FUNNEL.map((f, i) => {
+                  const pct = ((f.v / FUNNEL[0].v) * 100).toFixed(0);
+                  const w = ((f.v / FUNNEL[0].v) * 100).toFixed(0) + "%";
+                  return (
+                    <div className="an-funnel-row" key={i}>
+                      <div className="name">
+                        {f.name}
+                        <small>{f.sub}</small>
+                      </div>
+                      <div className={`bar ${f.stage}`} style={{width: w}}>
+                        <span className="lbl">{f.v}</span>
+                      </div>
+                      <div className="pct">
+                        {pct}%
+                        <small>{i === 0 ? "100% базы" : `от запросов`}</small>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="cab-callout cab-callout-emerald">
+                <Ic name="spark-ai" size={18} />
+                <div>
+                  <b>Drop-off на «Подтверждение владельцем» — 13%.</b> Это 12 клиентов в месяц.
+                  Проверьте push-уведомления в MAX (вкладка Настройки → Push) — возможно, владелец
+                  не успевает реагировать в течение 15 минут (после этого клиенты передумывают).
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* HEATMAP */}
+          <section className="cab-section">
+            <div className="cab-section-head">
+              <div>
+                <h3>Активность по часам и дням</h3>
+                <p>Когда клиенты пишут вам чаще — спланируйте присутствие владельца</p>
+              </div>
+            </div>
+            <div className="cab-card">
+              <div className="an-heatmap">
+                <div className="h-corner"></div>
+                {Array.from({length:24}).map((_, h) => (
+                  <div key={"h" + h} className="h-hour">{h % 3 === 0 ? h : ""}</div>
+                ))}
+                {DAYS.map((d, di) => (
+                  <React.Fragment key={d}>
+                    <div className="h-day">{d}</div>
+                    {HEAT[di].map((v, hi) => {
+                      const cls = v === 0 ? "h-cell" : `h-cell l${v}`;
+                      const peak = (di === 1 && hi === 18) ? " peak" : "";
+                      return <div key={hi} className={cls + peak}
+                                  title={`${d} ${hi}:00 — ${v} ед.`}></div>;
+                    })}
+                  </React.Fragment>
+                ))}
+              </div>
+
+              <div className="an-heatmap-legend">
+                <span>Меньше</span>
+                <div className="scale">
+                  <span style={{background:"rgba(16, 185, 129, 0.05)"}}></span>
+                  <span style={{background:"rgba(16, 185, 129, 0.10)"}}></span>
+                  <span style={{background:"rgba(16, 185, 129, 0.22)"}}></span>
+                  <span style={{background:"rgba(16, 185, 129, 0.38)"}}></span>
+                  <span style={{background:"rgba(16, 185, 129, 0.55)"}}></span>
+                  <span style={{background:"rgba(16, 185, 129, 0.75)"}}></span>
+                </div>
+                <span>Больше</span>
+                <span style={{marginLeft:"auto", fontFamily:"var(--font-body)", color:"var(--brand-700)", fontWeight:600}}>
+                  <Ic name="spark-ai" size={12} style={{display:"inline-block", verticalAlign:"-2px", marginRight:4}} />
+                  Пиковая активность — Вт 18:00
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {/* EXPORT BAR */}
+          <div className="an-export-bar">
+            <span className="meta">
+              <Ic name="status-checkmark-done" size={14} />
+              Данные актуальны на <b>15.05.2026, 17:42 МСК</b>
+            </span>
+            <button className="btn btn-secondary"><Ic name="icon-action-download" size={13} /> PDF report</button>
+            <button className="btn btn-secondary"><Ic name="icon-action-export" size={13} /> CSV raw data</button>
+            <button className="btn btn-primary"><Ic name="notification-bell" size={13} /> Ежемесячный email-отчёт</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

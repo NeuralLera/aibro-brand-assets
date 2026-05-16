@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Настройка промпта ИИ‑ассистента — Справка СММ АЙБРО</title>
+<meta name="description" content="Как написать system prompt для ИИ‑ассистента: что обязательно указать, пример хорошего промпта, что не работает, как помогает ИИ‑коуч.">
+<link rel="icon" href="assets/logos/favicon-light.svg">
+<link rel="stylesheet" href="assets/colors_and_type.css">
+<link rel="stylesheet" href="assets/help-article.css">
+</head>
+<body>
+
+<a href="#main" class="skip">К&nbsp;содержимому</a>
+
+<header class="pub-header">
+  <div class="pub-header-inner">
+    <a href="index.html" class="pub-brand" aria-label="СММ АЙБРО — на главную">
+      <span class="pub-brand-tile" aria-hidden="true">
+        <img src="assets/logos/robot-icon-light.svg" alt="">
+      </span>
+      <span class="pub-brand-word">СММ <em>АЙБРО</em></span>
+    </a>
+    <nav class="pub-nav" aria-label="Основная навигация">
+      <a href="#">Возможности</a>
+      <a href="#">Примеры</a>
+      <a href="#">Тариф</a>
+      <a href="#">Партнёрам</a>
+      <a href="index.html" class="is-current" aria-current="page">Справка</a>
+    </nav>
+    <div class="pub-header-actions">
+      <a href="#" class="pub-btn pub-btn--ghost pub-btn--sm">Войти</a>
+      <a href="#" class="pub-btn pub-btn--primary pub-btn--sm">Пробный период</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <div class="article-shell">
+
+    <aside class="side-rail" aria-label="Навигация по разделу ИИ‑ассистент">
+      <h4>Раздел</h4>
+      <ul class="side-nav">
+        <li>
+          <a href="index.html" class="hub-link">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+            </span>
+            Все темы справки
+          </a>
+        </li>
+      </ul>
+
+      <h4>ИИ‑ассистент</h4>
+      <ul class="side-nav">
+        <li>
+          <a href="help-ai-assistant-prompt.html" class="is-current" aria-current="page">
+            Настройка промпта
+          </a>
+        </li>
+        <li><a href="#">ИИ‑коуч</a></li>
+        <li><a href="#">Голосовые ответы</a></li>
+        <li><a href="#">Лимиты ответов ИИ</a></li>
+      </ul>
+
+      <h4>Связанные разделы</h4>
+      <ul class="side-nav">
+        <li><a href="help-connection-max-channel.html">Подключение MAX</a></li>
+        <li><a href="help-content-autoposting.html">Автопостинг</a></li>
+        <li><a href="help-business-crm-orders.html">Приём заказов</a></li>
+      </ul>
+
+      <div class="side-support">
+        <p>Не&nbsp;нашли ответ?</p>
+        <a href="#">
+          Написать в&nbsp;поддержку
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </aside>
+
+    <article class="article">
+
+      <nav class="crumbs" aria-label="Хлебные крошки">
+        <a href="index.html">Главная</a>
+        <span class="sep" aria-hidden="true"></span>
+        <a href="index.html">Справка</a>
+        <span class="sep" aria-hidden="true"></span>
+        <a href="#">ИИ‑ассистент</a>
+        <span class="sep" aria-hidden="true"></span>
+        <span class="current" aria-current="page">Настройка промпта</span>
+      </nav>
+
+      <header class="article-head">
+        <div class="article-eyebrow">
+          <span class="dot" aria-hidden="true"></span>
+          ИИ‑ассистент · Промпт
+        </div>
+        <h1>Настройка промпта ИИ‑ассистента</h1>
+        <div class="article-meta">
+          <span>7&nbsp;мин чтения</span>
+          <span class="sep" aria-hidden="true"></span>
+          <span>обновлено 16.05.2026</span>
+          <span class="sep" aria-hidden="true"></span>
+          <span>автор: команда СММ&nbsp;АЙБРО</span>
+        </div>
+      </header>
+
+      <div class="article-body">
+
+        <h2 id="chto-takoe">Что такое промпт</h2>
+        <p>
+          Промпт (system prompt)&nbsp;— это <strong>инструкция для ИИ</strong>: кто он, как разговаривает с&nbsp;клиентами, что знает, чего не&nbsp;знает, что разрешено говорить, что нельзя. Это самая важная настройка ассистента&nbsp;— от&nbsp;промпта зависит, как клиенты воспримут общение с&nbsp;вашим бизнесом.
+        </p>
+        <p>
+          Хороший промпт = ИИ ведёт себя как опытный консультант, который работает у&nbsp;вас уже год. Плохой промпт = ИИ говорит общими фразами, обещает лишнее и&nbsp;злит клиентов.
+        </p>
+
+        <h2 id="gde-nastraivat">Где настраивать</h2>
+        <p>
+          Кабинет → <strong>ИИ‑ассистент → Промпт</strong>. Изменения применяются сразу&nbsp;— уже следующее сообщение клиента ИИ ответит по&nbsp;новому промпту.
+        </p>
+
+        <h2 id="obyazatelno">Что обязательно указать в&nbsp;промпте</h2>
+        <ul class="featlist featlist--check">
+          <li><strong>Имя бизнеса</strong>&nbsp;— чтобы ИИ называл вас правильно («ассистент пекарни Уют», а&nbsp;не&nbsp;«ассистент компании»).</li>
+          <li><strong>Тип бизнеса</strong>&nbsp;— чем занимаетесь («пекарня домашних тортов», «салон маникюра», «доставка цветов»).</li>
+          <li><strong>Тон общения</strong>&nbsp;— формальный, дружеский, неформальный.</li>
+          <li><strong>Что умеете</strong>&nbsp;— список услуг/товаров (общими словами, конкретику ИИ берёт из&nbsp;каталога).</li>
+          <li><strong>Чего НЕ&nbsp;умеете</strong>&nbsp;— чтобы ИИ не&nbsp;обещал то, чего нет. Это самое важное.</li>
+          <li><strong>Как реагировать, если не&nbsp;знает</strong>&nbsp;— перевести на&nbsp;вас, попросить уточнить.</li>
+        </ul>
+
+        <h2 id="primer">Пример хорошего промпта</h2>
+        <p>Для пекарни «Уют»&nbsp;— просто скопируйте, замените под себя:</p>
+        <div class="example" aria-label="Пример промпта">
+          <div class="ex-head">
+            <span class="dot" aria-hidden="true"></span>
+            Промпт · пекарня домашних тортов
+          </div>
+<pre class="ex-body">Вы&nbsp;— дружелюбный ассистент пекарни «Уют».
+Отвечайте клиентам в&nbsp;MAX короткими сообщениями (1–2 предложения, без воды).
+
+Что вы&nbsp;знаете:
+- Полный каталог товаров с&nbsp;актуальными ценами
+- Состав каждого торта и&nbsp;аллергены
+- Часы работы пекарни и&nbsp;даты доставки
+
+Что вы&nbsp;умеете:
+- Принять заказ (имя, телефон, адрес, состав, дата)
+- Подсказать с&nbsp;выбором торта под событие
+- Рассказать про скидки и&nbsp;акции
+- Дать рекомендации по&nbsp;хранению
+
+Что нельзя:
+- НЕ&nbsp;предлагать скидки без явной акции в&nbsp;каталоге
+- НЕ&nbsp;обещать «доставим сегодня»&nbsp;— только на&nbsp;завтра
+- НЕ&nbsp;обсуждать политику, религию, медицину
+- НЕ&nbsp;давать диетические рекомендации
+
+Если не&nbsp;знаете ответ&nbsp;— честно скажите:
+«Уточню у&nbsp;Анны и&nbsp;вернусь, минута» и&nbsp;поставьте задачу владельцу.</pre>
+        </div>
+
+        <h2 id="ne-rabotaet">Что НЕ&nbsp;работает в&nbsp;промпте</h2>
+        <ul class="featlist featlist--cross">
+          <li><strong>«Будь умным» / «Будь профессионалом»</strong>&nbsp;— слишком абстрактно. ИИ не&nbsp;понимает, что для вашего бизнеса значит «умный».</li>
+          <li><strong>«Закрывай возражения»</strong>&nbsp;— нужны конкретные сценарии: «если клиент говорит „дорого“&nbsp;— расскажи про натуральные ингредиенты».</li>
+          <li><strong>Несколько ролей в&nbsp;одном промпте</strong>&nbsp;— «ты и&nbsp;консультант, и&nbsp;курьер, и&nbsp;кассир». ИИ запутается. Выбирайте одну роль.</li>
+          <li><strong>«Будь эмпатичным»</strong> без примеров&nbsp;— ИИ будет вставлять «понимаю вас» к&nbsp;месту и&nbsp;не&nbsp;к&nbsp;месту. Лучше&nbsp;— «если клиент жалуется, сначала извинись, потом предложи решение».</li>
+          <li><strong>Очень длинный промпт</strong> (более 3000&nbsp;символов)&nbsp;— ИИ начнёт забывать начало. Держите 1500–2500&nbsp;символов.</li>
+        </ul>
+
+        <h2 id="ii-kouch">ИИ‑коуч</h2>
+        <p>
+          В&nbsp;кабинете есть <strong>ИИ‑коуч</strong>&nbsp;— отдельный модуль, который раз в&nbsp;неделю анализирует диалоги ассистента с&nbsp;клиентами и&nbsp;предлагает улучшения промпта. Например:
+        </p>
+        <ul class="featlist featlist--check">
+          <li>«В&nbsp;15&nbsp;диалогах клиенты спросили про вегетарианские торты&nbsp;— добавьте в&nbsp;промпт информацию».</li>
+          <li>«ИИ 7&nbsp;раз пообещал доставку сегодня, хотя у&nbsp;вас только на&nbsp;завтра&nbsp;— уточните в&nbsp;промпте».</li>
+          <li>«Клиенты часто пишут „торт без сахара“&nbsp;— добавьте к&nbsp;каталогу или укажите, что у&nbsp;вас таких нет».</li>
+        </ul>
+        <p>
+          Включается в&nbsp;разделе <strong>ИИ‑ассистент → Коуч</strong>. Доступен в&nbsp;тарифе 4&nbsp;990&nbsp;₽/мес и&nbsp;на&nbsp;<a href="help-billing-trial.html">пробном периоде</a>.
+        </p>
+
+        <h2 id="faq">Частые вопросы</h2>
+        <div class="article-faq" id="article-faq">
+
+          <div class="item" aria-expanded="false">
+            <button class="q" type="button" aria-expanded="false" aria-controls="afaq-a-1" id="afaq-q-1">
+              <span>На&nbsp;каком языке писать промпт?</span>
+              <span class="caret" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+            <div class="a" id="afaq-a-1" role="region" aria-labelledby="afaq-q-1">
+              <div class="a-inner">
+                На&nbsp;русском&nbsp;— это нативный язык вашей аудитории и&nbsp;ИИ хорошо его понимает. Если у&nbsp;вас англоязычные клиенты&nbsp;— добавьте в&nbsp;промпт строку: «Если клиент пишет на&nbsp;английском&nbsp;— отвечайте на&nbsp;английском».
+              </div>
+            </div>
+          </div>
+
+          <div class="item" aria-expanded="false">
+            <button class="q" type="button" aria-expanded="false" aria-controls="afaq-a-2" id="afaq-q-2">
+              <span>Можно&nbsp;ли использовать готовые промпты для моей ниши?</span>
+              <span class="caret" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+            <div class="a" id="afaq-a-2" role="region" aria-labelledby="afaq-q-2">
+              <div class="a-inner">
+                Да. В&nbsp;кабинете → <strong>ИИ‑ассистент → Шаблоны промптов</strong> есть готовые для популярных ниш: пекарни, цветочные, салоны красоты, кафе, доставка еды, фермеры, мастерские. Берите шаблон и&nbsp;допишите под себя (имя бизнеса, ваши особенности).
+              </div>
+            </div>
+          </div>
+
+          <div class="item" aria-expanded="false">
+            <button class="q" type="button" aria-expanded="false" aria-controls="afaq-a-3" id="afaq-q-3">
+              <span>Что если ИИ всё равно говорит ерунду?</span>
+              <span class="caret" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+            <div class="a" id="afaq-a-3" role="region" aria-labelledby="afaq-q-3">
+              <div class="a-inner">
+                Откройте диалог в&nbsp;кабинете (<b>Коммуникации → Диалоги</b>), найдите проблемное сообщение и&nbsp;нажмите <strong>«Поправить промпт»</strong>&nbsp;— ИИ‑коуч предложит, что добавить в&nbsp;инструкцию, чтобы такое не&nbsp;повторилось. Если ИИ систематически путается&nbsp;— напишите в&nbsp;поддержку, посмотрим вместе.
+              </div>
+            </div>
+          </div>
+
+          <div class="item" aria-expanded="false">
+            <button class="q" type="button" aria-expanded="false" aria-controls="afaq-a-4" id="afaq-q-4">
+              <span>Как часто можно менять промпт?</span>
+              <span class="caret" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+            <div class="a" id="afaq-a-4" role="region" aria-labelledby="afaq-q-4">
+              <div class="a-inner">
+                Сколько угодно. Каждая редакция сохраняется в&nbsp;истории (<b>Промпт → История версий</b>), можно откатить к&nbsp;любой предыдущей. Меняйте смело&nbsp;— это безопасно. Лучше пробовать и&nbsp;улучшать, чем держать неудачный.
+              </div>
+            </div>
+          </div>
+
+          <div class="item" aria-expanded="false">
+            <button class="q" type="button" aria-expanded="false" aria-controls="afaq-a-5" id="afaq-q-5">
+              <span>Видят&nbsp;ли клиенты текст промпта?</span>
+              <span class="caret" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </button>
+            <div class="a" id="afaq-a-5" role="region" aria-labelledby="afaq-q-5">
+              <div class="a-inner">
+                Нет. Промпт&nbsp;— это служебная инструкция, видит только ИИ. Клиенты видят только ответы. Но&nbsp;будьте осторожны: если в&nbsp;промпте написать «никогда не&nbsp;говори клиенту&nbsp;X»&nbsp;— на&nbsp;прямой вопрос «а&nbsp;что вы&nbsp;скрываете?» ИИ может проболтаться. Лучше&nbsp;— нейтральное «эта информация недоступна».
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <p style="margin-top: 18px; font-size: 14px; color: var(--fg-3);">
+          См.&nbsp;также: <a href="help-content-autoposting.html">Автопостинг</a> · <a href="help-business-crm-orders.html">Приём заказов</a>.
+        </p>
+      </div>
+
+      <div class="helpful" id="helpful">
+        <span class="label">Помогла&nbsp;ли статья?</span>
+        <div class="votes">
+          <button class="vote" type="button" data-vote="up" aria-label="Да, помогла">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H7"/></svg>
+            Да
+          </button>
+          <button class="vote" type="button" data-vote="down" aria-label="Нет, не помогла">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H17"/></svg>
+            Нет
+          </button>
+        </div>
+        <span class="thanks" aria-live="polite">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Спасибо за&nbsp;отзыв
+        </span>
+      </div>
+
+      <section class="related" aria-labelledby="rel-title">
+        <h3 id="rel-title">Читайте дальше</h3>
+        <div class="related-grid">
+          <a href="help-connection-max-channel.html" class="related-card">
+            <span class="cat">Подключение</span>
+            <span class="ttl">Подключение MAX‑канала</span>
+            <p class="desc">Перед настройкой промпта нужно подключить канал и&nbsp;бота.</p>
+          </a>
+          <a href="help-content-autoposting.html" class="related-card">
+            <span class="cat">Контент</span>
+            <span class="ttl">Автопостинг 5/день</span>
+            <p class="desc">ИИ генерирует не&nbsp;только ответы, но&nbsp;и&nbsp;посты в&nbsp;канал.</p>
+          </a>
+          <a href="help-business-crm-orders.html" class="related-card">
+            <span class="cat">Бизнес · CRM</span>
+            <span class="ttl">Приём заказов через ИИ</span>
+            <p class="desc">Как ассистент собирает заказы с&nbsp;имя/телефон/адрес/состав.</p>
+          </a>
+        </div>
+      </section>
+
+      <aside class="support-card" aria-label="Поддержка">
+        <div class="text">
+          <strong>Помочь написать промпт под ваш бизнес?</strong>
+          <p>Напишите в&nbsp;поддержку с&nbsp;описанием ниши&nbsp;— команда подберёт шаблон и&nbsp;доработает под вас. Ответ в&nbsp;течение часа по&nbsp;будням 9:00–21:00&nbsp;МСК.</p>
+        </div>
+        <a href="#" class="max-cta">
+          <img src="assets/logos/max-glyph.svg" alt="">
+          Открыть в&nbsp;MAX
+        </a>
+      </aside>
+
+    </article>
+
+    <aside class="toc-rail" aria-label="Содержание статьи">
+      <h4>В&nbsp;этой статье</h4>
+      <ul class="toc" id="toc">
+        <li><a href="#chto-takoe">Что такое промпт</a></li>
+        <li><a href="#gde-nastraivat">Где настраивать</a></li>
+        <li><a href="#obyazatelno">Что обязательно</a></li>
+        <li><a href="#primer">Пример промпта</a></li>
+        <li><a href="#ne-rabotaet">Что НЕ&nbsp;работает</a></li>
+        <li><a href="#ii-kouch">ИИ‑коуч</a></li>
+        <li><a href="#faq">Частые вопросы</a></li>
+      </ul>
+    </aside>
+
+  </div>
+
+</main>
+
+<footer class="pub-footer">
+  <div class="pub-footer-inner">
+    <div class="footer-cols">
+      <div class="footer-brand">
+        <a href="index.html" class="pub-brand" aria-label="СММ АЙБРО — на главную">
+          <span class="pub-brand-tile" aria-hidden="true">
+            <img src="assets/logos/robot-icon-light.svg" alt="">
+          </span>
+          <span class="pub-brand-word">СММ <em>АЙБРО</em></span>
+        </a>
+        <p>ИИ‑автоматизация бизнеса в&nbsp;мессенджере MAX: ассистент клиентам 24/7, автопостинг, приём заказов и&nbsp;мини‑CRM.</p>
+      </div>
+      <div>
+        <h5>Продукт</h5>
+        <ul>
+          <li><a href="#">Возможности</a></li>
+          <li><a href="#">Демо по&nbsp;нишам</a></li>
+          <li><a href="#">Тариф</a></li>
+          <li><a href="#">Пробный период</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Помощь</h5>
+        <ul>
+          <li><a href="index.html">Все статьи</a></li>
+          <li><a href="help-faq.html">Частые вопросы</a></li>
+          <li><a href="#">Канал поддержки</a></li>
+          <li><a href="help-roadmap.html">Дорожная карта</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Компания</h5>
+        <ul>
+          <li><a href="help-partner-program.html">Партнёрам</a></li>
+          <li><a href="#">Реквизиты</a></li>
+          <li><a href="legal-offer.html">Договор‑оферта</a></li>
+          <li><a href="legal-privacy.html">Политика данных</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>ИП Мальцев Валерий Валерьевич · ИНН 519041916737 · УСН 6% · Т‑Банк Санкт‑Петербург. Услуги оказываются на&nbsp;территории Российской Федерации.</p>
+      <p>© 2026 СММ АЙБРО</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    const items = document.querySelectorAll('#article-faq .item');
+    items.forEach((item) => {
+      const btn = item.querySelector('.q');
+      const ans = item.querySelector('.a');
+      btn.addEventListener('click', () => {
+        const open = item.getAttribute('aria-expanded') === 'true';
+        if (open) {
+          item.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-expanded', 'false');
+          ans.style.maxHeight = '0px';
+        } else {
+          item.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-expanded', 'true');
+          ans.style.maxHeight = ans.scrollHeight + 'px';
+        }
+      });
+    });
+  })();
+
+  (function () {
+    const wrap = document.getElementById('helpful');
+    if (!wrap) return;
+    const votes = wrap.querySelectorAll('.vote');
+    votes.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        votes.forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        wrap.classList.add('is-voted');
+      });
+    });
+  })();
+
+  (function () {
+    const toc = document.getElementById('toc');
+    if (!toc) return;
+    const links = [...toc.querySelectorAll('a')];
+    const headings = links
+      .map((a) => document.getElementById(a.getAttribute('href').slice(1)))
+      .filter(Boolean);
+    if (!('IntersectionObserver' in window)) return;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const id = e.target.id;
+          links.forEach((a) => {
+            a.classList.toggle('is-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-96px 0px -70% 0px', threshold: 0 });
+    headings.forEach((h) => obs.observe(h));
+  })();
+
+  (function () {
+    document.querySelectorAll('a[href^="#"]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        const href = a.getAttribute('href');
+        if (href === '#' || href.length < 2) return;
+        const target = document.querySelector(href);
+        if (!target) return;
+        e.preventDefault();
+        const top = window.scrollY + target.getBoundingClientRect().top - 88;
+        window.scrollTo({ top, behavior: 'smooth' });
+        history.replaceState(null, '', href);
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

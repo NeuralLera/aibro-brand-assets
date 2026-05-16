@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Email-шаблоны (8 transactional)</title>
+  <link rel="icon" type="image/svg+xml" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/ui-kit.css">
+  <link rel="stylesheet" href="design/email-templates.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+const ICO = "design/assets/icons/";
+const LOGO = "design/assets/logos/";
+
+function Ic({ name, size = 18, style }) {
+  return (
+    <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+         style={{ width: size, height: size, display: "block", ...style }} />
+  );
+}
+
+/* ============================================================
+   TOC nav
+============================================================ */
+const SECTIONS = [
+  { id: "welcome",  num: "01", title: "Welcome",                   desc: "После регистрации · приветствие + 3-step roadmap" },
+  { id: "trial-x",  num: "02", title: "Завтра закончится пробный", desc: "T-1 до конца пробного периода · функции которые потеряются" },
+  { id: "trial-e",  num: "03", title: "Пробный закончился",        desc: "T+0 · мягкое сообщение + опция «скачать данные»" },
+  { id: "receipt",  num: "04", title: "Чек об оплате",             desc: "После успешной оплаты · 54-ФЗ compliance" },
+  { id: "refund",   num: "05", title: "Возврат оформлен",          desc: "После refund · сумма + ETA зачисления" },
+  { id: "payout",   num: "06", title: "Партнёрская выплата",       desc: "Партнёрам · сумма + breakdown НДФЛ + 2-НДФЛ" },
+  { id: "ref-new",  num: "07", title: "Новый реферал",             desc: "Партнёру когда L1/L2 зарегистрировался" },
+  { id: "renewed",  num: "08", title: "Подписка продлена",         desc: "После успешного auto-billing · подтверждение" },
+];
+
+function Toc() {
+  return (
+    <nav className="uk-toc" aria-label="Разделы Email templates">
+      {SECTIONS.map(s => (
+        <a key={s.id} href={`#${s.id}`}>
+          <span className="uk-toc-num">{s.num}</span>
+          <span>{s.title}</span>
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+function Section({ id, num, title, desc, children }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <section id={id} className={`uk-section ${open ? "" : "collapsed"}`}>
+      <div className={`uk-section-head ${open ? "" : "collapsed"}`} onClick={() => setOpen(!open)}>
+        <div>
+          <h2><span className="num">{num}</span> {title}</h2>
+          <p className="desc">{desc}</p>
+        </div>
+        <button className="uk-section-toggle" aria-label={open ? "Свернуть" : "Развернуть"}>
+          <Ic name="icon-action-expand" size={14} />
+        </button>
+      </div>
+      {open && <div className="uk-section-body">{children}</div>}
+    </section>
+  );
+}
+
+/* ============================================================
+   EMAIL WINDOW (chrome + meta-block + body)
+============================================================ */
+function EmailWindow({ from, to, subject, tag = "transactional", children, plaintext }) {
+  const [showText, setShowText] = useState(false);
+  return (
+    <div className="em-window">
+      <div className="em-chrome">
+        <span className="em-chrome-dot" />
+        <span className="em-chrome-dot" />
+        <span className="em-chrome-dot" />
+        <span className="em-chrome-title">Mail · preview · {tag}</span>
+      </div>
+      <div className="em-meta-block">
+        <div className="em-meta-row">
+          <span className="label">от</span>
+          <span className="value">{from}</span>
+        </div>
+        <div className="em-meta-row">
+          <span className="label">кому</span>
+          <span className="value">{to}</span>
+        </div>
+        <div className="em-subject">{subject}</div>
+      </div>
+      <div className="em-body">
+        {children}
+      </div>
+
+      <div className="em-actions-row" style={{padding: "0 18px 14px"}}>
+        <a href="#" onClick={e => e.preventDefault()}
+           style={{fontSize: 12, color: "var(--brand-700)", fontWeight: 600}}>
+          Открыть полный preview →
+        </a>
+        <button className="uk-btn uk-btn--ghost uk-btn--sm" onClick={() => setShowText(s => !s)}>
+          <Ic name="file-text" size={12} /> {showText ? "Скрыть" : "Показать"} plain-text
+        </button>
+      </div>
+      {showText && (
+        <div style={{padding: "0 18px 18px"}}>
+          <pre className="em-plaintext">{plaintext}</pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   Reusable: branded card header / footer
+============================================================ */
+function EmHeader({ kind = "", tag = "" }) {
+  return (
+    <div className={`em-header ${kind ? "em-header--" + kind : ""}`}>
+      <div className="em-header-logo">
+        <img src={`${LOGO}robot-icon-light.svg`} alt="" />
+      </div>
+      <span className="em-header-brand">СММ АЙБРО</span>
+      {tag && <span className="em-header-tag">{tag}</span>}
+    </div>
+  );
+}
+
+function EmFooter({ extra }) {
+  return (
+    <div className="em-footer">
+      <div className="em-footer-row em-footer-brand">СММ АЙБРО · ИП Мальцев Валерий Валерьевич</div>
+      <div className="em-footer-row">ИНН 519041916737 · УСН 6% · работаем по 152-ФЗ</div>
+      {extra && <div className="em-footer-row" style={{marginTop: 6}}>{extra}</div>}
+      <div className="em-footer-row" style={{marginTop: 8}}>
+        <a href="#" onClick={e => e.preventDefault()}>Отписаться</a> ·
+        <a href="#" onClick={e => e.preventDefault()}> Настройки уведомлений</a> ·
+        <a href="#" onClick={e => e.preventDefault()}> Помощь</a>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   1 — Welcome
+============================================================ */
+function EmailWelcome() {
+  return (
+    <EmailWindow
+      from="СММ АЙБРО <hello@smmaibro.ru>"
+      to="Анна Соколова <anna@pekarnya-uyut.ru>"
+      subject="Добро пожаловать в СММ АЙБРО"
+      tag="welcome"
+      plaintext={`Добро пожаловать в СММ АЙБРО, Анна!
+
+Мы рады, что вы с нами. Ваш Пробный период активен 5 дней —
+этого хватит, чтобы оценить, как ИИ-ассистент работает с
+вашим бизнесом в MAX.
+
+3 шага, чтобы начать:
+1. Подключите бизнес-канал в MAX
+2. Загрузите 5-10 товаров (или CSV)
+3. Включите ИИ-ассистента — он начнёт отвечать клиентам
+
+Открыть кабинет: https://cabinet.smmaibro.ru
+
+Вопросы? Напишите в @aibro_support
+СММ АЙБРО · ИП Мальцев · ИНН 519041916737`}
+    >
+      <div className="em-card">
+        <EmHeader tag="Welcome" />
+        <div className="em-content">
+          <h3 className="em-greet">Добро пожаловать, Анна <span aria-hidden="true">👋</span></h3>
+          <p className="em-p">
+            Мы рады, что вы выбрали СММ АЙБРО. Пробный период активен <strong>5 дней</strong> —
+            этого хватит, чтобы оценить, как ИИ-ассистент работает с вашим бизнесом в MAX.
+          </p>
+
+          <div className="em-banner em-banner--success">
+            <div className="em-banner-icon em-banner-icon--success">
+              <Ic name="gift-trial" size={14} />
+            </div>
+            <div>
+              <strong>Пробный период активен до 21.05.2026</strong><br />
+              Все функции тарифа открыты · 2 автопоста/день · 100 ответов ИИ · ИИ-коуч и голос
+            </div>
+          </div>
+
+          <a className="em-cta" href="#" onClick={e => e.preventDefault()}>
+            Открыть кабинет →
+          </a>
+
+          <p className="em-p" style={{marginTop: 18, fontWeight: 600, color: "var(--fg-1)"}}>
+            3 шага, чтобы начать:
+          </p>
+          <div className="em-steps">
+            <div className="em-step">
+              <div className="em-step-num">1</div>
+              <div className="em-step-body">
+                <h4 className="em-step-title">Подключите бизнес-канал в MAX</h4>
+                <p className="em-step-text">Добавьте бота — он подхватит подписчиков и каталог.</p>
+              </div>
+            </div>
+            <div className="em-step">
+              <div className="em-step-num">2</div>
+              <div className="em-step-body">
+                <h4 className="em-step-title">Загрузите 5-10 товаров</h4>
+                <p className="em-step-text">Вручную или CSV — ИИ создаст карточки и опишет.</p>
+              </div>
+            </div>
+            <div className="em-step">
+              <div className="em-step-num">3</div>
+              <div className="em-step-body">
+                <h4 className="em-step-title">Включите ИИ-ассистента</h4>
+                <p className="em-step-text">Он начнёт отвечать клиентам в MAX и принимать заказы.</p>
+              </div>
+            </div>
+          </div>
+
+          <p className="em-p" style={{marginTop: 14, fontSize: 13, color: "var(--fg-3)"}}>
+            Вопросы? Напишите в <a href="#" onClick={e => e.preventDefault()}>@aibro_support</a> в MAX —
+            отвечаем в течение часа.
+          </p>
+        </div>
+        <EmFooter />
+      </div>
+    </EmailWindow>
+  );
+}
+
+/* ============================================================
+   2 — Trial expiring tomorrow
+============================================================ */
+function EmailTrialExpiring() {
+  return (
+    <EmailWindow
+      from="СММ АЙБРО <billing@smmaibro.ru>"
+      to="Анна Соколова <anna@pekarnya-uyut.ru>"
+      subject="Завтра закончится пробный период"
+      tag="trial · t-1"
+      plaintext={`Анна, завтра в 23:59 МСК закончится Пробный период.
+
+Что вы потеряете, если не активируете тариф:
+• Автопостинг 2 раза в день
+• 100 ответов ИИ-ассистента
+• ИИ-коуч и голосовые ответы
+• Загрузка товаров через CSV
+
+Активировать тариф 4 990 ₽/мес:
+https://cabinet.smmaibro.ru/billing
+
+Один тариф, всё включено. Без скрытых платежей.
+
+СММ АЙБРО · ИП Мальцев · ИНН 519041916737`}
+    >
+      <div className="em-card">
+        <EmHeader kind="warning" tag="T-1" />
+        <div className="em-content">
+          <h3 className="em-greet">Анна, завтра последний день</h3>
+
+          <div className="em-banner em-banner--warning">
+            <div className="em-banner-icon em-banner-icon--warning">
+              <Ic name="toast-warning" size={14} />
+            </div>
+            <div>
+              <strong>Пробный период истекает 21.05.2026 в 23:59 МСК</strong><br />
+              Чтобы не прерывать работу ИИ-ассистента — активируйте тариф сейчас.
+            </div>
+          </div>
+
+          <p className="em-p" style={{fontWeight: 600, color: "var(--fg-1)", marginTop: 14}}>
+            Что вы потеряете без подписки:
+          </p>
+          <ul className="em-feat-list">
+            <li>Автопостинг 2 раза в день</li>
+            <li>100 ответов ИИ-ассистента</li>
+            <li>ИИ-коуч и голос</li>
+            <li>Загрузка товаров CSV</li>
+          </ul>
+
+          <a className="em-cta" href="#" onClick={e => e.preventDefault()}>
+            Активировать тариф 4 990 ₽/мес →
+          </a>
+
+          <p className="em-p" style={{marginTop: 12, fontSize: 13, color: "var(--fg-3)", textAlign: "center"}}>
+            Один тариф · всё включено · без скрытых платежей
+          </p>
+        </div>
+        <EmFooter />
+      </div>
+    </EmailWindow>
+  );
+}
+
+/* ============================================================
+   3 — Trial expired
+============================================================ */
+function EmailTrialExpired() {
+  return (
+    <EmailWindow
+      from="СММ АЙБРО <billing@smmaibro.ru>"
+      to="Анна Соколова <anna@pekarnya-uyut.ru>"
+      subject="Пробный период закончился"
+      tag="trial · t+0"
+      plaintext={`Анна, ваш Пробный период закончился 21.05.2026.
+
+ИИ-ассистент пока приостановлен. Если вы хотите продолжить —
+активируйте тариф 4 990 ₽/мес.
+
+Если решили уйти — без обид. Вы можете скачать данные
+(товары, клиентов, переписки) одним архивом в течение 30 дней.
+
+Активировать: https://cabinet.smmaibro.ru/billing
+Скачать данные: https://cabinet.smmaibro.ru/settings/export
+
+СММ АЙБРО · ИП Мальцев · ИНН 519041916737`}
+    >
+      <div className="em-card">
+        <EmHeader kind="neutral" tag="T+0" />
+        <div className="em-content">
+          <h3 className="em-greet">Пробный период закончился</h3>
+          <p className="em-p">
+            Анна, ваш пробный период истёк <strong>21.05.2026</strong>. ИИ-ассистент пока
+            приостановлен — клиенты в MAX не получают автоматических ответов.
+          </p>
+          <p className="em-p">
+            Если хотите продолжить — активируйте тариф. Если решили уйти, без обид:
+            данные (товары, клиентов, переписки) можно скачать одним архивом в течение
+            30 дней.
+          </p>
+
+          <div className="em-cta-row">
+            <a className="em-cta" href="#" onClick={e => e.preventDefault()}>
+              Активировать
+            </a>
+            <a className="em-cta em-cta--ghost" href="#" onClick={e => e.preventDefault()}>
+              Скачать данные
+            </a>
+          </div>
+
+          <p className="em-p" style={{marginTop: 14, fontSize: 12, color: "var(--fg-3)"}}>
+            Можем чем-то помочь или ответить на вопросы перед решением? Напишите
+            в <a href="#" onClick={e => e.preventDefault()}>@aibro_support</a>.
+          </p>
+        </div>
+        <EmFooter />
+      </div>
+    </EmailWindow>
+  );
+}
+
+/* ============================================================
+   4 — Receipt (54-ФЗ)
+============================================================ */
+function EmailReceipt() {
+  return (
+    <EmailWindow
+      from="СММ АЙБРО <receipts@smmaibro.ru>"
+      to="Анна Соколова <anna@pekarnya-uyut.ru>"
+      subject="Чек об оплате · 4 990 ₽ · СММ АЙБРО"
+      tag="receipt · 54-ФЗ"
+      plaintext={`Анна, спасибо за оплату.
+
+Чек № 2026-05-14-0042
+Сумма: 4 990 ₽
+Период: 14.05.2026 → 14.06.2026
+
+Скачать чек PDF: https://cabinet.smmaibro.ru/billing/receipts/2026-05-14-0042
+
+Чек сформирован в соответствии с 54-ФЗ.
+ОФД: Платформа ОФД · ФД 4823916251
+
+СММ АЙБРО · ИП Мальцев · ИНН 519041916737 · УСН 6%`}
+    >
+      <div className="em-card">
+        <EmHeader tag="Receipt" />
+        <div className="em-content">
+          <h3 className="em-greet">Спасибо за оплату</h3>
+          <p className="em-p">
+            Анна, мы получили платёж и продлили вашу подписку. Чек прикреплён ниже —
+            храните его на случай налоговой отчётности.
+          </p>
+
+          <div className="em-amount">
+            <div className="em-amount-value">4 990 ₽</div>
+            <div className="em-amount-label">Оплачено · Тариф СММ АЙБРО</div>
+          </div>
+
+          <div className="em-dl">
+            <div className="em-dl-row">
+              <span className="key">Чек №</span>
+              <span className="val">2026-05-14-0042</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Период</span>
+              <span className="val">14.05.2026 — 14.06.2026</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Способ оплаты</span>
+              <span className="val">Visa •••• 4521</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">ОФД (54-ФЗ)</span>
+              <span className="val">Платформа ОФД · ФД 4823916251</span>
+            </div>
+          </div>
+
+          <a className="em-cta" href="#" onClick={e => e.preventDefault()}>
+            <span style={{display: "inline-flex", alignItems: "center", gap: 6}}>
+              Скачать PDF чека
+            </span>
+          </a>
+
+          <div className="em-banner em-banner--info" style={{marginTop: 14}}>
+            <div className="em-banner-icon em-banner-icon--info">
+              <Ic name="info" size={14} />
+            </div>
+            <div>
+              <strong>54-ФЗ:</strong> чек сформирован и передан в ФНС.
+              ИП Мальцев Валерий Валерьевич · ИНН 519041916737 · УСН 6%.
+            </div>
+          </div>
+        </div>
+        <EmFooter extra="Документы для бухгалтерии запросите в @aibro_support" />
+      </div>
+    </EmailWindow>
+  );
+}
+
+/* ============================================================
+   5 — Refund processed
+============================================================ */
+function EmailRefund() {
+  return (
+    <EmailWindow
+      from="СММ АЙБРО <billing@smmaibro.ru>"
+      to="Анна Соколова <anna@pekarnya-uyut.ru>"
+      subject="Возврат оформлен · 2 800 ₽"
+      tag="refund"
+      plaintext={`Анна, возврат оформлен.
+
+Сумма: 2 800 ₽
+Причина: частичный возврат за неиспользованный период
+
+Зачисление на карту Visa •••• 4521 — за 3-5 рабочих дней.
+
+Чек о возврате передан в ФНС (54-ФЗ).
+
+СММ АЙБРО · ИП Мальцев · ИНН 519041916737`}
+    >
+      <div className="em-card">
+        <EmHeader tag="Refund" />
+        <div className="em-content">
+          <h3 className="em-greet">Возврат оформлен</h3>
+          <p className="em-p">
+            Анна, мы оформили возврат по вашему обращению. Ниже детали — деньги
+            вернутся на карту в течение 3-5 рабочих дней.
+          </p>
+
+          <div className="em-amount">
+            <div className="em-amount-value">2 800 ₽</div>
+            <div className="em-amount-label">Возврат · частичная компенсация</div>
+          </div>
+
+          <div className="em-dl">
+            <div className="em-dl-row">
+              <span className="key">Причина</span>
+              <span className="val">Частичный возврат за неиспользованный период</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Возврат на карту</span>
+              <span className="val">Visa •••• 4521</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Ожидаемое зачисление</span>
+              <span className="val">3-5 рабочих дней</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Чек о возврате</span>
+              <span className="val">2026-05-16-R-0017</span>
+            </div>
+          </div>
+
+          <div className="em-banner em-banner--info">
+            <div className="em-banner-icon em-banner-icon--info">
+              <Ic name="info" size={14} />
+            </div>
+            <div>
+              Срок зависит от вашего банка. Если деньги не поступили через 5 рабочих
+              дней — напишите в поддержку, мы поможем разобраться.
+            </div>
+          </div>
+        </div>
+        <EmFooter />
+      </div>
+    </EmailWindow>
+  );
+}
+
+/* ============================================================
+   6 — Partner payout
+============================================================ */
+function EmailPartnerPayout() {
+  return (
+    <EmailWindow
+      from="СММ АЙБРО · Партнёрская программа <partners@smmaibro.ru>"
+      to="Михаил Орлов <mikhail@example.ru>"
+      subject="Партнёрская выплата 10 440 ₽ отправлена"
+      tag="partner · payout"
+      plaintext={`Михаил, ваша партнёрская выплата отправлена.
+
+Начислено (gross): 12 000 ₽
+НДФЛ 13% удержан: -1 560 ₽
+К выплате (net): 10 440 ₽
+
+Зачисление: Т-Банк · •••• 8842 · 1-2 рабочих дня
+
+Удержание НДФЛ обязательно: вы не самозанятый и не ИП.
+Мы (ИП Мальцев, ИНН 519041916737) выступаем налоговым агентом.
+
+Справка 2-НДФЛ за период доступна в кабинете.
+
+СММ АЙБРО · Партнёрская программа`}
+    >
+      <div className="em-card">
+        <EmHeader tag="Payout" />
+        <div className="em-content">
+          <h3 className="em-greet">Партнёрская выплата отправлена</h3>
+          <p className="em-p">
+            Михаил, мы перевели вашу выплату за <strong>апрель 2026</strong>. Ниже
+            детали по налогу — он удержан и перечислен в ФНС.
+          </p>
+
+          <div className="em-amount">
+            <div className="em-amount-value">10 440 ₽</div>
+            <div className="em-amount-label">К выплате (net)</div>
+          </div>
+
+          <div className="em-dl">
+            <div className="em-dl-row">
+              <span className="key">Начислено (gross)</span>
+              <span className="val">12 000 ₽</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">НДФЛ 13% удержан</span>
+              <span className="val" style={{color: "var(--danger-700)"}}>−1 560 ₽</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">К выплате</span>
+              <span className="val" style={{color: "var(--brand-700)"}}>10 440 ₽</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Реквизиты</span>
+              <span className="val">Т-Банк · •••• 8842</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Зачисление</span>
+              <span className="val">1-2 рабочих дня</span>
+            </div>
+          </div>
+
+          <div className="em-banner em-banner--info">
+            <div className="em-banner-icon em-banner-icon--info">
+              <Ic name="shield-check" size={14} />
+            </div>
+            <div>
+              <strong>Удержание НДФЛ обязательно</strong>: вы не самозанятый и не ИП.
+              Мы (ИП Мальцев, ИНН 519041916737) выступаем налоговым агентом.
+            </div>
+          </div>
+
+          <a className="em-cta em-cta--ghost" href="#" onClick={e => e.preventDefault()}>
+            Скачать справку 2-НДФЛ за период
+          </a>
+        </div>
+        <EmFooter extra="Подробнее о налогах партнёров — в Личном кабинете → Налоги" />
+      </div>
+    </EmailWindow>
+  );
+}
+
+/* ============================================================
+   7 — New referral
+============================================================ */
+function EmailNewReferral() {
+  return (
+    <EmailWindow
+      from="СММ АЙБРО · Партнёрская программа <partners@smmaibro.ru>"
+      to="Михаил Орлов <mikhail@example.ru>"
+      subject="У вас новый реферал!"
+      tag="partner · referral"
+      plaintext={`Михаил, у вас новый реферал.
+
+Дмитрий Соколов · «Студия дизайна Pixel»
+Уровень: L1 (прямой реферал)
+
+Он на Пробном периоде до 21.05.2026. Если оплатит тариф —
+начислим вам 10% lifetime от каждого платежа (499 ₽/мес).
+
+Смотреть всех рефералов: https://partners.smmaibro.ru/referrals
+
+СММ АЙБРО · Партнёрская программа`}
+    >
+      <div className="em-card">
+        <EmHeader tag="New referral" />
+        <div className="em-content">
+          <h3 className="em-greet">У вас новый реферал! <span aria-hidden="true">🎉</span></h3>
+          <p className="em-p">
+            Михаил, по вашей реферальной ссылке только что зарегистрировался новый
+            клиент. Если он оплатит тариф — вам будет начисляться <strong>10% lifetime</strong>.
+          </p>
+
+          <div className="em-ref-card">
+            <div className="em-ref-avatar">ДС</div>
+            <div className="em-ref-info">
+              <h4 className="em-ref-name">Дмитрий Соколов</h4>
+              <p className="em-ref-sub">Студия дизайна Pixel · ниша «услуги»</p>
+            </div>
+            <span className="em-ref-badge">L1</span>
+          </div>
+
+          <div className="em-banner em-banner--info">
+            <div className="em-banner-icon em-banner-icon--info">
+              <Ic name="gift-trial" size={14} />
+            </div>
+            <div>
+              <strong>Он на Пробном периоде до 21.05.2026</strong><br />
+              Если оплатит тариф 4 990 ₽/мес — начислим вам 10% lifetime (≈ 499 ₽/мес)
+              от каждого платежа, пока он остаётся клиентом.
+            </div>
+          </div>
+
+          <a className="em-cta" href="#" onClick={e => e.preventDefault()}>
+            Смотреть всех рефералов →
+          </a>
+
+          <p className="em-p" style={{marginTop: 12, fontSize: 12, color: "var(--fg-3)"}}>
+            Партнёрка: <strong style={{color: "var(--fg-2)"}}>10% L1 + 10% L2 lifetime</strong>.
+            Подробнее в <a href="#" onClick={e => e.preventDefault()}>правилах программы</a>.
+          </p>
+        </div>
+        <EmFooter />
+      </div>
+    </EmailWindow>
+  );
+}
+
+/* ============================================================
+   8 — Subscription renewed
+============================================================ */
+function EmailSubscriptionRenewed() {
+  return (
+    <EmailWindow
+      from="СММ АЙБРО <billing@smmaibro.ru>"
+      to="Анна Соколова <anna@pekarnya-uyut.ru>"
+      subject="Подписка продлена на месяц"
+      tag="renewal"
+      plaintext={`Анна, подписка продлена.
+
+Тариф: СММ АЙБРО · 4 990 ₽/мес
+Период: 14.05.2026 → 14.06.2026
+Следующее списание: 14.06.2026
+
+Способ оплаты: Visa •••• 4521
+Чек: 2026-05-14-0042
+
+Управлять подпиской: https://cabinet.smmaibro.ru/billing
+
+СММ АЙБРО · ИП Мальцев · ИНН 519041916737`}
+    >
+      <div className="em-card">
+        <EmHeader tag="Renewed" />
+        <div className="em-content">
+          <h3 className="em-greet">Подписка продлена</h3>
+          <p className="em-p">
+            Анна, мы успешно продлили вашу подписку на следующий месяц. Все функции
+            продолжают работать без перерыва — ИИ-ассистент в MAX, автопостинг и
+            CRM-light.
+          </p>
+
+          <div className="em-banner em-banner--success">
+            <div className="em-banner-icon em-banner-icon--success">
+              <Ic name="status-checkmark-done" size={14} />
+            </div>
+            <div>
+              <strong>Платёж 4 990 ₽ прошёл успешно</strong><br />
+              Подписка активна до 14.06.2026.
+            </div>
+          </div>
+
+          <div className="em-dl">
+            <div className="em-dl-row">
+              <span className="key">Тариф</span>
+              <span className="val">СММ АЙБРО · 4 990 ₽/мес</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Период</span>
+              <span className="val">14.05.2026 — 14.06.2026</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Следующее списание</span>
+              <span className="val">14.06.2026</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Способ оплаты</span>
+              <span className="val">Visa •••• 4521</span>
+            </div>
+            <div className="em-dl-row">
+              <span className="key">Чек</span>
+              <span className="val">2026-05-14-0042</span>
+            </div>
+          </div>
+
+          <a className="em-cta" href="#" onClick={e => e.preventDefault()}>
+            Управлять подпиской →
+          </a>
+
+          <p className="em-p" style={{marginTop: 12, fontSize: 12, color: "var(--fg-3)", textAlign: "center"}}>
+            Хотите отменить или изменить способ оплаты? Это можно сделать в кабинете
+            в любой момент.
+          </p>
+        </div>
+        <EmFooter />
+      </div>
+    </EmailWindow>
+  );
+}
+
+/* ============================================================
+   Section wrapper — single-card grid each
+============================================================ */
+function EmailCard({ id, meta, email }) {
+  return (
+    <div className="uk-grid uk-grid--full">
+      <div className="uk-preview">
+        <div className="uk-preview-head">
+          <h3 className="uk-preview-title">{id}</h3>
+          <span className="uk-preview-meta">{meta}</span>
+        </div>
+        <div className="uk-preview-stage uk-preview-stage--em">
+          {email}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   ROOT APP
+============================================================ */
+function App() {
+  return (
+    <div className="uk-shell">
+      <div className="uk-wrap">
+        <header className="uk-head">
+          <div>
+            <div className="uk-head-meta" style={{marginBottom: 8}}>
+              <span>Кабинет / Email templates</span>
+              <span>·</span>
+              <span>v1.0</span>
+              <span>·</span>
+              <span>обновлено 16.05.2026</span>
+            </div>
+            <h1>Email-шаблоны</h1>
+            <p className="lead">
+              8 transactional emails · согласованы с дизайн-системой. Каждый шаблон
+              показан как preview в email-client viewer (600px — стандарт email)
+              + plain-text копия для accessible / legacy клиентов. Использует те же
+              tokens.css и brand-визуал что cabinet.smmaibro.ru.
+            </p>
+          </div>
+          <div className="uk-head-meta">
+            <span className="uk-head-tag">Aibro · 8 шаблонов</span>
+          </div>
+        </header>
+
+        <Toc />
+
+        <Section id="welcome" num="01" title="Welcome"
+                 desc="После регистрации · приветствие + 3-step roadmap">
+          <EmailCard id="welcome.html" meta="trigger · после signup"
+                     email={<EmailWelcome />} />
+        </Section>
+
+        <Section id="trial-x" num="02" title="Завтра закончится пробный"
+                 desc="T-1 до конца пробного периода · функции которые потеряются">
+          <EmailCard id="trial_expiring.html" meta="trigger · trial ends in 24h"
+                     email={<EmailTrialExpiring />} />
+        </Section>
+
+        <Section id="trial-e" num="03" title="Пробный закончился"
+                 desc="T+0 · мягкое сообщение + опция «скачать данные»">
+          <EmailCard id="trial_expired.html" meta="trigger · trial ended"
+                     email={<EmailTrialExpired />} />
+        </Section>
+
+        <Section id="receipt" num="04" title="Чек об оплате"
+                 desc="После успешной оплаты · 54-ФЗ compliance">
+          <EmailCard id="receipt.html" meta="trigger · payment.success · 54-ФЗ"
+                     email={<EmailReceipt />} />
+        </Section>
+
+        <Section id="refund" num="05" title="Возврат оформлен"
+                 desc="После refund · сумма + ETA зачисления">
+          <EmailCard id="refund.html" meta="trigger · refund.processed"
+                     email={<EmailRefund />} />
+        </Section>
+
+        <Section id="payout" num="06" title="Партнёрская выплата"
+                 desc="Партнёрам · сумма + breakdown НДФЛ + 2-НДФЛ">
+          <EmailCard id="partner_payout.html" meta="trigger · payout.sent · НДФЛ агент"
+                     email={<EmailPartnerPayout />} />
+        </Section>
+
+        <Section id="ref-new" num="07" title="Новый реферал"
+                 desc="Партнёру когда L1/L2 зарегистрировался">
+          <EmailCard id="new_referral.html" meta="trigger · referral.registered"
+                     email={<EmailNewReferral />} />
+        </Section>
+
+        <Section id="renewed" num="08" title="Подписка продлена"
+                 desc="После успешного auto-billing · подтверждение">
+          <EmailCard id="subscription_renewed.html" meta="trigger · subscription.renewed"
+                     email={<EmailSubscriptionRenewed />} />
+        </Section>
+
+        <footer style={{marginTop: 80, paddingTop: 24, borderTop: "1px solid var(--border-1)",
+                        fontSize: 12, color: "var(--fg-3)", display: "flex",
+                        justifyContent: "space-between", flexWrap: "wrap", gap: 12}}>
+          <div>СММ АЙБРО · Email templates showcase · 8 transactional · 54-ФЗ + 152-ФЗ + 168-ФЗ compliant</div>
+          <div>RUMIRA · Claude Opus 4.7 · TASK-007 · 16.05.2026</div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+/* =============================================================
+   СММ АЙБРО · Error & status pages — showcase
+   error-pages.css
+
+   Showcase для 5 страниц состояния (404 / 500 / Maintenance /
+   403 / 429). Использует токены из tokens.css и shell-классы
+   из ui-kit.css (uk-shell / uk-wrap / uk-head / uk-toc /
+   uk-section / uk-grid / uk-preview).
+   ============================================================= */
+
+/* ============================================================
+   ERROR PAGE — base layout (карточка-превью внутри showcase)
+============================================================ */
+.ep {
+  position: relative;
+  width: 100%;
+  min-height: 480px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-2);
+  border-radius: 16px;
+  padding: 56px 32px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 18px;
+  overflow: hidden;
+}
+
+.ep::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--tile-bg-light);
+  background-size: 240px 240px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.ep > * { position: relative; z-index: 1; }
+
+/* ---------- Display number / large status ---------- */
+.ep-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 120px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--brand-500);
+  text-shadow: 0 8px 24px rgba(16, 185, 129, 0.18);
+  font-variant-numeric: tabular-nums lining-nums;
+  margin: 0;
+}
+
+.ep-num--danger  { color: var(--danger-500);  text-shadow: 0 8px 24px rgba(239, 68, 68, 0.18); }
+.ep-num--warning { color: var(--warning-500); text-shadow: 0 8px 24px rgba(245, 158, 11, 0.18); }
+.ep-num--info    { color: var(--info-500);    text-shadow: 0 8px 24px rgba(59, 130, 246, 0.18); }
+
+/* ---------- Large status icon (alternative to number) ---------- */
+.ep-icon-wrap {
+  width: 96px;
+  height: 96px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.12);
+  margin: 0 auto;
+  position: relative;
+}
+.ep-icon-wrap--warning { background: rgba(245, 158, 11, 0.14); }
+.ep-icon-wrap--danger  { background: rgba(239, 68, 68, 0.12); }
+.ep-icon-wrap--info    { background: rgba(59, 130, 246, 0.12); }
+
+.ep-icon-wrap--rotate img {
+  animation: ep-rotate 4.2s linear infinite;
+  transform-origin: center;
+}
+@keyframes ep-rotate {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Headings ---------- */
+.ep-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--fg-1);
+  max-width: 540px;
+}
+.ep-sub {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--fg-2);
+  margin: 0;
+  max-width: 440px;
+}
+
+/* ---------- Buttons row ---------- */
+.ep-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* ---------- Meta block (request id / countdown / etc) ---------- */
+.ep-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--fg-3);
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-1);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ep-meta strong {
+  color: var(--fg-1);
+  font-weight: 600;
+}
+
+/* ---------- Info card (для 500 и др.) ---------- */
+.ep-info {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-1);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fg-2);
+  max-width: 480px;
+  text-align: left;
+}
+.ep-info strong { color: var(--fg-1); font-weight: 600; }
+.ep-info code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  color: var(--brand-700);
+  border: 1px solid var(--border-1);
+}
+
+/* ============================================================
+   404 — decorative «0» with mascot
+============================================================ */
+.ep-404-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0;
+}
+.ep-404-art .ep-num { font-size: 140px; }
+.ep-404-zero {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 12px solid var(--brand-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.06);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.16);
+  position: relative;
+}
+.ep-404-zero img {
+  width: 78px;
+  height: 78px;
+  display: block;
+}
+
+/* ============================================================
+   Maintenance — live status list
+============================================================ */
+.ep-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 380px;
+  text-align: left;
+}
+.ep-status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-2);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--fg-1);
+}
+.ep-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ep-status-dot--ok      { background: var(--brand-500); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16); }
+.ep-status-dot--warning { background: var(--warning-500); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.16); animation: ep-pulse 1.4s ease-in-out infinite; }
+.ep-status-dot--down    { background: var(--danger-500);  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16); }
+@keyframes ep-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.55; transform: scale(1.4); }
+}
+.ep-status-row .label { flex: 1; }
+.ep-status-row .state {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Subscribe email line ---------- */
+.ep-subscribe {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-2);
+  border-radius: 12px;
+  padding: 6px 6px 6px 14px;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+}
+.ep-subscribe input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--fg-1);
+  padding: 8px 0;
+  min-width: 0;
+}
+.ep-subscribe input::placeholder { color: var(--fg-4); }
+
+/* ============================================================
+   429 — countdown timer
+============================================================ */
+.ep-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--warning-700);
+  padding: 12px 20px;
+  background: var(--warning-50);
+  border: 1px solid rgba(245, 158, 11, 0.30);
+  border-radius: 12px;
+  letter-spacing: -0.01em;
+}
+.ep-countdown-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--warning-700);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ============================================================
+   Preview stage override (large stage для error pages)
+============================================================ */
+.uk-preview-stage--ep {
+  min-height: 540px;
+  padding: 18px;
+  background: var(--bg-base);
+}
+
+/* ============================================================
+   Responsive
+============================================================ */
+@media (max-width: 720px) {
+  .ep { padding: 40px 20px 32px; min-height: 420px; }
+  .ep-num { font-size: 96px; }
+  .ep-404-art .ep-num { font-size: 100px; }
+  .ep-404-zero { width: 100px; height: 100px; border-width: 9px; }
+  .ep-404-zero img { width: 56px; height: 56px; }
+  .ep-title { font-size: 22px; }
+  .ep-icon-wrap { width: 80px; height: 80px; border-radius: 20px; }
+}

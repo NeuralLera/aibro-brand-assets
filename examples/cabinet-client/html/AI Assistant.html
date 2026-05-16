@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Кабинет — ИИ-ассистент</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/atoms.css">
+  <link rel="stylesheet" href="design/cabinet.css">
+  <link rel="stylesheet" href="design/settings.css">
+  <link rel="stylesheet" href="design/bots.css">
+  <link rel="stylesheet" href="design/ai-assistant.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+const ICO = "design/assets/icons/";
+
+function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+const NAV = [
+  { id: "home",      label: "Главная",         icon: "icon-nav-home",       href: "Dashboard.html" },
+  { id: "bots",      label: "Боты и каналы",   icon: "icon-nav-integrations", href: "Bots.html" },
+  { id: "orders",    label: "Заказы",          icon: "icon-crm-orders",     href: "Orders.html",    badge: 7 },
+  { id: "bookings",  label: "Записи",          icon: "icon-crm-bookings",   href: "Bookings.html",  badge: 12 },
+  { id: "customers", label: "Клиенты",         icon: "icon-crm-customers",  href: "Customers.html" },
+  { id: "products",  label: "Товары и услуги", icon: "icon-nav-products",   href: "Products.html" },
+  { id: "content",   label: "Контент",         icon: "icon-nav-content",    href: "Calendar.html" },
+  { id: "ai",        label: "ИИ-ассистент",    icon: "spark-ai" },
+  { id: "analytics", label: "Аналитика",       icon: "chart-line",          href: "Analytics.html" },
+  { id: "marketing", label: "Маркетинг",       icon: "megaphone" },
+  { id: "billing",   label: "Подписка",        icon: "price-tag-ruble",     href: "Billing.html" },
+  { id: "settings",  label: "Настройки",       icon: "icon-nav-settings",   href: "Settings.html" },
+];
+
+function Sidebar({ current }) {
+  return (
+    <aside className="cab-side" aria-label="Главная навигация">
+      <a className="cab-brand" href="Dashboard.html">
+        <span className="cab-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+        <span>
+          <span className="cab-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="cab-brand-meta">Кабинет</div>
+        </span>
+      </a>
+
+      <button className="cab-biz">
+        <div className="cab-biz-ava" style={{background:"#fed7aa", color:"#9a3412"}}>У</div>
+        <div>
+          <div className="cab-biz-name">Пекарня «Уют»</div>
+          <div className="cab-biz-handle">@pekarnya_uyut · Бакалея</div>
+        </div>
+        <Ic name="icon-action-expand" size={14} style={{opacity:0.4}} />
+      </button>
+
+      {NAV.map((it) => {
+        const cls = `cab-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="cab-side-foot">
+        Тариф «Единый» · <b>4 990 ₽/мес</b><br/>
+        До 24.06.2026 · <a href="Billing.html">Продлить</a>
+      </div>
+    </aside>
+  );
+}
+
+function TopBar() {
+  return (
+    <header className="cab-top">
+      <div>
+        <div className="crumb">Кабинет / ИИ-ассистент</div>
+        <h1>ИИ-ассистент</h1>
+      </div>
+      <div className="cab-top-actions">
+        <button className="cab-iconbtn" aria-label="Уведомления">
+          <Ic name="notification-bell" size={20} />
+          <span className="dot"></span>
+        </button>
+        <div className="cab-profile" tabIndex="0">
+          <div className="ava">А</div>
+          <div className="meta">
+            <span className="name">Анна П.</span>
+            <span className="role">Владелец</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ============================================================
+   TABS
+============================================================ */
+const TABS = [
+  { id: "prompt",  label: "Промпт",          icon: "spark-ai" },
+  { id: "limits",  label: "Лимиты и квоты",  icon: "target" },
+  { id: "coach",   label: "ИИ-коуч",         icon: "icon-nav-feedback" },
+  { id: "voice",   label: "Голос",           icon: "chat-bubble" },
+  { id: "history", label: "История ответов", icon: "timeline" },
+];
+
+/* ============================================================
+   STATUS STRIP
+============================================================ */
+function StatusStrip() {
+  return (
+    <div className="ai-status-strip">
+      <div className="ai-status-card">
+        <span className="lbl"><Ic name="spark-ai" size={12} /> Модель</span>
+        <span className="val">gemini-3-pro-preview</span>
+        <span className="sub">актуальная · обновлено 12.05.2026</span>
+      </div>
+      <div className="ai-status-card">
+        <span className="lbl"><Ic name="target" size={12} /> Использовано в этом месяце</span>
+        <span className="val">47 <small>/ 1 000 ответов</small></span>
+        <div className="bar"><span style={{width:"4.7%"}}></span></div>
+      </div>
+      <div className="ai-status-card">
+        <span className="lbl"><Ic name="timeline" size={12} /> Скорость ответа</span>
+        <span className="val">1,2 <small>сек</small></span>
+        <span className="sub">средняя за 7 дней · −0,3 с</span>
+      </div>
+      <div className="ai-status-card">
+        <span className="lbl"><Ic name="chat-bubble" size={12} /> Тон</span>
+        <span className="val">Дружелюбный</span>
+        <span className="sub">эмодзи умеренно · на «Вы»</span>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   PROMPT TAB
+============================================================ */
+const DEFAULT_PROMPT = `Вы — дружелюбный ассистент пекарни «Уют». Отвечайте клиентам в MAX от имени бизнеса.
+
+КОНТЕКСТ:
+— Пекарня «Уют», Санкт-Петербург, ул. Свободы, 14.
+— Часы работы: Пн–Вс 08:00 – 21:00.
+— Доставка по СПб (центр 350 ₽, окраины 500 ₽).
+— Самовывоз — готовность через 2 часа.
+
+ПРАВИЛА:
+1. Используйте каталог товаров — никогда не выдумывайте цены и наличие.
+2. Если товар закончился, предложите похожий.
+3. Принимайте заказ через slot-filling: имя → телефон → адрес/самовывоз → состав → способ оплаты.
+4. Подтверждайте каждый шаг короткой фразой.
+5. На вопросы про доставку отвечайте по тарифам выше.
+6. Если клиент жалуется — переключайте на владельца (push в MAX).
+
+ТОН:
+— На «Вы», дружелюбно, без канцелярита.
+— Эмодзи умеренно (🥖 🌟 ✅ — да; 😍 🔥 — нет).
+— Короткие ответы (1–3 предложения).`;
+
+function SegBar({ items, value, onChange }) {
+  return (
+    <div className="ai-segment" role="tablist">
+      {items.map(it => (
+        <button key={it.id}
+                role="tab"
+                aria-selected={value === it.id}
+                className={value === it.id ? "active" : ""}
+                onClick={() => onChange(it.id)}>
+          {it.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function PromptPanel() {
+  const [prompt, setPrompt] = useState(DEFAULT_PROMPT);
+  const [tone, setTone] = useState("friendly");
+  const [length, setLength] = useState("medium");
+  const [emoji, setEmoji] = useState(true);
+  const [voiceOn, setVoiceOn] = useState(true);
+
+  const chars = prompt.length;
+  const tokens = Math.round(chars / 4);
+
+  return (
+    <>
+      <section className="cab-section">
+        <div className="cab-section-head">
+          <div>
+            <h3>Системный промпт</h3>
+            <p>Что ИИ-ассистент знает о вашем бизнесе и как себя ведёт</p>
+          </div>
+        </div>
+
+        <div className="ai-prompt-grid">
+          {/* LEFT — editor */}
+          <div className="cab-card ai-prompt-editor">
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Опишите вашего ассистента, контекст бизнеса, правила и тон..." />
+            <div className="ai-prompt-meta">
+              <span>{fmt(chars)} символов · {fmt(tokens)} токенов</span>
+              <div className="actions">
+                <button className="btn btn-ghost" onClick={() => setPrompt(DEFAULT_PROMPT)}>
+                  <Ic name="icon-action-refresh" size={13} /> Сбросить
+                </button>
+                <button className="btn btn-primary">
+                  <Ic name="icon-action-save" size={13} /> Сохранить
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT — phone preview */}
+          <div className="cab-card">
+            <h4 style={{margin:"0 0 12px", fontFamily:"var(--font-display)", fontSize:14, fontWeight:700}}>Тестовый чат · live preview</h4>
+            <div className="ai-phone">
+              <div className="ai-phone-head">
+                <div className="ava">У</div>
+                <div>
+                  <div className="who">Пекарня «Уют»<small>отвечает за 1,2 сек</small></div>
+                </div>
+                <Ic name="icon-max-product-bot" size={18} style={{marginLeft:"auto", opacity:0.6}} />
+              </div>
+              <div className="ai-phone-body">
+                <div className="ai-msg user">Что у вас свежее?</div>
+                <div className="ai-msg bot">
+                  Здравствуйте! 🥖 Сегодня свежее: чиабатта, багет, медовик и творожные булочки. Что вас заинтересовало?
+                </div>
+                <div className="ai-msg user">Сколько медовик?</div>
+                <div className="ai-msg bot">
+                  Медовик — 850 ₽ за килограмм или 320 ₽ за порцию. Хотите заказать?
+                </div>
+              </div>
+              <div className="ai-phone-foot">
+                <input type="text" placeholder="Введите тестовый вопрос..." defaultValue="" />
+                <button className="btn btn-primary"><Ic name="icon-action-share-link" size={13} /></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TONE & BEHAVIOR */}
+      <section className="cab-section">
+        <div className="cab-section-head">
+          <div>
+            <h3>Тон и поведение</h3>
+            <p>Стиль общения с клиентами и форматирование ответов</p>
+          </div>
+        </div>
+        <div className="cab-card">
+          <div className="ai-tone-grid">
+            <div className="cab-field">
+              <label>Тон общения</label>
+              <SegBar items={[
+                {id:"formal", label:"Формальный"},
+                {id:"friendly", label:"Дружелюбный"},
+                {id:"casual", label:"Неформальный"},
+              ]} value={tone} onChange={setTone} />
+            </div>
+            <div className="cab-field">
+              <label>Длина ответов</label>
+              <SegBar items={[
+                {id:"short", label:"Короткие"},
+                {id:"medium", label:"Средние"},
+                {id:"long", label:"Развёрнутые"},
+              ]} value={length} onChange={setLength} />
+            </div>
+          </div>
+
+          <div style={{marginTop:8}}>
+            <div className="ai-check-row">
+              <label className="cab-switch">
+                <input type="checkbox" checked={emoji} onChange={(e) => setEmoji(e.target.checked)} />
+                <span className="cab-switch-track"><span className="cab-switch-thumb"></span></span>
+              </label>
+              <div>
+                <b>Эмодзи в ответах</b>
+                <div className="cab-mute">Умеренно · 1–2 на сообщение. Без 😍 🔥 ❤️</div>
+              </div>
+            </div>
+            <div className="ai-check-row">
+              <label className="cab-switch">
+                <input type="checkbox" checked={voiceOn} onChange={(e) => setVoiceOn(e.target.checked)} />
+                <span className="cab-switch-track"><span className="cab-switch-thumb"></span></span>
+              </label>
+              <div>
+                <b>Голосовые ответы</b>
+                <div className="cab-mute">ИИ присылает голосовые сообщения когда уместно. Настройка голоса — на вкладке «Голос»</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+/* ============================================================
+   LIMITS TAB
+============================================================ */
+const DAILY_USAGE = [
+  2,3,1,4,2,5,3,2,4,3,
+  1,2,6,4,3,2,5,3,4,2,
+  3,1,2,3,4,2,3,1,2,3,
+];
+
+function LinePath({ data, w, h, pad = 10 }) {
+  const max = Math.max(...data, 1);
+  const sx = (w - 2 * pad) / (data.length - 1);
+  const points = data.map((v, i) => [pad + i * sx, h - pad - (v / max) * (h - 2 * pad)]);
+  const d = points.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const dArea = d + ` L ${w - pad} ${h - pad} L ${pad} ${h - pad} Z`;
+  return (
+    <>
+      <path d={dArea} fill="url(#ai-grad)" />
+      <path d={d} stroke="var(--brand-600)" strokeWidth="2" fill="none" />
+      {points.map((p, i) => (
+        <circle key={i} cx={p[0]} cy={p[1]} r="2.2" fill="var(--brand-600)" />
+      ))}
+    </>
+  );
+}
+
+function Donut({ slices, size = 140, stroke = 20 }) {
+  const r = (size - stroke) / 2;
+  const C = 2 * Math.PI * r;
+  const total = slices.reduce((s, x) => s + x.v, 0);
+  let acc = 0;
+  return (
+    <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--bg-subtle)" strokeWidth={stroke} />
+      {slices.map((s, i) => {
+        const frac = s.v / total;
+        const dash = frac * C;
+        const off = -acc * C;
+        acc += frac;
+        return (
+          <circle key={i} cx={size/2} cy={size/2} r={r}
+                  fill="none" stroke={s.color} strokeWidth={stroke}
+                  strokeDasharray={`${dash} ${C - dash}`}
+                  strokeDashoffset={off}
+                  transform={`rotate(-90 ${size/2} ${size/2})`} />
+        );
+      })}
+      <text x={size/2} y={size/2 - 2} textAnchor="middle"
+            style={{fontFamily:"var(--font-display)", fontWeight:700, fontSize:18, fill:"var(--fg-1)"}}>
+        {fmt(total)}
+      </text>
+      <text x={size/2} y={size/2 + 14} textAnchor="middle"
+            style={{fontFamily:"var(--font-body)", fontSize:11, fill:"var(--fg-3)"}}>
+        ответов
+      </text>
+    </svg>
+  );
+}
+
+function LimitsPanel() {
+  return (
+    <>
+      <section className="cab-section">
+        <div className="ai-quota-card">
+          <div>
+            <div className="big"><span>47</span> / 1 000 ответов
+              <small>Использовано в этом месяце · <b style={{color:"var(--brand-700)"}}>95% осталось</b></small>
+            </div>
+            <div className="quota-bar"><span style={{width:"4.7%"}}></span></div>
+            <div className="quota-meta">
+              <span>Тариф «Единый» — 1 000 ответов ИИ/мес</span>
+              <span>Перенос остатка не предусмотрен</span>
+            </div>
+          </div>
+          <div className="reset">
+            <div className="label">Сброс квоты</div>
+            <div className="date">24.06.2026</div>
+            <div className="ago">через 39 дней · вместе со списанием тарифа</div>
+          </div>
+        </div>
+      </section>
+
+      <div className="ai-limits-row">
+        {/* Daily usage chart */}
+        <div className="cab-card">
+          <h4 style={{margin:"0 0 4px", fontFamily:"var(--font-display)", fontSize:14, fontWeight:700}}>Использование по дням</h4>
+          <div className="cab-mute" style={{marginBottom:12}}>Последние 30 дней · средне 2,8 ответа/день</div>
+          <div className="ai-chart-wrap">
+            <svg viewBox="0 0 520 160" className="an-chart">
+              <defs>
+                <linearGradient id="ai-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(16, 185, 129, 0.25)" />
+                  <stop offset="100%" stopColor="rgba(16, 185, 129, 0.02)" />
+                </linearGradient>
+              </defs>
+              <g className="grid">
+                <line x1="10" y1="40"  x2="510" y2="40" />
+                <line x1="10" y1="80"  x2="510" y2="80" />
+                <line x1="10" y1="120" x2="510" y2="120" />
+              </g>
+              <LinePath data={DAILY_USAGE} w={520} h={160} pad={14} />
+              <g className="axis-x">
+                <text x="14"  y="155">16.04</text>
+                <text x="170" y="155">25.04</text>
+                <text x="330" y="155">04.05</text>
+                <text x="478" y="155">15.05</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        {/* Per-source donut */}
+        <div className="cab-card">
+          <h4 style={{margin:"0 0 4px", fontFamily:"var(--font-display)", fontSize:14, fontWeight:700}}>По источнику</h4>
+          <div className="cab-mute" style={{marginBottom:12}}>Откуда приходят запросы</div>
+          <div className="an-donut">
+            <Donut slices={[
+              { name: "MAX-канал",    v: 38, color: "#10b981" },
+              { name: "Бизнес-чат",   v: 7,  color: "#34d399" },
+              { name: "Quick Post",   v: 2,  color: "#a7f3d0" },
+            ]} />
+            <div className="an-donut-legend">
+              <div className="row">
+                <span className="sw" style={{background:"#10b981"}}></span>
+                <span className="name">MAX-канал</span>
+                <span className="num">38</span>
+              </div>
+              <div className="row">
+                <span className="sw" style={{background:"#34d399"}}></span>
+                <span className="name">Бизнес-чат</span>
+                <span className="num">7</span>
+              </div>
+              <div className="row">
+                <span className="sw" style={{background:"#a7f3d0"}}></span>
+                <span className="name">Quick Post бот</span>
+                <span className="num">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="cab-callout cab-callout-info">
+        <Ic name="icon-status-info" size={18} />
+        <div>
+          <b>Достигли лимита?</b> Ответы продолжат генерироваться, но с задержкой и предупреждением клиенту.
+          Если регулярно упираетесь — напишите в поддержку, увеличим квоту в индивидуальном порядке.
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ============================================================
+   COACH TAB
+============================================================ */
+const COACH_CARDS = [
+  {
+    title: "Топ-3 вопроса",
+    trend: { kind: "up", label: "+12%" },
+    body: <>
+      <ol>
+        <li><b>Цены</b> — 14 раз</li>
+        <li><b>Адрес и часы работы</b> — 9 раз</li>
+        <li><b>Наличие товара</b> — 7 раз</li>
+      </ol>
+      <em>Добавьте в промпт прайс-блок и адрес явно — сэкономите токены</em>
+    </>,
+  },
+  {
+    title: "Не отвечает на",
+    trend: { kind: "warn", label: "12 раз" },
+    body: <>
+      «<b>Бесплатная доставка?</b>» — пропущено 12 раз. Ассистент не знает про вашу акцию.
+      <em>Добавьте правило: «Бесплатная доставка от 3 000 ₽ по СПб центру»</em>
+    </>,
+  },
+  {
+    title: "Возражение которое не закрыли",
+    trend: { kind: "down", label: "−18% продаж" },
+    body: <>
+      «<b>Дорого</b>» — обработано в 23% случаев против бенчмарка 60%.
+      <em>Добавьте reply: «Понимаю. Зато выпекаем по утрам — без консервантов. Хотите попробовать с маленького заказа?»</em>
+    </>,
+  },
+  {
+    title: "Best converting phrase",
+    trend: { kind: "up", label: "+34%" },
+    body: <>
+      «<b>Можем доставить за час</b>» — конверсия в заказ <b>78%</b>.
+      <em>Используется в 6 диалогах. Усилить — упомянуть в первом сообщении ассистента</em>
+    </>,
+  },
+  {
+    title: "Worst converting phrase",
+    trend: { kind: "warn", label: "8% конверсия" },
+    body: <>
+      «<b>Уточните у менеджера</b>» — конверсия <b>8%</b>. Клиенты уходят.
+      <em>Замените на конкретный ответ или передачу на владельца через push в MAX</em>
+    </>,
+  },
+];
+
+function CoachPanel() {
+  return (
+    <>
+      <div className="ai-coach-banner">
+        <div className="icobox"><Ic name="spark-ai" size={22} /></div>
+        <div style={{flex:1}}>
+          <h3>ИИ-коуч продаж <span className="chip">ПРО · в тарифе</span></h3>
+          <p>
+            Анализирует ваши диалоги с клиентами в MAX и предлагает улучшения промпта,
+            обработки возражений, продаж. Запускается ежедневно в 06:00 МСК.
+          </p>
+        </div>
+      </div>
+
+      <div className="ai-coach-summary">
+        <div>
+          <b>Последний анализ: 14.05.2026, 06:14 МСК</b>
+          <div className="cab-mute" style={{marginTop:2}}>проанализировано за 24 часа</div>
+        </div>
+        <div className="nums">
+          <div><span className="v">38</span><span className="l">Диалогов</span></div>
+          <div><span className="v">152</span><span className="l">Сообщений</span></div>
+          <div><span className="v">11</span><span className="l">Заказов оформлено</span></div>
+          <div><span className="v">29%</span><span className="l">Конверсия</span></div>
+        </div>
+      </div>
+
+      <div className="ai-coach-grid">
+        {COACH_CARDS.map((c, i) => (
+          <div className="ai-coach-card" key={i}>
+            <div className="head">
+              <Ic name="spark" size={12} /> {c.title}
+              <span className={`pill ${c.trend.kind}`}>{c.trend.label}</span>
+            </div>
+            <div className="body">{c.body}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{display:"flex", gap:10, justifyContent:"flex-end"}}>
+        <button className="btn btn-secondary">
+          <Ic name="icon-action-download" size={13} /> Полный отчёт PDF
+        </button>
+        <button className="btn btn-primary">
+          <Ic name="spark-ai" size={13} /> Применить рекомендации к промпту
+        </button>
+      </div>
+    </>
+  );
+}
+
+/* ============================================================
+   VOICE TAB
+============================================================ */
+function VoicePanel() {
+  const [enabled, setEnabled] = useState(true);
+  const [voice, setVoice] = useState("female");
+  const [speed, setSpeed] = useState(1.0);
+
+  return (
+    <>
+      <section className="cab-section">
+        <div className="cab-section-head">
+          <div>
+            <h3>Голосовые ответы</h3>
+            <p>ИИ может присылать голосовые сообщения в MAX, когда уместно</p>
+          </div>
+          <label className="cab-switch">
+            <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
+            <span className="cab-switch-track"><span className="cab-switch-thumb"></span></span>
+          </label>
+        </div>
+
+        {enabled && (
+          <div className="cab-card">
+            <div className="ai-voice-grid">
+              <div className="cab-field">
+                <label>Голос</label>
+                <SegBar items={[
+                  {id:"female",  label:"Женский"},
+                  {id:"male",    label:"Мужской"},
+                  {id:"neutral", label:"Нейтральный"},
+                ]} value={voice} onChange={setVoice} />
+              </div>
+              <div className="cab-field">
+                <label>Скорость воспроизведения</label>
+                <div className="ai-slider">
+                  <span style={{fontSize:11, color:"var(--fg-3)"}}>0,8x</span>
+                  <input type="range" min="0.8" max="1.2" step="0.05"
+                         value={speed}
+                         onChange={(e) => setSpeed(parseFloat(e.target.value))} />
+                  <span style={{fontSize:11, color:"var(--fg-3)"}}>1,2x</span>
+                  <span className="v">{speed.toFixed(2)}x</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="ai-voice-player">
+              <button className="play" aria-label="Воспроизвести образец">▶</button>
+              <div style={{flex:1, minWidth:0}}>
+                <div style={{fontFamily:"var(--font-display)", fontWeight:600, fontSize:13, color:"var(--fg-1)"}}>
+                  Образец голоса
+                </div>
+                <div style={{fontSize:11, color:"var(--fg-3)"}}>
+                  «Здравствуйте! Спасибо за заказ. Будет готов через 2 часа.»
+                </div>
+              </div>
+              <div className="wave"></div>
+              <span className="dur">0:04</span>
+            </div>
+
+            <div className="ai-voice-row">
+              <div>
+                <b>Когда отправлять голос</b>
+                <span className="mute">Триггеры для голосового ответа вместо текста</span>
+              </div>
+              <div style={{display:"flex", gap:14, flexWrap:"wrap"}}>
+                <label className="cab-check"><input type="checkbox" defaultChecked /> Если клиент прислал голос</label>
+                <label className="cab-check"><input type="checkbox" defaultChecked /> Подтверждение заказа</label>
+                <label className="cab-check"><input type="checkbox" /> Приветствие при первом обращении</label>
+              </div>
+            </div>
+
+            <div className="ai-voice-row">
+              <div>
+                <b>Распознавание входящих голосовых</b>
+                <span className="mute">ИИ слушает голосовые от клиентов и отвечает</span>
+              </div>
+              <label className="cab-switch">
+                <input type="checkbox" defaultChecked />
+                <span className="cab-switch-track"><span className="cab-switch-thumb"></span></span>
+              </label>
+            </div>
+          </div>
+        )}
+
+        <div className="cab-callout cab-callout-info">
+          <Ic name="icon-status-info" size={18} />
+          <div>
+            <b>Голосовые тратят квоту в 1,5× против текста.</b><br/>
+            Сейчас голос реализован через Gemini multimodal. После релиза перейдём
+            на Яндекс SpeechKit — качество выше, расход меньше.
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+/* ============================================================
+   HISTORY TAB
+============================================================ */
+const HISTORY = [
+  { ts: "15.05 14:32", who: "Мария К.",     q: "Что у вас свежее сегодня?",            a: "Сегодня свежее: чиабатта, багет, медовик и творожные булочки 🥖", react: "up",   dur: "1,1 с" },
+  { ts: "15.05 14:20", who: "Алексей Б.",   q: "До скольки работаете?",                 a: "Мы работаем Пн–Вс с 08:00 до 21:00. Самовывоз и доставка по СПб.", react: "up",   dur: "0,9 с" },
+  { ts: "15.05 13:48", who: "Светлана М.",  q: "Сколько медовик?",                       a: "Медовик — 850 ₽/кг или 320 ₽ за порцию.", react: "none", dur: "1,3 с" },
+  { ts: "15.05 13:22", who: "Иван Д.",      q: "Доставка бесплатная?",                   a: "Доставка по СПб: центр — 350 ₽, окраины — 500 ₽.", react: "down", dur: "1,5 с" },
+  { ts: "15.05 12:58", who: "Ольга Р.",     q: "Можно заказать на завтра к 10:00?",      a: "Да, конечно! Оформляю заказ на 16.05.2026 к 10:00. Что положим?", react: "up",   dur: "1,8 с" },
+  { ts: "15.05 12:14", who: "Дмитрий П.",   q: "Какая минимальная сумма доставки?",      a: "Минимальная сумма заказа с доставкой — 1 500 ₽ по центру.", react: "up",   dur: "1,0 с" },
+  { ts: "15.05 11:30", who: "Наталья И.",   q: "Есть ли торты без сахара?",              a: "Из несладкого у нас творожные булочки. Тортов без сахара пока нет.", react: "none", dur: "1,4 с" },
+  { ts: "15.05 10:48", who: "Артём Г.",     q: "Принимаете СБП?",                        a: "Да, оплата СБП — переводом по номеру телефона. Реквизиты пришлю после оформления.", react: "up",   dur: "1,2 с" },
+  { ts: "15.05 10:12", who: "Елена Т.",     q: "Где забрать самовывоз?",                 a: "Самовывоз: ул. Свободы, 14. Готовность через 2 часа.", react: "up",   dur: "0,8 с" },
+  { ts: "15.05 09:34", who: "Анна Л.",      q: "Уточните у менеджера про корпоратив?",   a: "Передам ваш запрос владельцу — она свяжется в течение часа.", react: "down", dur: "1,1 с" },
+  { ts: "15.05 09:18", who: "Сергей К.",    q: "Можно ли с собой кофе?",                 a: "Кофе у нас на вынос — латте 220 ₽, капучино 200 ₽, американо 150 ₽.", react: "up",   dur: "1,3 с" },
+  { ts: "15.05 08:56", who: "Татьяна О.",   q: "Какие есть закваски?",                   a: "Делаем на ржаной и пшеничной закваске. Сегодня доступны оба варианта.", react: "up",   dur: "1,5 с" },
+  { ts: "15.05 08:42", who: "Михаил А.",    q: "Подарочный сертификат есть?",            a: "Да! Номиналы 1 000 / 2 000 / 5 000 ₽. Оформить?", react: "up",   dur: "1,2 с" },
+  { ts: "15.05 08:30", who: "Ирина С.",     q: "Без глютена что есть?",                  a: "К сожалению, безглютеновых позиций пока нет. Планируем ввести летом.", react: "none", dur: "1,7 с" },
+  { ts: "14.05 22:14", who: "Юрий В.",      q: "Открыты завтра?",                        a: "Да, завтра Пн–Вс — работаем с 08:00 до 21:00.", react: "up",   dur: "0,9 с" },
+  { ts: "14.05 21:48", who: "Полина Ж.",    q: "Привет",                                 a: "Здравствуйте! 🥖 Чем могу помочь?", react: "up",   dur: "0,7 с" },
+  { ts: "14.05 21:12", who: "Виктор Н.",    q: "Сколько стоит круассан?",                a: "Круассаны: классический 140 ₽, миндальный 180 ₽, шоколадный 170 ₽.", react: "up",   dur: "1,1 с" },
+  { ts: "14.05 20:34", who: "Алёна Б.",     q: "Есть ли вегетарианское?",                a: "Все наши хлеба и большинство выпечки — вегетарианские. Без яиц — багет и чиабатта.", react: "up",   dur: "1,6 с" },
+  { ts: "14.05 19:48", who: "Денис Е.",     q: "Куда писать жалобу?",                    a: "Передам владельцу — она свяжется в течение часа. Сильно извиняемся за неудобства.", react: "none", dur: "1,2 с" },
+  { ts: "14.05 19:22", who: "Ксения Ф.",    q: "Можно оплатить картой курьеру?",         a: "Да, у курьера терминал. Карта/СБП/наличные — на ваш выбор.", react: "up",   dur: "1,0 с" },
+];
+
+function HistoryPanel() {
+  return (
+    <>
+      <div className="ai-history-filters">
+        <input type="search" placeholder="Поиск по вопросу или клиенту..." />
+        <select defaultValue="all">
+          <option value="all">Все даты</option>
+          <option value="today">Сегодня</option>
+          <option value="week">Неделя</option>
+          <option value="month">Месяц</option>
+        </select>
+        <select defaultValue="all">
+          <option value="all">Все реакции</option>
+          <option value="up">👍 Положительные</option>
+          <option value="down">👎 Отрицательные</option>
+          <option value="none">— Без реакции</option>
+        </select>
+        <select defaultValue="all">
+          <option value="all">Все темы</option>
+          <option value="price">Цены</option>
+          <option value="delivery">Доставка</option>
+          <option value="orders">Заказы</option>
+          <option value="hours">Часы работы</option>
+        </select>
+        <button className="btn btn-secondary" style={{marginLeft:"auto"}}>
+          <Ic name="icon-action-export" size={13} /> Экспорт CSV
+        </button>
+      </div>
+
+      <div className="cab-card" style={{padding:0}}>
+        <table className="cab-tbl">
+          <thead>
+            <tr>
+              <th style={{width:110}}>Время</th>
+              <th style={{width:140}}>Клиент</th>
+              <th>Вопрос</th>
+              <th>Ответ ИИ</th>
+              <th style={{width:80, textAlign:"center"}}>Реакция</th>
+              <th style={{width:80, textAlign:"right"}}>Время</th>
+            </tr>
+          </thead>
+          <tbody>
+            {HISTORY.map((r, i) => (
+              <tr key={i}>
+                <td><code style={{fontSize:11}}>{r.ts}</code></td>
+                <td><b>{r.who}</b></td>
+                <td><div className="ai-question">{r.q}</div></td>
+                <td><div className="ai-answer">{r.a}</div></td>
+                <td style={{textAlign:"center"}}>
+                  <span className={`ai-react ${r.react}`}>
+                    {r.react === "up" ? "👍" : r.react === "down" ? "👎" : "—"}
+                  </span>
+                </td>
+                <td className="num" style={{fontFamily:"var(--font-mono)", fontSize:11, color:"var(--fg-3)"}}>{r.dur}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+/* ============================================================
+   ROOT
+============================================================ */
+function App() {
+  const [tab, setTab] = useState("prompt");
+
+  return (
+    <div className="cab-shell">
+      <Sidebar current="ai" />
+      <main className="cab-main">
+        <TopBar />
+        <div className="cab-content">
+          <div style={{marginBottom:18}}>
+            <div className="cab-mute" style={{fontSize:13}}>
+              <b style={{color:"var(--fg-1)"}}>1 000 ответов в этом месяце</b> · 47 использовано · gemini-3-pro-preview
+            </div>
+          </div>
+
+          <StatusStrip />
+
+          <div className="cab-tabs" role="tablist">
+            {TABS.map(t => (
+              <button key={t.id}
+                      role="tab"
+                      aria-selected={tab === t.id}
+                      className={`cab-tab ${tab === t.id ? "active" : ""}`}
+                      onClick={() => setTab(t.id)}>
+                <Ic name={t.icon} size={16} />
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="cab-tab-content">
+            {tab === "prompt"  && <PromptPanel />}
+            {tab === "limits"  && <LimitsPanel />}
+            {tab === "coach"   && <CoachPanel />}
+            {tab === "voice"   && <VoicePanel />}
+            {tab === "history" && <HistoryPanel />}
+          </div>
+
+          <div className="cab-save-bar">
+            <span className="cab-save-status"><Ic name="status-checkmark-done" size={14} /> Все изменения сохраняются автоматически</span>
+            <button className="btn btn-ghost"><Ic name="icon-action-export" size={13} /> Экспорт промпта JSON</button>
+            <button className="btn btn-ghost"><Ic name="icon-action-import" size={13} /> Импорт</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

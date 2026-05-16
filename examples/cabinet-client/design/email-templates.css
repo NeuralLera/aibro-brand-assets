@@ -1,0 +1,507 @@
+/* =============================================================
+   СММ АЙБРО · Email templates — showcase
+   email-templates.css
+
+   8 transactional email mockups (welcome / trial expiring /
+   trial expired / receipt / refund / partner payout /
+   new referral / subscription renewed).
+
+   Используется поверх tokens.css + ui-kit.css.
+   ============================================================= */
+
+/* ============================================================
+   EMAIL CLIENT WINDOW (mock «розетка»)
+============================================================ */
+.em-window {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-2);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Window chrome (traffic lights) ---------- */
+.em-chrome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px;
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border-1);
+}
+.em-chrome-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--border-3);
+}
+.em-chrome-dot:nth-child(1) { background: #ff5f57; }
+.em-chrome-dot:nth-child(2) { background: #ffbd2e; }
+.em-chrome-dot:nth-child(3) { background: #28c840; }
+.em-chrome-title {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---------- From / To / Subject ---------- */
+.em-meta-block {
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--border-1);
+  background: var(--bg-elevated);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.em-meta-row {
+  display: flex;
+  gap: 6px;
+  color: var(--fg-2);
+}
+.em-meta-row .label {
+  font-weight: 600;
+  color: var(--fg-3);
+  min-width: 56px;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  text-transform: lowercase;
+}
+.em-meta-row .value { color: var(--fg-1); }
+.em-meta-row .value strong { font-weight: 600; }
+.em-subject {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--fg-1);
+  letter-spacing: -0.01em;
+  margin-top: 6px;
+}
+
+/* ============================================================
+   EMAIL BODY (the actual content)
+============================================================ */
+.em-body {
+  background: #f4f6f5; /* email clients render bg behind cards */
+  padding: 24px 18px;
+}
+
+/* ---------- Email "card" — white area with header band ---------- */
+.em-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+/* ---------- Card header band (emerald accent) ---------- */
+.em-header {
+  background: linear-gradient(135deg, var(--brand-600), var(--brand-500));
+  color: #ffffff;
+  padding: 22px 24px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.em-header--warning { background: linear-gradient(135deg, #d97706, var(--warning-500)); }
+.em-header--neutral { background: linear-gradient(135deg, #1f2937, #374151); }
+.em-header--info    { background: linear-gradient(135deg, var(--info-700), var(--info-500)); }
+
+.em-header-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  backdrop-filter: blur(6px);
+}
+.em-header-logo img {
+  width: 22px;
+  height: 22px;
+  filter: brightness(0) invert(1);
+}
+.em-header-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+.em-header-tag {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.78);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ---------- Card content ---------- */
+.em-content {
+  padding: 24px 26px 28px;
+  color: var(--fg-1);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.em-greet {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+  color: var(--fg-1);
+}
+.em-p {
+  margin: 0 0 12px;
+  color: var(--fg-2);
+}
+.em-p:last-child { margin-bottom: 0; }
+.em-p strong { color: var(--fg-1); font-weight: 600; }
+
+/* ---------- Hero amount (для receipt / payout) ---------- */
+.em-amount {
+  text-align: center;
+  margin: 16px 0 12px;
+  padding: 18px 16px;
+  background: var(--brand-50);
+  border-radius: 10px;
+  border: 1px solid rgba(16, 185, 129, 0.20);
+}
+.em-amount-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  color: var(--brand-700);
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: 1;
+}
+.em-amount-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--fg-2);
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+/* ---------- Warning / info / success banner inside email ---------- */
+.em-banner {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.em-banner--warning {
+  background: var(--warning-50);
+  border: 1px solid rgba(245, 158, 11, 0.30);
+  color: var(--warning-700);
+}
+.em-banner--success {
+  background: var(--brand-50);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: var(--brand-700);
+}
+.em-banner--info {
+  background: var(--info-50);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: var(--info-700);
+}
+.em-banner-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.em-banner-icon--warning { background: rgba(245, 158, 11, 0.18); }
+.em-banner-icon--success { background: rgba(16, 185, 129, 0.16); }
+.em-banner-icon--info    { background: rgba(59, 130, 246, 0.14); }
+.em-banner strong { font-weight: 700; }
+
+/* ---------- CTA button (email-safe, inline-styled in real email) ---------- */
+.em-cta {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: var(--brand-500);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 16px 0 4px;
+  transition: background 140ms;
+  text-decoration: none;
+}
+.em-cta:hover { background: var(--brand-600); }
+.em-cta--ghost {
+  background: #ffffff;
+  color: var(--fg-1);
+  border: 1px solid var(--border-2);
+}
+.em-cta--ghost:hover { background: var(--bg-subtle); }
+
+.em-cta-row {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 4px;
+}
+.em-cta-row .em-cta { margin: 0; flex: 1; }
+
+/* ---------- Detail list / key-value rows ---------- */
+.em-dl {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 12px 0;
+  background: var(--bg-subtle);
+  border-radius: 10px;
+  border: 1px solid var(--border-1);
+  overflow: hidden;
+}
+.em-dl-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  border-top: 1px solid var(--border-1);
+}
+.em-dl-row:first-child { border-top: 0; }
+.em-dl-row .key {
+  color: var(--fg-3);
+  font-weight: 500;
+}
+.em-dl-row .val {
+  color: var(--fg-1);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1;
+  text-align: right;
+}
+
+/* ---------- Steps roadmap (welcome email) ---------- */
+.em-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+}
+.em-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-1);
+}
+.em-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--brand-500);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.em-step-body { flex: 1; }
+.em-step-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  margin: 0 0 2px;
+  color: var(--fg-1);
+}
+.em-step-text {
+  font-size: 12px;
+  color: var(--fg-3);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* ---------- Feature loss list (trial expiring) ---------- */
+.em-feat-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.em-feat-list li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-1);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--fg-2);
+  line-height: 1.4;
+}
+.em-feat-list li::before {
+  content: "•";
+  color: var(--danger-500);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ---------- Referral card ---------- */
+.em-ref-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-1);
+  border-radius: 10px;
+  margin: 12px 0;
+}
+.em-ref-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.em-ref-info { flex: 1; min-width: 0; }
+.em-ref-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--fg-1);
+  margin: 0 0 2px;
+}
+.em-ref-sub {
+  font-size: 12px;
+  color: var(--fg-3);
+  margin: 0;
+}
+.em-ref-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--brand-50);
+  color: var(--brand-700);
+  border: 1px solid rgba(16, 185, 129, 0.20);
+  white-space: nowrap;
+}
+
+/* ---------- Email footer (compliance) ---------- */
+.em-footer {
+  background: var(--bg-elevated);
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--border-1);
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--fg-3);
+  text-align: center;
+}
+.em-footer-row {
+  margin: 4px 0;
+}
+.em-footer a {
+  color: var(--fg-3);
+  text-decoration: underline;
+}
+.em-footer-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--fg-2);
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   Plain-text panel (показываем "копия plain-text version")
+============================================================ */
+.em-plaintext {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-1);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--fg-2);
+  margin-top: 12px;
+  white-space: pre-wrap;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.em-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* ============================================================
+   Preview stage override (большая stage для email mockups)
+============================================================ */
+.uk-preview-stage--em {
+  background: linear-gradient(180deg, var(--bg-subtle), var(--bg-elevated));
+  padding: 24px 18px;
+  min-height: 100px;
+  align-items: flex-start;
+}
+
+/* ============================================================
+   Responsive
+============================================================ */
+@media (max-width: 720px) {
+  .em-window { max-width: 100%; }
+  .em-body { padding: 18px 12px; }
+  .em-content { padding: 20px 18px 22px; }
+  .em-amount-value { font-size: 28px; }
+  .em-feat-list { grid-template-columns: 1fr; }
+  .em-cta-row { flex-direction: column; }
+}

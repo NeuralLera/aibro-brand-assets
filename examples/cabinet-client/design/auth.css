@@ -1,0 +1,704 @@
+/* Public Auth Pages — Login / Signup / Reset Password / 2FA Setup
+   Pattern: centered card on full-screen, glass, brand wordmark in top-nav.
+   Reuses tokens.css and onboarding.css patterns. No sidebar. */
+
+/* ========== SHELL ========== */
+.au-shell {
+  min-height: 100vh;
+  background-color: var(--bg-base, #fafafa);
+  background-image: var(--tile-bg-light);
+  background-size: 240px 240px;
+  background-repeat: repeat;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== TOP NAV (minimal, sticky, glass) ========== */
+.au-top {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(250, 250, 250, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-1, rgba(15, 23, 42, 0.06));
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.au-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--fg-1, #0e0f12);
+}
+.au-brand-tile {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--bg-elevated, #fff);
+  border: 1px solid var(--border-1, rgba(15, 23, 42, 0.06));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.au-brand-tile img { width: 26px; height: 26px; display: block; }
+.au-brand-word {
+  font-family: var(--font-display, "Onest", sans-serif);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: var(--fg-1, #0e0f12);
+}
+.au-brand-word em {
+  font-style: normal;
+  color: var(--brand-700, #047857);
+}
+.au-top-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.au-top-link {
+  font-size: 13px;
+  color: var(--fg-3, #6b7079);
+  text-decoration: none;
+  font-weight: 500;
+}
+.au-top-link:hover { color: var(--fg-1, #0e0f12); text-decoration: underline; }
+.au-top-link.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--brand-700, #047857);
+  font-weight: 600;
+}
+
+/* ========== MAIN — 2-col on desktop ========== */
+.au-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 36px 28px 56px;
+  gap: 48px;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+.au-main--single {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+@media (max-width: 980px) {
+  .au-main {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 28px;
+  }
+  .au-aside { display: none; }
+}
+
+/* ========== CENTER CARD ========== */
+.au-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-2, rgba(15, 23, 42, 0.08));
+  border-radius: 18px;
+  box-shadow: var(--shadow-3, 0 8px 16px rgba(15, 23, 42, 0.08));
+  padding: 36px 36px 32px;
+  justify-self: end;
+}
+.au-main--single .au-card { justify-self: center; }
+@media (max-width: 980px) { .au-card { justify-self: center; padding: 28px 24px 24px; } }
+
+.au-head { margin-bottom: 22px; }
+.au-head h1 {
+  font-family: var(--font-display, "Onest", sans-serif);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0 0 8px;
+  color: var(--fg-1, #0e0f12);
+}
+.au-head p {
+  font-size: 14px;
+  color: var(--fg-2, #3a3d44);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ========== FORM ========== */
+.au-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.au-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.au-field-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-display, "Onest", sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-1, #0e0f12);
+}
+.au-field-label .hint {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg-3, #6b7079);
+}
+.au-field-label a {
+  font-size: 12px;
+  color: var(--brand-700, #047857);
+  font-weight: 600;
+}
+.au-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.au-input {
+  flex: 1;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--border-2, rgba(15, 23, 42, 0.12));
+  border-radius: 10px;
+  background: var(--bg-elevated, #fff);
+  font-family: var(--font-body, "Golos Text", sans-serif);
+  font-size: 15px;
+  color: var(--fg-1, #0e0f12);
+  transition: border-color 140ms, box-shadow 140ms;
+  width: 100%;
+}
+.au-input::placeholder { color: var(--fg-4, #9aa0aa); }
+.au-input:focus {
+  outline: 0;
+  border-color: var(--brand-500, #10b981);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+.au-input-toggle {
+  position: absolute;
+  right: 10px;
+  height: 32px;
+  padding: 0 10px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg-3, #6b7079);
+  border-radius: 6px;
+}
+.au-input-toggle:hover { color: var(--fg-1, #0e0f12); background: var(--bg-subtle, #f4f6f5); }
+
+/* password strength meter */
+.au-pwd-strength {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+.au-pwd-strength-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--bg-subtle, #f4f6f5);
+  border-radius: 999px;
+  transition: background 200ms;
+}
+.au-pwd-strength-bar.active-weak     { background: #ef4444; }
+.au-pwd-strength-bar.active-medium   { background: #f59e0b; }
+.au-pwd-strength-bar.active-strong   { background: var(--brand-500, #10b981); }
+.au-pwd-hint {
+  font-size: 12px;
+  color: var(--fg-3, #6b7079);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* checkbox */
+.au-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--fg-2, #3a3d44);
+  cursor: pointer;
+  line-height: 1.45;
+}
+.au-check input {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--brand-500, #10b981);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.au-check a {
+  color: var(--brand-700, #047857);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+.au-check-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2px 0 4px;
+  font-size: 13px;
+}
+
+/* ========== BUTTONS ========== */
+.au-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-family: var(--font-body, "Golos Text", sans-serif);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 0;
+  transition: all 140ms;
+  white-space: nowrap;
+  text-decoration: none;
+  width: 100%;
+}
+.au-btn-primary {
+  background: var(--brand-500, #10b981);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.20);
+}
+.au-btn-primary:hover { background: var(--brand-600, #059669); box-shadow: 0 6px 16px rgba(16, 185, 129, 0.28); }
+.au-btn-primary:disabled { background: var(--fg-4, #9aa0aa); cursor: not-allowed; box-shadow: none; opacity: 0.7; }
+.au-btn-secondary {
+  background: var(--bg-elevated, #fff);
+  color: var(--fg-1, #0e0f12);
+  border: 1px solid var(--border-2, rgba(15, 23, 42, 0.12));
+}
+.au-btn-secondary:hover { background: var(--bg-subtle, #f4f6f5); border-color: var(--border-3, rgba(15, 23, 42, 0.18)); }
+.au-btn-ghost {
+  background: transparent;
+  color: var(--brand-700, #047857);
+  height: 38px;
+  font-size: 13px;
+}
+.au-btn-ghost:hover { background: var(--brand-50, #ecfdf5); }
+.au-btn-max {
+  background: #fff;
+  color: var(--fg-1);
+  border: 1px solid var(--border-2);
+  font-weight: 700;
+}
+.au-btn-max:hover { background: var(--bg-subtle); }
+.au-btn-max .max-tile {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #10b981, #047857);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
+
+/* ========== DIVIDER ========== */
+.au-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  font-size: 12px;
+  color: var(--fg-3, #6b7079);
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+.au-divider::before,
+.au-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--divider, rgba(15, 23, 42, 0.06));
+}
+
+/* ========== FOOTER LINKS BELOW CARD ========== */
+.au-foot {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--fg-3, #6b7079);
+}
+.au-foot a {
+  color: var(--brand-700, #047857);
+  font-weight: 600;
+}
+
+/* ========== RIGHT SIDE — illustration / testimonial / chips ========== */
+.au-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 440px;
+}
+
+/* testimonial card (login) */
+.au-testimonial {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-2, rgba(15, 23, 42, 0.08));
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: var(--shadow-2);
+}
+.au-testimonial-stars {
+  color: #f59e0b;
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+.au-testimonial-text {
+  font-family: var(--font-display, "Onest", sans-serif);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--fg-1, #0e0f12);
+  margin-bottom: 18px;
+}
+.au-testimonial-who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.au-testimonial-ava {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fed7aa, #fdba74);
+  color: #9a3412;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+.au-testimonial-meta b {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--fg-1, #0e0f12);
+}
+.au-testimonial-meta span {
+  font-size: 12px;
+  color: var(--fg-3, #6b7079);
+}
+
+/* signup chips */
+.au-chips {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.au-chip-card {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-2, rgba(15, 23, 42, 0.08));
+  border-radius: 12px;
+  align-items: flex-start;
+}
+.au-chip-ico {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--brand-700, #047857);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.au-chip-text b {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--fg-1, #0e0f12);
+  margin-bottom: 2px;
+}
+.au-chip-text span {
+  font-size: 12px;
+  color: var(--fg-3, #6b7079);
+  line-height: 1.4;
+}
+
+/* ========== 2FA — method cards ========== */
+.au-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.au-method {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  background: var(--bg-elevated, #fff);
+  border: 1px solid var(--border-2, rgba(15, 23, 42, 0.10));
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 140ms;
+  align-items: flex-start;
+  text-align: left;
+}
+.au-method:hover {
+  border-color: var(--brand-300, #6ee7b7);
+  background: rgba(16, 185, 129, 0.03);
+}
+.au-method.active {
+  border-color: var(--brand-500, #10b981);
+  background: rgba(16, 185, 129, 0.06);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+}
+.au-method-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border-3, rgba(15, 23, 42, 0.18));
+  flex-shrink: 0;
+  margin-top: 2px;
+  position: relative;
+  background: white;
+}
+.au-method.active .au-method-radio {
+  border-color: var(--brand-500, #10b981);
+}
+.au-method.active .au-method-radio::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--brand-500, #10b981);
+  position: absolute;
+  top: 3px;
+  left: 3px;
+}
+.au-method-body { flex: 1; min-width: 0; }
+.au-method-title {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--fg-1, #0e0f12);
+}
+.au-method-rec {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--brand-700, #047857);
+}
+.au-method-desc {
+  font-size: 12px;
+  color: var(--fg-3, #6b7079);
+  margin-top: 4px;
+  line-height: 1.45;
+}
+
+/* ========== 2FA — QR setup ========== */
+.au-qr-wrap {
+  background: var(--bg-subtle, #f4f6f5);
+  border-radius: 12px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.au-qr {
+  width: 180px;
+  height: 180px;
+  background: white;
+  border: 1px solid var(--border-2);
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(12, 1fr);
+  gap: 1px;
+  padding: 8px;
+}
+/* fake QR pattern with random-ish blocks */
+.au-qr span {
+  background: #0e0f12;
+  border-radius: 1px;
+}
+.au-qr span.empty { background: transparent; }
+.au-secret {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px dashed var(--border-2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--brand-700, #047857);
+  letter-spacing: 0.05em;
+}
+
+/* OTP input row (6 digits) */
+.au-otp {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 14px 0;
+}
+.au-otp input {
+  width: 44px;
+  height: 52px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  border: 1px solid var(--border-2);
+  border-radius: 10px;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-elevated, #fff);
+  color: var(--fg-1, #0e0f12);
+}
+.au-otp input:focus {
+  outline: 0;
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+/* ========== BACKUP CODES ========== */
+.au-backup {
+  background: var(--bg-subtle, #f4f6f5);
+  border: 1px solid var(--border-2, rgba(15, 23, 42, 0.08));
+  border-radius: 12px;
+  padding: 18px;
+  margin: 14px 0;
+}
+.au-backup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  color: var(--fg-1, #0e0f12);
+}
+.au-backup-grid code {
+  background: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-1);
+  text-align: center;
+  font-weight: 600;
+}
+.au-backup-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+/* ========== 2FA wizard stepper (small, inside card) ========== */
+.au-stepper {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+.au-stepper-dot {
+  flex: 1;
+  height: 4px;
+  background: var(--bg-subtle, #f4f6f5);
+  border-radius: 999px;
+}
+.au-stepper-dot.done { background: var(--brand-500); }
+.au-stepper-dot.active { background: var(--brand-500); }
+
+/* ========== CALLOUT inside card ========== */
+.au-callout {
+  display: flex;
+  gap: 10px;
+  background: rgba(96, 165, 250, 0.06);
+  border: 1px solid rgba(96, 165, 250, 0.18);
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--fg-2, #3a3d44);
+  line-height: 1.5;
+  margin: 14px 0;
+}
+.au-callout img { flex-shrink: 0; opacity: 0.7; margin-top: 1px; }
+.au-callout b { color: var(--fg-1); }
+.au-callout-success {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.22);
+}
+
+/* ========== TRUST CHIPS (bottom of card on auth pages) ========== */
+.au-trust {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+  font-size: 11px;
+  color: var(--fg-3, #6b7079);
+  flex-wrap: wrap;
+}
+.au-trust span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ========== MOBILE ========== */
+@media (max-width: 540px) {
+  .au-top { padding: 12px 16px; }
+  .au-card { padding: 24px 20px; }
+  .au-head h1 { font-size: 22px; }
+  .au-otp input { width: 38px; height: 46px; font-size: 18px; }
+  .au-backup-grid { grid-template-columns: 1fr; }
+  .au-qr { width: 160px; height: 160px; }
+}

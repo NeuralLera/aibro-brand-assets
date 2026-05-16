@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Вход в кабинет</title>
+  <link rel="icon" type="image/svg+xml" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/auth.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+const ICO = "design/assets/icons/";
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+function TopNav() {
+  return (
+    <header className="au-top">
+      <a className="au-brand" href="/">
+        <span className="au-brand-tile">
+          <img src="design/assets/logos/robot-icon-light.svg" alt="" />
+        </span>
+        <span className="au-brand-word">СММ <em>АЙБРО</em></span>
+      </a>
+      <div className="au-top-actions">
+        <span className="au-top-link" style={{display: "inline-block"}}>Нет аккаунта?</span>
+        <a className="au-top-link brand" href="Signup.html">Зарегистрироваться →</a>
+      </div>
+    </header>
+  );
+}
+
+function App() {
+  const [showPwd, setShowPwd] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(true);
+
+  function submit(e) {
+    e.preventDefault();
+    alert("Вход… (демо)");
+  }
+
+  return (
+    <div className="au-shell">
+      <TopNav />
+      <main className="au-main">
+        {/* LEFT — form card */}
+        <div className="au-card">
+          <div className="au-head">
+            <h1>Вход в СММ АЙБРО</h1>
+            <p>Войдите в кабинет владельца бизнеса. Один аккаунт — все ваши MAX-каналы и CRM-light.</p>
+          </div>
+
+          <form className="au-form" onSubmit={submit}>
+            <div className="au-field">
+              <label className="au-field-label">Email</label>
+              <div className="au-input-wrap">
+                <input type="email" className="au-input" placeholder="anna@pekarnya-uyut.ru"
+                       value={email} onChange={(e) => setEmail(e.target.value)} required />
+              </div>
+            </div>
+
+            <div className="au-field">
+              <label className="au-field-label">
+                Пароль
+                <a href="Reset Password.html">Забыли?</a>
+              </label>
+              <div className="au-input-wrap">
+                <input type={showPwd ? "text" : "password"} className="au-input" placeholder="Минимум 8 символов"
+                       value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <button type="button" className="au-input-toggle" onClick={() => setShowPwd(!showPwd)}>
+                  {showPwd ? "Скрыть" : "Показать"}
+                </button>
+              </div>
+            </div>
+
+            <label className="au-check">
+              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+              <span>Запомнить меня на этом устройстве</span>
+            </label>
+
+            <button type="submit" className="au-btn au-btn-primary">
+              Войти
+            </button>
+
+            <div className="au-divider">или</div>
+
+            <button type="button" className="au-btn au-btn-max">
+              <span className="max-tile">MAX</span>
+              Войти через MAX
+            </button>
+
+            <button type="button" className="au-btn au-btn-secondary">
+              <Ic name="ui-core/briefcase" size={18} />
+              Войти через Tinkoff ID
+            </button>
+          </form>
+
+          <div className="au-trust">
+            <span><Ic name="shield-check" size={12} /> Защищено 2FA</span>
+            <span><Ic name="icon-status-success" size={12} /> ИП РФ · 152-ФЗ</span>
+            <span><Ic name="badge-erid" size={12} /> ОРД ✓</span>
+          </div>
+        </div>
+
+        {/* RIGHT — testimonial (hidden on mobile) */}
+        <aside className="au-aside">
+          <div className="au-testimonial">
+            <div className="au-testimonial-stars">★★★★★</div>
+            <div className="au-testimonial-text">
+              «За первый месяц ИИ-ассистент ответил на 1 200 вопросов клиентов в MAX. Заказы выросли на 38% — я просто иногда заглядываю в кабинет.»
+            </div>
+            <div className="au-testimonial-who">
+              <div className="au-testimonial-ava">А</div>
+              <div className="au-testimonial-meta">
+                <b>Анна Петрова</b>
+                <span>Пекарня «Уют» · Санкт-Петербург</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="au-chips">
+            <div className="au-chip-card">
+              <div className="au-chip-ico"><Ic name="spark-ai" size={18} /></div>
+              <div className="au-chip-text">
+                <b>ИИ 24/7 в MAX</b>
+                <span>1 000 ответов/мес</span>
+              </div>
+            </div>
+            <div className="au-chip-card">
+              <div className="au-chip-ico"><Ic name="badge-erid" size={18} /></div>
+              <div className="au-chip-text">
+                <b>ОРД автоматом</b>
+                <span>30 креативов/мес</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

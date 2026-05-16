@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Кабинет — Маркетинг</title>
+  <link rel="icon" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/atoms.css">
+  <link rel="stylesheet" href="design/cabinet.css">
+  <link rel="stylesheet" href="design/settings.css">
+  <link rel="stylesheet" href="design/marketing.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+const ICO = "design/assets/icons/";
+
+function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+function fmtRub(n) { return fmt(n) + " ₽"; }
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+const NAV = [
+  { id: "home",      label: "Главная",        icon: "icon-nav-home",       href: "Dashboard.html" },
+  { id: "orders",    label: "Заказы",         icon: "icon-crm-orders",     href: "Orders.html",    badge: 7 },
+  { id: "bookings",  label: "Записи",         icon: "icon-crm-bookings",   href: "Bookings.html",  badge: 12 },
+  { id: "customers", label: "Клиенты",        icon: "icon-crm-customers",  href: "Customers.html" },
+  { id: "products",  label: "Товары и услуги", icon: "icon-nav-products",   href: "Products.html" },
+  { id: "content",   label: "Контент",        icon: "icon-nav-content",    href: "Calendar.html" },
+  { id: "ai",        label: "ИИ-ассистент",   icon: "spark-ai" },
+  { id: "analytics", label: "Аналитика",      icon: "chart-line" },
+  { id: "marketing", label: "Маркетинг",      icon: "megaphone",           href: "Marketing.html" },
+  { id: "billing",   label: "Подписка",       icon: "price-tag-ruble",     href: "Billing.html" },
+  { id: "settings",  label: "Настройки",      icon: "icon-nav-settings",   href: "Settings.html" },
+];
+
+function Sidebar({ current }) {
+  return (
+    <aside className="cab-side" aria-label="Главная навигация">
+      <a className="cab-brand" href="Dashboard.html">
+        <span className="cab-brand-tile"><img src="design/assets/logos/robot-icon-light.svg" alt="" /></span>
+        <span>
+          <span className="cab-brand-word">СММ <span style={{color:"var(--brand-700)"}}>АЙБРО</span></span>
+          <div className="cab-brand-meta">Кабинет</div>
+        </span>
+      </a>
+
+      <button className="cab-biz">
+        <div className="cab-biz-ava" style={{background:"#fed7aa", color:"#9a3412"}}>У</div>
+        <div>
+          <div className="cab-biz-name">Пекарня «Уют»</div>
+          <div className="cab-biz-handle">@pekarnya_uyut · Бакалея</div>
+        </div>
+        <Ic name="icon-action-expand" size={14} style={{opacity:0.4}} />
+      </button>
+
+      {NAV.map((it) => {
+        const cls = `cab-nav-item ${current === it.id ? "active" : ""}`;
+        const body = <>
+          <span className="ico"><Ic name={it.icon} size={20} /></span>
+          <span>{it.label}</span>
+          {it.badge ? <span className="badge">{it.badge}</span> : null}
+        </>;
+        return it.href
+          ? <a key={it.id} className={cls} href={it.href}>{body}</a>
+          : <button key={it.id} className={cls}>{body}</button>;
+      })}
+
+      <div className="cab-side-foot">
+        Тариф «Единый» · <b>4 990 ₽/мес</b><br/>
+        До 24.06.2026 · <a href="Billing.html">Продлить</a>
+      </div>
+    </aside>
+  );
+}
+
+function TopBar() {
+  return (
+    <header className="cab-top">
+      <div>
+        <div className="crumb">Кабинет / Маркетинг</div>
+        <h1>Маркетинг</h1>
+        <div className="mk-subtitle">
+          <Ic name="badge-erid" size={14} />
+          <span>Реклама с ОРД-маркировкой · <b>12</b> из <b>30</b> креативов в этом месяце</span>
+        </div>
+      </div>
+      <div className="cab-top-actions">
+        <button className="cab-iconbtn" aria-label="Уведомления">
+          <Ic name="notification-bell" size={20} />
+          <span className="dot"></span>
+        </button>
+        <div className="cab-profile" tabIndex="0">
+          <div className="ava">А</div>
+          <div className="meta">
+            <span className="name">Анна П.</span>
+            <span className="role">Владелец</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ============================================================
+   DATA — рекламные посты (Пекарня Уют)
+============================================================ */
+const ADS = [
+  { date: "16.05.2026", title: "Доставка тортов на завтра — успейте до 21:00", img: "🎂", platform: "MAX",
+    erid: "Kra24Aibro-bkr-016", reach: 2840, budget: 1500, status: "опубликован", likes: 38, comments: 11, saves: 19 },
+  { date: "14.05.2026", title: "Медовик 1.5 кг — скидка 15% по промокоду WELCOME10", img: "🍰", platform: "MAX",
+    erid: "Kra24Aibro-bkr-015", reach: 3120, budget: 2000, status: "опубликован", likes: 24, comments: 6, saves: 12 },
+  { date: "12.05.2026", title: "Новый сорт — Сметанник «Бабушкин» уже в продаже", img: "🥧", platform: "MAX",
+    erid: "Kra24Aibro-bkr-014", reach: 1980, budget: 1200, status: "опубликован", likes: 19, comments: 4, saves: 8 },
+  { date: "10.05.2026", title: "Кейтеринг для офисов · 10–30 человек · доставка к 10:00", img: "🥐", platform: "MAX",
+    erid: "Kra24Aibro-bkr-013", reach: 2410, budget: 1800, status: "опубликован", likes: 15, comments: 3, saves: 11 },
+  { date: "08.05.2026", title: "Свежий хлеб каждое утро · доставка в Купчино за 1 час", img: "🍞", platform: "MAX",
+    erid: "Kra24Aibro-bkr-012", reach: 1750, budget: 1000, status: "опубликован", likes: 22, comments: 5, saves: 9 },
+  { date: "06.05.2026", title: "Торт «Наполеон» на заказ — 7 дней предзаказа", img: "🎂", platform: "MAX",
+    erid: "Kra24Aibro-bkr-011", reach: 2980, budget: 1500, status: "опубликован", likes: 17, comments: 4, saves: 6 },
+  { date: "04.05.2026", title: "Промокод MEDOVIK500 — минус 500 ₽ на медовик от 1.5 кг", img: "🍯", platform: "MAX",
+    erid: "Kra24Aibro-bkr-010", reach: 3340, budget: 2200, status: "опубликован", likes: 14, comments: 2, saves: 7 },
+  { date: "17.05.2026", title: "Подарочные наборы к 1 июня · бронирование открыто", img: "🎁", platform: "MAX",
+    erid: "—", reach: 0, budget: 1500, status: "в работе", likes: 0, comments: 0, saves: 0 },
+];
+
+const PROMOS = [
+  { code: "WELCOME10",   type: "Скидка %",      discount: "10%",       used: 47, limit: 100, exp: "до 14.06.2026", status: "active" },
+  { code: "MEDOVIK500",  type: "Скидка ₽",      discount: "500 ₽",     used: 8,  limit: null, exp: "Бессрочно",     status: "active" },
+  { code: "MAY",         type: "Скидка %",      discount: "15%",       used: 142, limit: 200, exp: "истёк 31.05",   status: "expired" },
+  { code: "FRIEND2026",  type: "Скидка %",      discount: "20%",       used: 3,  limit: 50,  exp: "до 01.07.2026", status: "active" },
+  { code: "BIRTHDAY",    type: "Скидка ₽",      discount: "300 ₽",     used: 19, limit: null, exp: "Бессрочно",     status: "active" },
+];
+
+const ORD_ROWS = [
+  { date: "16.05.2026", erid: "Kra24Aibro-bkr-016", title: "Доставка тортов на завтра",     status: "submitted",  submitted: "16.05 14:22" },
+  { date: "14.05.2026", erid: "Kra24Aibro-bkr-015", title: "Медовик 1.5 кг — скидка 15%",   status: "submitted",  submitted: "14.05 11:08" },
+  { date: "12.05.2026", erid: "Kra24Aibro-bkr-014", title: "Новый сорт — Сметанник",        status: "submitted",  submitted: "12.05 09:44" },
+  { date: "10.05.2026", erid: "Kra24Aibro-bkr-013", title: "Кейтеринг для офисов",          status: "pending",    submitted: "10.05 18:12" },
+  { date: "08.05.2026", erid: "Kra24Aibro-bkr-012", title: "Свежий хлеб каждое утро",       status: "submitted",  submitted: "08.05 08:01" },
+  { date: "06.05.2026", erid: "Kra24Aibro-bkr-011", title: "Торт «Наполеон» на заказ",      status: "submitted",  submitted: "06.05 14:55" },
+  { date: "04.05.2026", erid: "Kra24Aibro-bkr-010", title: "Промокод MEDOVIK500",           status: "pending",    submitted: "04.05 12:30" },
+];
+
+const TABS = [
+  { id: "ads",       label: "Рекламные посты",   icon: "megaphone" },
+  { id: "promos",    label: "Промо-акции",       icon: "gift-trial" },
+  { id: "ord",       label: "ОРД статистика",    icon: "badge-erid" },
+  { id: "partner",   label: "Партнёрский трекинг", icon: "icon-nav-partners" },
+];
+
+/* ============================================================
+   TAB 1 — РЕКЛАМНЫЕ ПОСТЫ
+============================================================ */
+function AdsPanel({ onOpen }) {
+  return (
+    <>
+      <div className="mk-kpi-row">
+        <div className="mk-kpi">
+          <div className="mk-kpi-lbl"><Ic name="badge-erid" size={12} /> ОРД-креативы</div>
+          <div className="mk-kpi-val">12<span className="mk-kpi-total"> / 30</span></div>
+          <div className="mk-kpi-bar"><div className="mk-kpi-bar-fill" style={{width: "40%"}}></div></div>
+          <div className="mk-kpi-hint">18 креативов осталось в этом месяце</div>
+        </div>
+        <div className="mk-kpi">
+          <div className="mk-kpi-lbl"><Ic name="ui-core/bar-chart" size={12} /> Охват за месяц</div>
+          <div className="mk-kpi-val">18 420</div>
+          <div className="mk-kpi-delta">+ 2 340 чел. к прошлому месяцу</div>
+        </div>
+        <div className="mk-kpi">
+          <div className="mk-kpi-lbl"><Ic name="ui-core/bolt" size={12} /> Реакции</div>
+          <div className="mk-kpi-val">247</div>
+          <div className="mk-kpi-react">
+            <span>♥ <b>142</b></span>
+            <span>💬 <b>35</b></span>
+            <span>★ <b>70</b></span>
+          </div>
+        </div>
+        <div className="mk-kpi mk-kpi-cta">
+          <div className="mk-kpi-lbl"><Ic name="spark-ai" size={12} /> Готовы запустить?</div>
+          <button className="btn btn-primary mk-kpi-btn">
+            <Ic name="icon-action-add" size={14} style={{filter:"brightness(0) invert(1)"}} />
+            Новый рекламный пост
+          </button>
+          <div className="mk-kpi-hint">ИИ подготовит креатив с ОРД-маркировкой</div>
+        </div>
+      </div>
+
+      <div className="cab-card mk-table-card">
+        <div className="cab-section-head">
+          <div>
+            <h3>История рекламных постов</h3>
+            <p>Клик по строке — детальная статистика и редактирование</p>
+          </div>
+          <div className="mk-filters">
+            <select defaultValue="month">
+              <option value="week">Неделя</option>
+              <option value="month">Этот месяц</option>
+              <option value="quarter">Квартал</option>
+              <option value="year">Год</option>
+            </select>
+            <button className="btn btn-ghost"><Ic name="icon-action-filter" size={14} /> Фильтры</button>
+            <button className="btn btn-ghost"><Ic name="icon-action-export" size={14} /> CSV</button>
+          </div>
+        </div>
+
+        <table className="cab-tbl mk-ads-tbl">
+          <thead>
+            <tr>
+              <th>Дата</th>
+              <th>Креатив</th>
+              <th>Платформа</th>
+              <th>erid</th>
+              <th className="num">Охват</th>
+              <th className="num">Бюджет</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ADS.map((a, i) => (
+              <tr key={i} onClick={() => onOpen(a)} className="mk-ads-row">
+                <td><b>{a.date}</b></td>
+                <td>
+                  <div className="mk-creative">
+                    <div className="mk-creative-thumb">{a.img}</div>
+                    <div className="mk-creative-text">{a.title}</div>
+                  </div>
+                </td>
+                <td><span className="mk-platform"><Ic name="icon-max-channel" size={14} /> {a.platform}</span></td>
+                <td><code>{a.erid}</code></td>
+                <td className="num">{a.reach ? fmt(a.reach) : "—"}</td>
+                <td className="num">{fmtRub(a.budget)}</td>
+                <td>
+                  <span className={`cab-chip ${a.status === "опубликован" ? "cab-chip-ok" : a.status === "в работе" ? "cab-chip-warn" : "cab-chip-mute"}`}>
+                    {a.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="cab-callout cab-callout-emerald">
+        <Ic name="shield-check" size={18} />
+        <div>
+          <b>ОРД маркируется автоматически.</b><br/>
+          Каждый рекламный пост получает <code>erid</code> и помету «реклама» с указанием ИНН рекламодателя.
+          Подача в ЕРИР — раз в 30 дней автоматически. <a href="#">Подробнее про 38-ФЗ →</a>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ============================================================
+   AD DRAWER (right-side)
+============================================================ */
+function AdDrawer({ ad, onClose }) {
+  if (!ad) return null;
+  return (
+    <>
+      <div className="mk-drawer-bg" onClick={onClose}></div>
+      <aside className="mk-drawer" role="dialog" aria-label="Рекламный пост">
+        <header className="mk-drawer-head">
+          <div>
+            <div className="mk-drawer-eyebrow">Рекламный пост · {ad.date}</div>
+            <h3>{ad.title}</h3>
+          </div>
+          <button className="mk-drawer-close" onClick={onClose} aria-label="Закрыть">
+            <Ic name="icon-action-collapse" size={18} />
+          </button>
+        </header>
+
+        <div className="mk-drawer-body">
+          <div className="mk-drawer-preview">
+            <div className="mk-drawer-thumb">{ad.img}</div>
+            <div className="mk-drawer-preview-text">
+              <div className="mk-platform"><Ic name="icon-max-channel" size={14} /> {ad.platform}-канал · @pekarnya_uyut</div>
+              <p>{ad.title}. Свежие торты с доставкой по СПб. Заказы принимаем до 21:00.</p>
+              <div className="mk-drawer-ord">
+                <Ic name="badge-erid" size={12} />
+                <span>Реклама · ИП Мальцев В.В. · ИНН 519041916737 · <code>erid: {ad.erid}</code></span>
+              </div>
+            </div>
+          </div>
+
+          <h4 className="mk-drawer-h4">Статистика</h4>
+          <div className="mk-drawer-stats">
+            <div className="mk-stat"><div className="mk-stat-lbl">Охват</div><div className="mk-stat-val">{fmt(ad.reach)}</div></div>
+            <div className="mk-stat"><div className="mk-stat-lbl">Бюджет</div><div className="mk-stat-val">{fmtRub(ad.budget)}</div></div>
+            <div className="mk-stat"><div className="mk-stat-lbl">CPM</div><div className="mk-stat-val">{ad.reach ? fmtRub(Math.round(ad.budget / ad.reach * 1000)) : "—"}</div></div>
+            <div className="mk-stat"><div className="mk-stat-lbl">Лайки</div><div className="mk-stat-val">{ad.likes}</div></div>
+            <div className="mk-stat"><div className="mk-stat-lbl">Комментарии</div><div className="mk-stat-val">{ad.comments}</div></div>
+            <div className="mk-stat"><div className="mk-stat-lbl">Сохранения</div><div className="mk-stat-val">{ad.saves}</div></div>
+          </div>
+
+          <h4 className="mk-drawer-h4">ОРД статус</h4>
+          <div className="cab-callout cab-callout-info" style={{marginTop:8}}>
+            <Ic name="badge-erid" size={18} />
+            <div>
+              <b>erid: {ad.erid}</b><br/>
+              {ad.erid === "—" ? "Будет присвоен после публикации." : "Подан в ЕРИР · ожидается подтверждение статистики в следующем отчётном периоде."}
+            </div>
+          </div>
+
+          <div className="mk-drawer-actions">
+            <button className="btn btn-secondary"><Ic name="icon-action-edit" size={14} /> Редактировать</button>
+            <button className="btn btn-secondary"><Ic name="icon-action-share-link" size={14} /> Скопировать ссылку</button>
+            <button className="btn btn-secondary"><Ic name="icon-action-archive" size={14} /> Архивировать</button>
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+/* ============================================================
+   TAB 2 — ПРОМО-АКЦИИ
+============================================================ */
+const PROMO_TYPES = [
+  { id: "placeholder-promo",     title: "Плейсхолдер «Акция»",     desc: "Кнопка-плейсхолдер в обложке поста · клик → ваш текст",
+    icon: "gift-trial", color: "#f59e0b" },
+  { id: "placeholder-discount",  title: "Плейсхолдер «Скидки»",    desc: "Кнопка-плейсхолдер в обложке поста · клик → ваш текст",
+    icon: "price-tag-ruble", color: "#10b981" },
+  { id: "qr-aibro",              title: "QR-код (СММ АЙБРО)",      desc: "Наш QR с реферальной ссылкой на @aibro_bot",
+    icon: "icon-action-share-link", color: "#3b82f6" },
+  { id: "qr-custom",             title: "Свой QR / штрих-код",     desc: "Ваш QR/штрих — для интеграции с кассой / лояльностью",
+    icon: "icon-action-import", color: "#8b5cf6" },
+];
+
+function PromosPanel() {
+  return (
+    <>
+      <div className="cab-section-head">
+        <div>
+          <h3>Типы промо в обложке поста</h3>
+          <p>Витрина — клиент видит в посте, далее владелец сам разбирается с кассой</p>
+        </div>
+      </div>
+      <div className="mk-promo-gallery">
+        {PROMO_TYPES.map(t => (
+          <div key={t.id} className="mk-promo-type">
+            <div className="mk-promo-type-ico" style={{background: t.color + "1A", color: t.color}}>
+              <Ic name={t.icon} size={20} />
+            </div>
+            <div className="mk-promo-type-text">
+              <b>{t.title}</b>
+              <p>{t.desc}</p>
+            </div>
+            <button className="btn btn-ghost">Выбрать</button>
+          </div>
+        ))}
+      </div>
+
+      <div className="cab-card">
+        <div className="cab-section-head">
+          <div>
+            <h3>Активные промокоды</h3>
+            <p>Промо-коды для упоминания в постах · кассовая логика на вашей стороне</p>
+          </div>
+          <button className="btn btn-primary"><Ic name="icon-action-add" size={14} style={{filter:"brightness(0) invert(1)"}} /> Создать промокод</button>
+        </div>
+
+        <table className="cab-tbl">
+          <thead>
+            <tr>
+              <th>Код</th>
+              <th>Тип</th>
+              <th>Скидка</th>
+              <th>Использований</th>
+              <th>Срок</th>
+              <th>Статус</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {PROMOS.map(p => (
+              <tr key={p.code}>
+                <td><code>{p.code}</code></td>
+                <td className="cab-mute">{p.type}</td>
+                <td><b>{p.discount}</b></td>
+                <td className="num">
+                  {p.used}{p.limit ? ` / ${p.limit}` : ""}
+                  {p.limit && <div className="mk-mini-bar"><div className="mk-mini-bar-fill" style={{width: Math.min(100, p.used / p.limit * 100) + "%"}}></div></div>}
+                </td>
+                <td className="cab-mute">{p.exp}</td>
+                <td>
+                  <span className={`cab-chip ${p.status === "active" ? "cab-chip-ok" : "cab-chip-mute"}`}>
+                    {p.status === "active" ? "Активен" : "Истёк"}
+                  </span>
+                </td>
+                <td>
+                  <button className="btn btn-ghost"><Ic name="icon-action-edit" size={14} /></button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="cab-card mk-wizard">
+        <div className="cab-section-head">
+          <div>
+            <h3>Создать промо в 3 шага</h3>
+            <p>Шаблон wizard'а — выбор типа, параметры, предпросмотр</p>
+          </div>
+        </div>
+        <div className="mk-wizard-steps">
+          <div className="mk-wizard-step active">
+            <div className="mk-wizard-num">1</div>
+            <div>
+              <b>Тип</b>
+              <span>Выберите тип промо-кода из 4 вариантов</span>
+            </div>
+          </div>
+          <div className="mk-wizard-step">
+            <div className="mk-wizard-num">2</div>
+            <div>
+              <b>Параметры</b>
+              <span>Код, размер скидки, срок, лимит использований</span>
+            </div>
+          </div>
+          <div className="mk-wizard-step">
+            <div className="mk-wizard-num">3</div>
+            <div>
+              <b>Предпросмотр</b>
+              <span>Как промо будет выглядеть в посте</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="cab-callout cab-callout-emerald">
+        <Ic name="shield-check" size={18} />
+        <div>
+          <b>Оплата клиентом — мимо нас.</b><br/>
+          СММ АЙБРО — не платёжный агент. Скидка применяется на вашей кассе/банке.
+          Мы — только витрина и автоматизация общения с клиентом в MAX.
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ============================================================
+   TAB 3 — ОРД СТАТИСТИКА
+============================================================ */
+function OrdPanel() {
+  const [period, setPeriod] = useState("month");
+
+  return (
+    <>
+      <div className="cab-section-head">
+        <div>
+          <h3>ОРД-статистика и подача в ЕРИР</h3>
+          <p>Все рекламные креативы автоматически маркируются и подаются в ЕРИР каждые 30 дней</p>
+        </div>
+        <select value={period} onChange={(e) => setPeriod(e.target.value)} className="mk-period">
+          <option value="month">Май 2026</option>
+          <option value="quarter">II квартал 2026</option>
+          <option value="year">2026 год</option>
+        </select>
+      </div>
+
+      <div className="mk-ord-big">
+        <div className="mk-ord-big-card mk-ord-big-card--ok">
+          <div className="mk-ord-big-ico"><Ic name="shield-check" size={22} /></div>
+          <div className="mk-ord-big-num">12</div>
+          <div className="mk-ord-big-lbl">Подано в ЕРИР</div>
+          <div className="mk-ord-big-hint">Креативов отправлено в реестр</div>
+        </div>
+        <div className="mk-ord-big-card mk-ord-big-card--warn">
+          <div className="mk-ord-big-ico"><Ic name="icon-status-warning" size={22} /></div>
+          <div className="mk-ord-big-num">3</div>
+          <div className="mk-ord-big-lbl">Pending статистика</div>
+          <div className="mk-ord-big-hint">Ожидаем подтверждение охвата</div>
+        </div>
+        <div className="mk-ord-big-card mk-ord-big-card--err">
+          <div className="mk-ord-big-ico"><Ic name="icon-status-success" size={22} /></div>
+          <div className="mk-ord-big-num">0</div>
+          <div className="mk-ord-big-lbl">Ошибок подачи</div>
+          <div className="mk-ord-big-hint">Все креативы валидны</div>
+        </div>
+        <div className="mk-ord-big-card">
+          <div className="mk-ord-big-ico"><Ic name="badge-erid" size={22} /></div>
+          <div className="mk-ord-big-num">18</div>
+          <div className="mk-ord-big-lbl">Лимит креативов</div>
+          <div className="mk-ord-big-hint">Осталось до конца месяца</div>
+        </div>
+      </div>
+
+      <div className="cab-card">
+        <div className="cab-section-head">
+          <div>
+            <h3>Реестр erid за {period === "month" ? "май 2026" : period === "quarter" ? "II квартал 2026" : "2026"}</h3>
+            <p>Каждая запись = креатив + erid + дата подачи</p>
+          </div>
+          <button className="btn btn-ghost"><Ic name="icon-action-export" size={14} /> XML для ЕРИР</button>
+        </div>
+
+        <table className="cab-tbl">
+          <thead>
+            <tr>
+              <th>Дата креатива</th>
+              <th>erid</th>
+              <th>Креатив</th>
+              <th>Подан в ЕРИР</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ORD_ROWS.map(r => (
+              <tr key={r.erid}>
+                <td><b>{r.date}</b></td>
+                <td><code>{r.erid}</code></td>
+                <td>{r.title}</td>
+                <td className="cab-mute">{r.submitted}</td>
+                <td>
+                  <span className={`cab-chip ${r.status === "submitted" ? "cab-chip-ok" : "cab-chip-warn"}`}>
+                    {r.status === "submitted" ? "Подан" : "Pending"}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="cab-callout cab-callout-info">
+        <Ic name="icon-status-info" size={18} />
+        <div>
+          <b>Реквизиты рекламодателя:</b> ИП Мальцев Валерий Валерьевич · ИНН 519041916737 · ОКВЭД 73.11.<br/>
+          ОРД-оператор: Vk Реклама. Договор № A-26-04-01 от 04.04.2026.
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ============================================================
+   TAB 4 — ПАРТНЁРСКИЙ ТРЕКИНГ
+============================================================ */
+function PartnerPanel() {
+  const [utmSource, setUtmSource] = useState("vk-blog");
+  const [utmMedium, setUtmMedium] = useState("post");
+  const [utmCampaign, setUtmCampaign] = useState("may-2026");
+  const utm = `https://smmaibro.ru/?ref=pekarnya&utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${utmCampaign}`;
+
+  return (
+    <>
+      <div className="mk-partner-grid">
+        <div className="cab-card">
+          <div className="cab-section-head">
+            <div>
+              <h3>Если вы — партнёр СММ АЙБРО</h3>
+              <p>Ваши реферальные ссылки и переходы</p>
+            </div>
+            <span className="cab-chip cab-chip-emerald">10% L1 + 10% L2 lifetime</span>
+          </div>
+
+          <div className="mk-ref-box">
+            <label>Ваша реферальная ссылка</label>
+            <div className="mk-ref-row">
+              <code className="mk-ref-code">https://smmaibro.ru/?ref=pekarnya-uyut</code>
+              <button className="btn btn-secondary"><Ic name="icon-action-copy" size={14} /> Копировать</button>
+            </div>
+          </div>
+
+          <div className="mk-stat-grid-3">
+            <div className="mk-stat"><div className="mk-stat-lbl">Переходов</div><div className="mk-stat-val">142</div></div>
+            <div className="mk-stat"><div className="mk-stat-lbl">Регистраций</div><div className="mk-stat-val">18</div></div>
+            <div className="mk-stat"><div className="mk-stat-lbl">Заработано</div><div className="mk-stat-val mk-stat-emerald">8 920 ₽</div></div>
+          </div>
+
+          <a className="mk-link" href="#"><Ic name="icon-nav-partners" size={14} /> Открыть кабинет партнёра →</a>
+        </div>
+
+        <div className="cab-card">
+          <div className="cab-section-head">
+            <div>
+              <h3>Если вы рекомендуете товары / услуги</h3>
+              <p>UTM-конструктор для рекламных кампаний</p>
+            </div>
+          </div>
+
+          <div className="cab-grid-2">
+            <div className="cab-field">
+              <label>Источник (utm_source)</label>
+              <input type="text" value={utmSource} onChange={(e) => setUtmSource(e.target.value)} />
+            </div>
+            <div className="cab-field">
+              <label>Канал (utm_medium)</label>
+              <input type="text" value={utmMedium} onChange={(e) => setUtmMedium(e.target.value)} />
+            </div>
+          </div>
+          <div className="cab-field" style={{marginTop: 12}}>
+            <label>Кампания (utm_campaign)</label>
+            <input type="text" value={utmCampaign} onChange={(e) => setUtmCampaign(e.target.value)} />
+          </div>
+
+          <div className="mk-ref-box" style={{marginTop: 18}}>
+            <label>Готовая ссылка с UTM</label>
+            <div className="mk-ref-row">
+              <code className="mk-ref-code">{utm}</code>
+              <button className="btn btn-secondary"><Ic name="icon-action-copy" size={14} /> Копировать</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="cab-card">
+        <div className="cab-section-head">
+          <div>
+            <h3>Аналитика по вашим ссылкам</h3>
+            <p>Топ-10 ссылок за последние 30 дней</p>
+          </div>
+        </div>
+        <table className="cab-tbl">
+          <thead>
+            <tr>
+              <th>Кампания</th>
+              <th>Источник</th>
+              <th className="num">Переходы</th>
+              <th className="num">Регистрации</th>
+              <th className="num">CR</th>
+              <th className="num">Заработано</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><b>may-2026</b></td><td className="cab-mute">vk-blog · post</td><td className="num">87</td><td className="num">12</td><td className="num"><span className="cab-chip cab-chip-ok">13.8%</span></td><td className="num"><b>5 940 ₽</b></td></tr>
+            <tr><td><b>april-launch</b></td><td className="cab-mute">tg-channel · stories</td><td className="num">42</td><td className="num">4</td><td className="num"><span className="cab-chip cab-chip-warn">9.5%</span></td><td className="num"><b>1 980 ₽</b></td></tr>
+            <tr><td><b>partner-promo</b></td><td className="cab-mute">friend · referral</td><td className="num">13</td><td className="num">2</td><td className="num"><span className="cab-chip cab-chip-ok">15.4%</span></td><td className="num"><b>1 000 ₽</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+/* ============================================================
+   ROOT
+============================================================ */
+function App() {
+  const [tab, setTab] = useState("ads");
+  const [drawer, setDrawer] = useState(null);
+
+  return (
+    <div className="cab-shell">
+      <Sidebar current="marketing" />
+      <main className="cab-main">
+        <TopBar />
+        <div className="cab-content">
+          <div className="cab-tabs" role="tablist">
+            {TABS.map(t => (
+              <button key={t.id}
+                      role="tab"
+                      aria-selected={tab === t.id}
+                      className={`cab-tab ${tab === t.id ? "active" : ""}`}
+                      onClick={() => setTab(t.id)}>
+                <Ic name={t.icon} size={16} />
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="cab-tab-content">
+            {tab === "ads"     && <AdsPanel onOpen={setDrawer} />}
+            {tab === "promos"  && <PromosPanel />}
+            {tab === "ord"     && <OrdPanel />}
+            {tab === "partner" && <PartnerPanel />}
+          </div>
+        </div>
+      </main>
+      <AdDrawer ad={drawer} onClose={() => setDrawer(null)} />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

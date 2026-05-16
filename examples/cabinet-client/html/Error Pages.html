@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Error & status pages — 404 / 500 / Maintenance / 403 / 429</title>
+  <link rel="icon" type="image/svg+xml" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/ui-kit.css">
+  <link rel="stylesheet" href="design/error-pages.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+const ICO = "design/assets/icons/";
+const LOGO = "design/assets/logos/";
+
+function Ic({ name, size = 18, style }) {
+  return (
+    <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+         style={{ width: size, height: size, display: "block", ...style }} />
+  );
+}
+
+/* ============================================================
+   TOC nav
+============================================================ */
+const SECTIONS = [
+  { id: "e404",   num: "01", title: "404 — страница не найдена",  desc: "Главная ошибка маршрутизации · ссылка устарела или адрес неверный", count: 1 },
+  { id: "e500",   num: "02", title: "500 — серверная ошибка",      desc: "Backend упал · показываем request-id для саппорта",              count: 1 },
+  { id: "emnt",   num: "03", title: "Технические работы",          desc: "Плановое обслуживание · live status трёх систем + ETA",          count: 1 },
+  { id: "e403",   num: "04", title: "403 — доступ запрещён",       desc: "У роли нет прав · client не пускаем в admin/partners",            count: 1 },
+  { id: "e429",   num: "05", title: "429 — слишком много запросов",desc: "Rate limit · 60 req/min · countdown 30s до повтора",              count: 1 },
+];
+
+function Toc() {
+  return (
+    <nav className="uk-toc" aria-label="Разделы Error pages">
+      {SECTIONS.map(s => (
+        <a key={s.id} href={`#${s.id}`}>
+          <span className="uk-toc-num">{s.num}</span>
+          <span>{s.title}</span>
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+function Section({ id, num, title, desc, count, children }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <section id={id} className={`uk-section ${open ? "" : "collapsed"}`}>
+      <div className={`uk-section-head ${open ? "" : "collapsed"}`} onClick={() => setOpen(!open)}>
+        <div>
+          <h2><span className="num">{num}</span> {title} <span className="num">· {count}</span></h2>
+          <p className="desc">{desc}</p>
+        </div>
+        <button className="uk-section-toggle" aria-label={open ? "Свернуть" : "Развернуть"}>
+          <Ic name="icon-action-expand" size={14} />
+        </button>
+      </div>
+      {open && <div className="uk-section-body">{children}</div>}
+    </section>
+  );
+}
+
+/* ============================================================
+   1 — 404 Not Found
+============================================================ */
+function ErrorPage404() {
+  return (
+    <div className="ep">
+      <div className="ep-404-art">
+        <span className="ep-num">4</span>
+        <div className="ep-404-zero">
+          <img src={`${LOGO}robot-icon-light.svg`} alt="" aria-hidden="true" />
+        </div>
+        <span className="ep-num">4</span>
+      </div>
+      <h2 className="ep-title">Страница не найдена</h2>
+      <p className="ep-sub">
+        Возможно ссылка устарела или вы ошиблись адресом. Проверьте URL или вернитесь
+        на главную — мы поможем разобраться.
+      </p>
+      <div className="ep-actions">
+        <button className="uk-btn uk-btn--primary">
+          <Ic name="home" size={14} /> На главную
+        </button>
+        <button className="uk-btn uk-btn--ghost">
+          <Ic name="dashboard" size={14} /> В кабинет
+        </button>
+      </div>
+      <div className="ep-meta">
+        <Ic name="info" size={12} />
+        <span>Если попали сюда по ссылке из MAX — напишите в поддержку @aibro_support</span>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   2 — 500 Server Error
+============================================================ */
+function ErrorPage500() {
+  return (
+    <div className="ep">
+      <h1 className="ep-num ep-num--danger">500</h1>
+      <h2 className="ep-title">Что-то пошло не так</h2>
+      <p className="ep-sub">
+        Мы уже знаем об ошибке и исправляем. Попробуйте обновить страницу через
+        1-2 минуты — обычно этого хватает.
+      </p>
+      <div className="ep-actions">
+        <button className="uk-btn uk-btn--primary">
+          <Ic name="icon-action-refresh" size={13} /> Перезагрузить
+        </button>
+        <button className="uk-btn uk-btn--ghost">
+          <Ic name="life-buoy" size={14} /> Связаться с поддержкой
+        </button>
+      </div>
+      <div className="ep-info">
+        <strong>Если ошибка повторяется</strong> — напишите в поддержку и приложите
+        request-id: <code>REQ-2026-05-16-7f3a92xy</code>. Мы быстрее найдём причину
+        в логах.
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   3 — Maintenance Mode
+============================================================ */
+function ErrorPageMaintenance() {
+  return (
+    <div className="ep">
+      <div className="ep-icon-wrap ep-icon-wrap--warning ep-icon-wrap--rotate">
+        <Ic name="icon-status-warning" size={52} />
+      </div>
+      <h2 className="ep-title">Технические работы</h2>
+      <p className="ep-sub">
+        Обновляем систему до новой версии. Вернёмся в течение 30 минут — кабинет
+        снова будет доступен. Бот в MAX продолжает отвечать клиентам.
+      </p>
+      <div className="ep-meta">
+        <Ic name="clock" size={12} />
+        <span>Окно: <strong>10:30 → 11:00 МСК</strong> · осталось ~22 мин</span>
+      </div>
+      <div className="ep-status-list">
+        <div className="ep-status-row">
+          <span className="ep-status-dot ep-status-dot--ok" />
+          <span className="label">Backend (API + webhook)</span>
+          <span className="state">работает</span>
+        </div>
+        <div className="ep-status-row">
+          <span className="ep-status-dot ep-status-dot--warning" />
+          <span className="label">База данных</span>
+          <span className="state">обновление</span>
+        </div>
+        <div className="ep-status-row">
+          <span className="ep-status-dot ep-status-dot--ok" />
+          <span className="label">MAX webhook (ИИ-ассистент)</span>
+          <span className="state">работает</span>
+        </div>
+      </div>
+      <div className="ep-subscribe">
+        <input type="email" placeholder="email — пришлём, когда закончим" />
+        <button className="uk-btn uk-btn--primary uk-btn--sm">
+          <Ic name="notification-bell" size={12} /> Уведомить
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   4 — 403 Forbidden
+============================================================ */
+function ErrorPage403() {
+  return (
+    <div className="ep">
+      <div className="ep-icon-wrap ep-icon-wrap--danger" style={{position: "relative"}}>
+        <Ic name="shield" size={52} />
+        <span style={{
+          position: "absolute", bottom: 10, right: 10,
+          width: 32, height: 32, borderRadius: 10,
+          background: "var(--danger-500)", display: "flex",
+          alignItems: "center", justifyContent: "center",
+          boxShadow: "0 4px 12px rgba(239, 68, 68, 0.40)",
+        }}>
+          <img src={`${ICO}lock.svg`} alt="" aria-hidden="true"
+               style={{width: 18, height: 18, filter: "brightness(0) invert(1)"}} />
+        </span>
+      </div>
+      <h2 className="ep-title">Доступ запрещён</h2>
+      <p className="ep-sub">
+        У вашей роли нет прав на этот раздел. Это операционная панель команды СММ АЙБРО —
+        она доступна только администраторам и поддержке.
+      </p>
+      <div className="ep-info">
+        <strong>Вы вошли как</strong>: <code>client</code> · бизнес «Пекарня Уют» ·
+        запрашивали раздел <code>/admin/finance</code>. Если думаете что у вас должен
+        быть доступ — напишите владельцу аккаунта или в поддержку.
+      </div>
+      <div className="ep-actions">
+        <button className="uk-btn uk-btn--primary">
+          <Ic name="dashboard" size={14} /> В свой кабинет
+        </button>
+        <button className="uk-btn uk-btn--ghost">
+          <Ic name="life-buoy" size={14} /> Связаться с поддержкой
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   5 — 429 Rate Limited (countdown)
+============================================================ */
+function ErrorPage429() {
+  const [secs, setSecs] = useState(30);
+
+  useEffect(() => {
+    if (secs <= 0) return;
+    const t = setTimeout(() => setSecs(s => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [secs]);
+
+  function reset() { setSecs(30); }
+
+  const mm = Math.floor(secs / 60).toString().padStart(2, "0");
+  const ss = (secs % 60).toString().padStart(2, "0");
+  const reachable = secs === 0;
+
+  return (
+    <div className="ep">
+      <div className="ep-icon-wrap ep-icon-wrap--warning">
+        <Ic name="clock" size={52} />
+      </div>
+      <h2 className="ep-title">Слишком много запросов</h2>
+      <p className="ep-sub">
+        Подождите немного и попробуйте снова. Это защита от спама и автоматических
+        скриптов — обычные пользователи в лимит не упираются.
+      </p>
+
+      <div className="ep-countdown">
+        <span className="ep-countdown-label">Повтор через</span>
+        <span>{mm}:{ss}</span>
+      </div>
+
+      <div className="ep-actions">
+        <button className="uk-btn uk-btn--primary"
+                disabled={!reachable}
+                style={!reachable ? {opacity: 0.45, cursor: "not-allowed"} : {}}
+                onClick={reachable ? reset : undefined}>
+          <Ic name="icon-action-refresh" size={13} /> Попробовать снова
+        </button>
+      </div>
+
+      <div className="ep-info">
+        <strong>Для разработчиков</strong>: rate limit <code>60 req/min</code> ·
+        заголовок ответа <code>X-Rate-Limit-Reset: 1747397400</code> ·
+        используйте exponential backoff и проверяйте <code>Retry-After</code>.
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   Section wrappers (single-card grid each)
+============================================================ */
+function ErrorCard({ id, page, meta }) {
+  return (
+    <div className="uk-grid uk-grid--full">
+      <div className="uk-preview">
+        <div className="uk-preview-head">
+          <h3 className="uk-preview-title">{id}</h3>
+          <span className="uk-preview-meta">{meta}</span>
+        </div>
+        <div className="uk-preview-stage uk-preview-stage--ep">
+          {page}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   ROOT APP
+============================================================ */
+function App() {
+  return (
+    <div className="uk-shell">
+      <div className="uk-wrap">
+        <header className="uk-head">
+          <div>
+            <div className="uk-head-meta" style={{marginBottom: 8}}>
+              <span>Кабинет / Error pages</span>
+              <span>·</span>
+              <span>v1.0</span>
+              <span>·</span>
+              <span>обновлено 16.05.2026</span>
+            </div>
+            <h1>Error & status pages</h1>
+            <p className="lead">
+              Все error pages в одном месте — для design review + handoff codex.
+              Используется на cabinet.smmaibro.ru / admin.smmaibro.ru / partners.smmaibro.ru /
+              публичном smmaibro.ru. 5 паттернов: 404 / 500 / Maintenance / 403 / 429.
+            </p>
+          </div>
+          <div className="uk-head-meta">
+            <span className="uk-head-tag">Aibro · 5 страниц</span>
+          </div>
+        </header>
+
+        <Toc />
+
+        <Section id="e404" num="01" title="404 — страница не найдена"
+                 desc="Главная ошибка маршрутизации · ссылка устарела или адрес неверный" count={1}>
+          <ErrorCard id="404 Not Found" meta="route · client + public" page={<ErrorPage404 />} />
+        </Section>
+
+        <Section id="e500" num="02" title="500 — серверная ошибка"
+                 desc="Backend упал · показываем request-id для саппорта" count={1}>
+          <ErrorCard id="500 Internal Server Error" meta="backend · all surfaces" page={<ErrorPage500 />} />
+        </Section>
+
+        <Section id="emnt" num="03" title="Технические работы"
+                 desc="Плановое обслуживание · live status трёх систем + ETA" count={1}>
+          <ErrorCard id="Maintenance mode" meta="planned · all surfaces" page={<ErrorPageMaintenance />} />
+        </Section>
+
+        <Section id="e403" num="04" title="403 — доступ запрещён"
+                 desc="У роли нет прав · client не пускаем в admin/partners" count={1}>
+          <ErrorCard id="403 Forbidden" meta="auth · role mismatch" page={<ErrorPage403 />} />
+        </Section>
+
+        <Section id="e429" num="05" title="429 — слишком много запросов"
+                 desc="Rate limit 60 req/min · countdown 30s до повтора" count={1}>
+          <ErrorCard id="429 Too Many Requests" meta="rate-limit · API + cabinet" page={<ErrorPage429 />} />
+        </Section>
+
+        <footer style={{marginTop: 80, paddingTop: 24, borderTop: "1px solid var(--border-1)",
+                        fontSize: 12, color: "var(--fg-3)", display: "flex",
+                        justifyContent: "space-between", flexWrap: "wrap", gap: 12}}>
+          <div>СММ АЙБРО · Error pages showcase · single-MAX · 4 990 ₽/мес · 168-ФЗ compliant</div>
+          <div>RUMIRA · Claude Opus 4.7 · TASK-007 · 16.05.2026</div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СММ АЙБРО · Двухфакторная защита</title>
+  <link rel="icon" type="image/svg+xml" href="design/assets/logos/robot-icon-light.svg">
+  <link rel="stylesheet" href="design/tokens.css">
+  <link rel="stylesheet" href="design/auth.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <style>body { margin: 0; }</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+const ICO = "design/assets/icons/";
+
+function Ic({ name, size = 18, style }) {
+  return <img src={`${ICO}${name}.svg`} alt="" aria-hidden="true"
+              style={{ width: size, height: size, display: "block", ...style }} />;
+}
+
+function TopNav() {
+  return (
+    <header className="au-top">
+      <a className="au-brand" href="/">
+        <span className="au-brand-tile">
+          <img src="design/assets/logos/robot-icon-light.svg" alt="" />
+        </span>
+        <span className="au-brand-word">СММ <em>АЙБРО</em></span>
+      </a>
+      <div className="au-top-actions">
+        <a className="au-top-link" href="Dashboard.html">Пропустить пока</a>
+      </div>
+    </header>
+  );
+}
+
+const METHODS = [
+  { id: "app",   title: "Приложение-аутентификатор", desc: "Google Authenticator · 1Password · Authy. Самый надёжный способ.",
+    icon: "shield-check", recommended: true },
+  { id: "sms",   title: "SMS на номер", desc: "Код придёт на ваш телефон из профиля.",
+    icon: "ui-core/bolt" },
+  { id: "email", title: "Email backup", desc: "Код на отдельный backup-email (не основной).",
+    icon: "icon-nav-messages" },
+];
+
+/* Generate a fake QR pattern */
+function FakeQR() {
+  const cells = [];
+  // pseudo-random but stable
+  const seed = "aibro-2fa-qr-stable";
+  let h = 0;
+  for (let i = 0; i < 144; i++) {
+    h = (h * 31 + seed.charCodeAt(i % seed.length) + i) >>> 0;
+    cells.push(h % 100 > 50);
+  }
+  // Position-detection patterns at corners
+  function isFinder(r, c) {
+    return (r < 3 && c < 3) || (r < 3 && c > 8) || (r > 8 && c < 3);
+  }
+  return (
+    <div className="au-qr" aria-label="QR-код для аутентификатора">
+      {cells.map((on, i) => {
+        const r = Math.floor(i / 12);
+        const c = i % 12;
+        const finder = isFinder(r, c);
+        return <span key={i} className={(on || finder) ? "" : "empty"}></span>;
+      })}
+    </div>
+  );
+}
+
+/* OTP 6-digit input */
+function OtpInput({ value, onChange }) {
+  return (
+    <div className="au-otp">
+      {[0,1,2,3,4,5].map(i => (
+        <input key={i} type="text" inputMode="numeric" maxLength="1"
+               value={value[i] || ""}
+               onChange={(e) => {
+                 const v = e.target.value.replace(/\D/g, "").slice(0, 1);
+                 const next = (value.substr(0, i) + v + value.substr(i + 1)).slice(0, 6);
+                 onChange(next);
+                 if (v && e.target.nextSibling) e.target.nextSibling.focus();
+               }} />
+      ))}
+    </div>
+  );
+}
+
+const BACKUP_CODES = [
+  "k4h9-m2nx", "p8r3-z5wq", "x7t2-c1jv", "n6q5-b9hd",
+  "a3f8-y4kp", "w1l5-r6mt", "g7e2-s9pn", "d4u8-v3xc",
+  "h5b1-q2zr", "j6w9-t8fy",
+];
+
+/* STEP 1 — pick method */
+function Step1({ method, onPick, onNext }) {
+  return (
+    <>
+      <div className="au-stepper">
+        <div className="au-stepper-dot active"></div>
+        <div className="au-stepper-dot"></div>
+        <div className="au-stepper-dot"></div>
+      </div>
+
+      <div className="au-head">
+        <h1>Защитите аккаунт 2FA</h1>
+        <p>Двухфакторная защита блокирует вход даже если ваш пароль украдут. Займёт 2 минуты.</p>
+      </div>
+
+      <div className="au-methods">
+        {METHODS.map(m => (
+          <button key={m.id} type="button"
+                  className={`au-method ${method === m.id ? "active" : ""}`}
+                  onClick={() => onPick(m.id)}>
+            <span className="au-method-radio"></span>
+            <div className="au-method-body">
+              <div className="au-method-title">
+                <Ic name={m.icon} size={16} />
+                <span>{m.title}</span>
+                {m.recommended && <span className="au-method-rec">Рекомендуем</span>}
+              </div>
+              <div className="au-method-desc">{m.desc}</div>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      <button type="button" className="au-btn au-btn-primary" onClick={onNext}>
+        Продолжить
+      </button>
+    </>
+  );
+}
+
+/* STEP 2 — setup (app QR or send SMS/email) */
+function Step2({ method, code, setCode, onNext, onBack }) {
+  return (
+    <>
+      <div className="au-stepper">
+        <div className="au-stepper-dot done"></div>
+        <div className="au-stepper-dot active"></div>
+        <div className="au-stepper-dot"></div>
+      </div>
+
+      <div className="au-head">
+        <h1>{method === "app" ? "Отсканируйте QR-код" : "Подтвердите код"}</h1>
+        <p>
+          {method === "app"
+            ? "Откройте Google Authenticator (или другое приложение) и отсканируйте код. Затем введите 6 цифр из приложения."
+            : method === "sms"
+              ? "Мы отправили SMS с 6-значным кодом на ваш номер. Введите его ниже."
+              : "Мы отправили 6-значный код на ваш backup-email. Введите его ниже."}
+        </p>
+      </div>
+
+      {method === "app" && (
+        <div className="au-qr-wrap">
+          <FakeQR />
+          <div className="au-secret">
+            <Ic name="icon-action-copy" size={14} />
+            <span>JBSWY3DPEHPK3PXP-AIBRO-2026</span>
+          </div>
+          <span className="au-pwd-hint" style={{textAlign: "center", marginTop: 8}}>
+            Не получается отсканировать? Введите ключ вручную.
+          </span>
+        </div>
+      )}
+
+      <div className="au-field">
+        <label className="au-field-label" style={{justifyContent: "center"}}>
+          Код из {method === "app" ? "приложения" : method === "sms" ? "SMS" : "email"}
+        </label>
+        <OtpInput value={code} onChange={setCode} />
+        {method !== "app" && (
+          <button type="button" className="au-btn au-btn-ghost" style={{width: "auto", margin: "0 auto"}}>
+            Отправить код повторно
+          </button>
+        )}
+      </div>
+
+      <div style={{display: "flex", gap: 8}}>
+        <button type="button" className="au-btn au-btn-secondary" onClick={onBack}>← Назад</button>
+        <button type="button" className="au-btn au-btn-primary" onClick={onNext} disabled={code.length !== 6}>
+          Подтвердить
+        </button>
+      </div>
+    </>
+  );
+}
+
+/* STEP 3 — backup codes */
+function Step3({ saved, setSaved, onDone }) {
+  function download() {
+    const text = "СММ АЙБРО — Резервные коды 2FA\n\n" + BACKUP_CODES.map((c, i) => `${i + 1}.  ${c}`).join("\n") + "\n\nХраните в безопасном месте.";
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "aibro-backup-codes.txt";
+    a.click();
+  }
+  function copy() {
+    navigator.clipboard.writeText(BACKUP_CODES.join("\n"));
+    alert("Скопировано · 10 кодов");
+  }
+
+  return (
+    <>
+      <div className="au-stepper">
+        <div className="au-stepper-dot done"></div>
+        <div className="au-stepper-dot done"></div>
+        <div className="au-stepper-dot active"></div>
+      </div>
+
+      <div className="au-head">
+        <h1>Сохраните резервные коды</h1>
+        <p>10 одноразовых кодов на случай если потеряете телефон. Каждый код можно использовать <b>один раз</b>.</p>
+      </div>
+
+      <div className="au-backup">
+        <div className="au-backup-grid">
+          {BACKUP_CODES.map((c, i) => <code key={i}>{c}</code>)}
+        </div>
+        <div className="au-backup-actions">
+          <button type="button" className="au-btn au-btn-secondary" onClick={download}>
+            <Ic name="icon-action-download" size={16} /> Скачать .txt
+          </button>
+          <button type="button" className="au-btn au-btn-secondary" onClick={copy}>
+            <Ic name="icon-action-copy" size={16} /> Копировать
+          </button>
+        </div>
+      </div>
+
+      <div className="au-callout">
+        <Ic name="icon-status-warning" size={16} />
+        <div>
+          <b>Не пересылайте коды в мессенджерах.</b><br/>
+          Лучшие места — менеджер паролей (1Password / Bitwarden), сейф, лист бумаги дома.
+        </div>
+      </div>
+
+      <label className="au-check" style={{marginTop: 8}}>
+        <input type="checkbox" checked={saved} onChange={(e) => setSaved(e.target.checked)} />
+        <span>Я сохранил коды в безопасном месте</span>
+      </label>
+
+      <button type="button" className="au-btn au-btn-primary" disabled={!saved} onClick={onDone} style={{marginTop: 14}}>
+        <Ic name="icon-status-success" size={18} style={{filter:"brightness(0) invert(1)"}} />
+        Готово, перейти в кабинет
+      </button>
+    </>
+  );
+}
+
+function App() {
+  const [step, setStep] = useState(1);
+  const [method, setMethod] = useState("app");
+  const [code, setCode] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  function done() {
+    alert("2FA активирована · переход в кабинет");
+    window.location.href = "Dashboard.html";
+  }
+
+  return (
+    <div className="au-shell">
+      <TopNav />
+      <main className="au-main au-main--single">
+        <div className="au-card" style={{maxWidth: 520}}>
+          {step === 1 && <Step1 method={method} onPick={setMethod} onNext={() => setStep(2)} />}
+          {step === 2 && <Step2 method={method} code={code} setCode={setCode}
+                                onNext={() => setStep(3)} onBack={() => setStep(1)} />}
+          {step === 3 && <Step3 saved={saved} setSaved={setSaved} onDone={done} />}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>
