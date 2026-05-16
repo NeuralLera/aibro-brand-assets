@@ -58,7 +58,81 @@
 
 ---
 
-## 3. 💡 Главный workflow lesson — Claude Design = concept, designer = polish + custom pages
+## 3. 🔑 САМЫЙ ВАЖНЫЙ LESSON — ICONS FIRST, PAGES SECOND
+
+**Сначала делай иконки. Потом страницы. Не наоборот.**
+
+### Почему это критично
+
+Иконки используются **везде** — в каждой кнопке, chip, status, toaster, sidebar nav, KPI card, taxonomy tag. Если на момент генерации страницы у тебя нет нужной иконки — subagent (или ты сама) сделает одно из:
+
+1. **Замена на банальный ✓ inline SVG** (`<polyline points="20 6 9 17 4 12"/>`) — выглядит amateur, conversion-killer
+2. **Substitution на «похожую»** — например `credit-card` вместо `bank-card` (теряет семантику)
+3. **CSS `mask-image` 404** — иконка не загружается, рендерится как пустой colored box (gracefully degrades, но криво)
+4. **Inline custom SVG в HTML** — нарушает single-source-of-truth, дубликаты по всем страницам
+
+**ВСЕ ЭТИ ВАРИАНТЫ ТРЕБУЮТ ПЕРЕДЕЛКИ.** Лучше потратить 30 минут на icon pack сначала, чем 5 часов на исправление всех страниц после.
+
+### Наш собственный пример провала (мы это испытали)
+
+День 1 Aibro — мы сделали Light Homepage в Claude Design. Trust strip имел 5 chips («Работает только в MAX» / «168-ФЗ» / «ОРД с erid» / «Единый тариф 4 990 ₽» / «5 дней без карты»). Все 5 chips использовали **банальные ✓ галки** inline SVG (`<polyline>` с эмеральд цветом).
+
+Валерий показал референс из другого проекта — там вместо ✓ галок были premium icons: **shield-check** для compliance, **badge-erid** для маркировки, **price-tag-ruble** для тарифа, **gift** для триала. Разница в восприятии — небо и земля.
+
+**Пришлось:**
+1. Создать 4 новых SVG (shield-check, badge-erid, price-tag-ruble, gift-trial)
+2. Заменить inline `<polyline>` на `<img src="design/assets/icons/X.svg">` в HTML
+3. Скопировать SVG в public mirror
+4. Re-test preview
+
+Это заняло **~40 минут полировки** одной trust strip строки в одной странице. Если бы pack был готов с самого начала — 0 минут.
+
+### Правильный порядок (если начинать заново — ПОВТОРЯЮ ЭТО ВСЕМ AGENT'ам)
+
+```
+1. Generate ВЕСЬ icon pack (3 batches, ~38 icons + ~30 ui-core = 68 минимум)
+   - Batch 1: P0 CRM / content (inventory / tag / timeline / attachment / image / etc)
+   - Batch 2: P1 (Finance / Admin / Public / Nav)
+   - Batch 3: Toaster + Status family (5 filled toasters + 7 outline statuses)
+   + 4 trust icons (shield-check / badge-erid для compliance + price-tag-ruble / gift-trial)
+
+2. Audit existing icon library — что уже есть в public mirror Aibro?
+   У Mira теперь доступ к 152 SVG в `aibro-brand-assets/icons/`.
+   Если SmashOne визуально близок к Aibro — можно reuse ~80% icons напрямую.
+
+3. ТОЛЬКО ПОСЛЕ Icon pack ready — начинать страницы.
+```
+
+### Это особенно важно для massive parallel subagents
+
+Когда спавнишь 5-6 субагентов параллельно — у каждого должен быть **готовый icon catalog** в brief. Без этого:
+- Каждый subagent изобретает свои иконки
+- Получаешь 5 разных вариантов "delivery icon" (truck / package / motorcycle / arrow / box)
+- Consistency страдает, придётся переделывать
+
+С готовым pack:
+- Brief каждого subagent: «используй ТОЛЬКО эти 152 SVG, список названий: ...»
+- Все страницы используют one truth
+- Consistency автоматическая
+
+### Минимум icon pack для cabinet-style продукта (наш канон)
+
+**~68 icons минимум** покрывают cabinet + public:
+
+- **30 ui-core** (universal): bar-chart / bolt / briefcase / calendar-clock / clock / credit-card / download / external-link / file / file-text / flask / help-circle / home / id-card / info / keyboard / layers / life-buoy / lock / megaphone / message-circle / mouse-pointer / percent / plug / rocket / scroll / settings / user / users / warning
+- **5 toaster** (filled-tile style): toast-success / info / warning / error / feature
+- **7 kanban status** (outline): hourglass-pending / arrow-rescheduled / inbox-new / document-accepted / truck-delivery / checkmark-done / cancelled-x
+- **4 trust** (compliance/billing/security): shield-check / badge-erid (or analog) / price-tag-currency / gift-trial
+- **15-20 nav** (sidebar items): dashboard / home / customers / orders / bookings / products / content / finance / partners / settings / notifications / messages / help / etc
+- **5-10 niche / industry** illustrations (опционально, если применимо)
+
+### Bottom line
+
+**НЕ начинай страницы пока нет icon pack. Это правило #1.**
+
+---
+
+## 4. 💡 Workflow lesson — Claude Design = concept, designer = polish + custom pages
 
 **Большая ошибка:** тратить Claude Design tokens на мелкие правки.
 
@@ -335,9 +409,11 @@ CSS variables в `colors_and_type.css` или `tokens.css`. Использова
 ❌ Inline `<polyline points="20 6 9 17 4 12"/>` для compliance/security chips
 ✅ Custom SVG shield-check / badge-erid / price-tag-currency
 
-### 5. Generate icons lazy
+### 5. Generate icons lazy / ПОСЛЕ страниц
 ❌ Откладывать генерацию icons «до момента когда страница потребует»
-✅ Сразу generate full pack — premium icons делают 50% впечатления страницы
+❌ Делать страницы СНАЧАЛА, icons — потом (мы попали в это, см. Section 3)
+✅ **Icons первыми всегда** — premium icons делают 50% впечатления страницы + предотвращают переделки
+✅ Сразу generate full pack для всех surfaces до начала генерации страниц
 
 ### 6. _FOR_VALERY / human-driven commands
 ❌ Multi-step manual instructions для каждого шага
@@ -404,29 +480,57 @@ CSS variables в `colors_and_type.css` или `tokens.css`. Использова
 
 ## 12. 🚀 Recommended sequence для SmashOne (если Mira хочет повторить наш success)
 
+> **⚠️ КРИТИЧНОЕ ПРАВИЛО:** Icons ПЕРВЫМИ, страницы — ПОТОМ. См. Section 3. Если перепутать порядок — придётся переделывать кучу страниц.
+
 ### Day 0 (1-2 hours) — Setup
 1. Создать public mirror repo (как наш `aibro-brand-assets`)
-2. Скачать наши 152 SVG icons → если визуальный язык схож → используй сразу
-3. Скопировать STYLE_CANON.md → адаптировать под SmashOne brand
+2. **Скачать наши 152 SVG icons** → если визуальный язык схож → используй сразу (это пол-дня работы экономит)
+3. Скопировать STYLE_CANON.md → адаптировать под SmashOne brand (палитра / шрифты / iron rules)
 4. Создать `smashone_eu/design/.claude/agents/mira.md` + `mira-export-packer.md` (по нашим образцам)
 
-### Day 1 (4-6 hours) — Foundation
+### Day 1 morning (2-3 hours) — **ICONS FIRST**
+
+> **НЕ начинай страницы пока этот этап не закрыт.** Иначе придётся переделывать (см. Section 3).
+
+1. **Audit existing pool** (10 минут)
+   - Скачай 152 SVG из `aibro-brand-assets/icons/`
+   - Раздели на: «reuse напрямую» / «требует адаптации под SmashOne brand» / «не подходит»
+   - Если SmashOne близок к Aibro визуально — 100+ можно reuse напрямую
+2. **Generate missing icons через Claude Design** (1-2 hours)
+   - 3 параллельных batch'а в одном проекте «SmashOne Icon Pack» как фазы
+   - Batch 1: P0 product-specific (~10-15 icons под domain SmashOne)
+   - Batch 2: P1 (Finance / Admin / Nav если custom)
+   - Batch 3: Toaster + Status family (если визуал отличается — те 12 что мы сделали)
+4. **Trust/compliance icons** (15 минут) — обычно 3-4 штуки, можно сделать самой в HTML/SVG за минуты (не нужен Claude Design)
+5. **Download → push в public mirror** sometime/SmashOne-brand-assets
+
+**После этапа icons:** у тебя есть **~70-150 SVG в canonical pool**, готов к использованию во всех страницах.
+
+### Day 1 afternoon + Day 2 (4-6 hours) — Foundation (Design System + Homepage)
+
 1. Approved Design System Light в Claude Design (~1 hour)
 2. Approved Design System Dark в Claude Design (~30 min)
 3. Homepage Light + Dark в Claude Design (~2 hours)
-4. Phone mockup canon для hero
+4. Phone mockup canon для hero (если применимо)
 
-### Day 2 (4-6 hours) — Massive parallel
-1. Спавнить 4-6 субагентов параллельно для cabinet pages (как у нас wave 1)
-2. Параллельно — Help / Legal страницы (другой wave)
-3. Public mirror push после каждого batch (защита от cleanup)
+**На этом этапе уже видишь:** icons работают идеально, потому что pack полный. Никаких inline `<polyline>` галок.
 
-### Day 3 — Polish + остатки
-1. Edge cases (Error pages / Email templates / UI Kit gallery)
+### Day 3 (4-6 hours) — Massive parallel cabinet/help/legal pages
+
+1. Спавнить 5-6 субагентов параллельно — каждому brief с **полным icon catalog** (название каждой иконки, путь, semantic значение)
+2. Cabinet pages (client / partner / admin)
+3. Help / Legal страницы (другой wave)
+4. Public mirror push после каждого batch (защита от cleanup)
+
+### Day 4 — Polish + edge cases
+1. Error pages / Email templates / UI Kit gallery
 2. Onboarding flow
 3. Auth pages
+4. Light Homepage polish (если что-то осталось)
 
-**Estimated total:** 56 страниц + 152 icons за 3 рабочих дня (если parallel)
+**Estimated total:** 60+ страниц + 70-150 icons за 4 рабочих дня (если parallel + icons первыми).
+
+> Без правила «Icons first» — будет ~5-7 дней с переделками.
 
 ---
 
