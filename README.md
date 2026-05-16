@@ -1,100 +1,59 @@
-# Aibro Brand Assets
+# Aibro Brand Assets — Public Mirror
 
-Публичный репо визуальной айдентики СММ АЙБРО — design system spec для подключения к [Claude Design](https://claude.ai/design) через "Link code on GitHub".
+Публичный repo с supplementary visual references СММ АЙБРО.
 
-> **SSoT для бренда Aibro СММ.** Адаптировано из sister `https://github.com/NeuralLera/smashone-brand-assets` под российский рынок (168-ФЗ + single-MAX + единый тариф 4 990 ₽).
+> **⚠️ Это NOT SSoT.** Canonical brand spec живёт в **private repo** `Aibro_SMM/design/`:
+> - `Aibro_SMM/design/STYLE_CANON.md` — главный SSoT (стиль / копирайт / компоненты / готовый PROMPT v1)
+> - `Aibro_SMM/design/assets/` — 53 SVG + 5 manifests (curated logos, icons, badges)
+> - `Aibro_SMM/design/MOCKUPS_CANON.md` — phone mockups carousel
+> - `Aibro_SMM/design/MASTER-SITEMAP.md` — 4 surfaces
+
+## Зачем этот public repo
+
+1. **Visual ДНК reference (SmashOne)** — `examples/smashone-pages-light/` (22 страницы) + `examples/smashone-pages-dark/` (5 страниц). Берём layout / glassmorphism / типографику от sister-проекта, контент полностью под Aibro (тариф 4990 ₽, single-MAX, ИП Мальцев РФ, 168-ФЗ).
+2. **Утверждённые экспорты Aibro** — `examples/aibro-pages-light/` / `examples/aibro-pages-dark/` (заполняются по мере approve).
+3. **Compliance summaries** — `compliance/168-fz.md` + `compliance/single-max.md` (короткие чек-листы для быстрого review).
+4. **Pattern references** — `patterns/glassmorphism.md` + `patterns/landing-pages.md`.
 
 ## Структура
 
 ```
 aibro-brand-assets/
-├── tokens/           — Design tokens (verbatim CSS для PROMPT.md)
-│   ├── light-theme.md     — Emerald Light palette + glassmorphism
-│   ├── dark-theme.md      — Emerald Dark (зелёный undertone + saturate boost)
-│   ├── typography.md      — Geist + Inter + IBM Plex Mono stack
-│   └── motion.md          — 140-220ms restraint canon
-├── patterns/         — UI patterns
-│   ├── landing-pages.md   — Public one-pager + CRM-pivot section
-│   ├── cabinet-ia.md      — Sidebar 256/64 + Cmd+K + cards + tables
-│   └── glassmorphism.md   — Glassmorphism + tile background layered hero
-├── brand/
-│   └── brand-identity.md  — Friendly Robot icon + MAX glyph + voice/tone
-├── compliance/
+├── compliance/         — Короткие чек-листы (168-ФЗ + single-MAX)
 │   ├── 168-fz.md         — Кириллица: ИИ / СММ / ЧЗВ / ПРО / СТАНДАРТ
 │   └── single-max.md     — Single-platform MAX (no Telegram / ВК / ОК / Дзен)
-└── examples/         — Заполняется после approval Aibro pages
-    └── (заполняется)
+├── patterns/           — Visual pattern references
+│   ├── glassmorphism.md  — Tile background + glassmorphism canon
+│   └── landing-pages.md  — Public one-pager + CRM-pivot section
+└── examples/           — Visual HTML references
+    ├── smashone-pages-light/  — 22 SmashOne pages (visual ДНК reference)
+    ├── smashone-pages-dark/   — 5 SmashOne dark pages
+    ├── aibro-pages-light/     — утверждённые наши страницы (light)
+    └── aibro-pages-dark/      — утверждённые наши страницы (dark)
 ```
 
-## Принципы
+## Источник правды по design tokens / typography / icons
 
-- **Light default** (с toggle на dark).
-- **Изумрудный акцент** `#10b981` ≤10% surface coverage.
-- **Glassmorphism canon** — backdrop-filter blur(20px) + rgba surfaces + multi-layer shadows.
-- **Sentence case везде** (никаких Title Case / UPPERCASE для заголовков).
-- **168-ФЗ кириллица** для всех user-facing аббревиатур (ИИ / СММ / ЧЗВ / ПРО).
-- **Бренд:** «СММ АЙБРО» (никаких «Aibro» / «AIBRO» / «aibro» в visible text).
-- **MAX** — латиницей всегда (торговая марка VK).
+**НЕ в этом repo.** В private repo `Aibro_SMM/design/STYLE_CANON.md`:
 
-## Tariff / Trial (для PROMPT)
+- **Шрифты:** Onest (headlines) + Golos Text (body). Inter / Geist / Roboto / Arial — banned.
+- **Иконки:** curated SVG в `design/assets/icons/ui-core/` (30 SVG) + 5 manifests. Lucide / Tabler / Heroicons / Phosphor — banned.
+- **Палитра:** Emerald light / dark — детали в STYLE_CANON секции 4-5.
+- **Motion:** restraint 140-220ms — детали в STYLE_CANON секции 3.
+- **Brand assets:** `design/assets/logos/aibro/` + `design/assets/logos/max/` (`aibro_channel/logos/` — НЕ для design-system, только для СОНИ канал-агента).
 
-- **Единый тариф:** 4 990 ₽/мес (всё включено, без аддонов).
-- **Триал:** 5 дней (2 автопоста/день, 100 ответов ИИ/триал).
-- **Партнёрка:** 10% L1 + 10% L2 lifetime (unified 12.05.2026).
-- **CRM-pivot (релиз 08.06.2026):** приём заказов / запись на услуги / мини-CRM клиентов + push владельцу через MAX. Оплата заказа клиентом — **мимо нас** (владелец сам на своей кассе/банке).
+## Использование с Claude Design
 
-## Подключение к Claude Design
+В setup форме Claude Design (https://claude.ai/design):
 
-При создании нового проекта на https://claude.ai/design в поле "Link code on GitHub" указывай:
+- Поле **«Link code on GitHub»**: опционально — `https://github.com/NeuralLera/aibro-brand-assets` (даст visual ДНК references).
+- **Основной canon** — paste содержимого `PROMPT.md` из task-папки (`Aibro_SMM/design/.claude/tasks/<TASK>/PROMPT.md`). PROMPT уже содержит canonical tokens / typography / iron rules.
 
-```
-https://github.com/NeuralLera/aibro-brand-assets
-```
+## Sister projects
 
-Claude Design автоматически подтянет tokens / patterns / brand / compliance — будет использовать при генерации концептов. Это даёт **консистентность бренда** между разными design проектами.
-
-## Use в PROMPT.md (для Rumira)
-
-При написании PROMPT для Claude Design — встраивай канон verbatim:
-
-```markdown
-## Design tokens
-[см. tokens/light-theme.md + tokens/dark-theme.md]
-
-## Typography
-[см. tokens/typography.md]
-
-## Motion
-[см. tokens/motion.md]
-
-## Glassmorphism
-[см. patterns/glassmorphism.md]
-
-## Brand identity
-[см. brand/brand-identity.md]
-
-## Compliance
-[см. compliance/168-fz.md + compliance/single-max.md]
-```
-
-## Sister repos
-
-- **SmashOne (EU/US):** `https://github.com/NeuralLera/smashone-brand-assets` — эталон structure, английский tone, dark default + light toggle, 6-platform stack.
-
-## Связанные документы
-
-- Основной репо Aibro СММ: `https://github.com/NeuralLera/smmaibro` (private).
-- Rumira (бренд-дизайнер): `Aibro_SMM/design/CLAUDE.md` + `Aibro_SMM/design/.claude/agents/rumira.md`.
-- Knowledge library: `Aibro_SMM/design/knowledge/` — детальные knowledge файлы (8 шт).
-
-## Версия
-
-- **v2.0** — 2026-05-16. Полное переписывание с нуля. Источник: `Aibro_SMM/design/knowledge/` (Phase A foundation для Rumira). Заменяет v1.0 (короткие spec'и от Дона + GPT-Rumira 14-15.05).
+- `https://github.com/NeuralLera/smashone-brand-assets` — эталон по которому сделан наш repo
+- `https://smashone.ai` — sister international product (SmashOne)
 
 ## License
 
-MIT — см. `LICENSE`.
-
----
-
-*Aibro СММ © 2025-2026 · ИП Мальцев Валерий Валерьевич · ИНН 519041916737*
+См. `LICENSE`.
