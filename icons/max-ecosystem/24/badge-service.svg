@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="80" height="22" viewBox="0 0 80 22" role="img" aria-label="Сервис">
-  <rect x="0.5" y="0.5" width="79" height="21" rx="10.5" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.28"></rect>
-  
-  <text x="40" y="12" dominant-baseline="middle" text-anchor="middle" font-family="Golos Text, Manrope, system-ui, sans-serif" font-size="12" font-weight="600" fill="currentColor">Сервис</text>
-</svg>
