@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Aibro Icons Preview — 80 SVG из manifests + 30 ui-core</title>
+<style>
+  body { background: #fafafa; color: #0e0f12; font-family: -apple-system, "Segoe UI", system-ui, sans-serif; margin: 0; padding: 40px 24px; }
+  h1 { font-size: 28px; margin: 0 0 8px; letter-spacing: -0.02em; }
+  .subtitle { color: #6b7079; font-size: 14px; margin: 0 0 32px; }
+  h2 { font-size: 18px; margin: 32px 0 16px; padding: 12px 16px; background: #ecfdf5; color: #047857; border-radius: 8px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .icon-card { background: #fff; border: 1px solid rgba(15,23,42,0.08); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: border-color 140ms; }
+  .icon-card:hover { border-color: #10b981; }
+  .icon-card img { width: 32px; height: 32px; color: #10b981; }
+  .icon-name { font-size: 11px; color: #6b7079; font-family: ui-monospace, monospace; text-align: center; word-break: break-all; }
+  .toggle { position: fixed; top: 16px; right: 16px; padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; }
+  body.dark { background: #0a0f0d; color: #f1f5f3; }
+  body.dark .icon-card { background: #11181a; border-color: rgba(255,255,255,0.08); }
+  body.dark .icon-card img { color: #34d399; }
+  body.dark .icon-name { color: #a1a8b0; }
+  body.dark h2 { background: rgba(52,211,153,0.12); color: #6ee7b7; }
+</style>
+</head>
+<body>
+<button class="toggle" onclick="document.body.classList.toggle('dark')">Toggle Light/Dark</button>
+
+<h1>Aibro Icons Preview</h1>
+<p class="subtitle">110 SVG total: 80 из manifests + 30 ui-core. Stroke 1.8px, currentColor inheritance, 24×24 grid.</p>
+
+<h2>Cabinet — Navigation (20 + 5 CRM + 5 CRM-settings = 30)</h2>
+<div class="grid">
+  <div class="icon-card"><img src="icon-nav-home.svg"><span class="icon-name">nav-home</span></div>
+  <div class="icon-card"><img src="icon-nav-content.svg"><span class="icon-name">nav-content</span></div>
+  <div class="icon-card"><img src="icon-nav-quick-post.svg"><span class="icon-name">nav-quick-post</span></div>
+  <div class="icon-card"><img src="icon-nav-plan.svg"><span class="icon-name">nav-plan</span></div>
+  <div class="icon-card"><img src="icon-nav-products.svg"><span class="icon-name">nav-products</span></div>
+  <div class="icon-card"><img src="icon-nav-orders.svg"><span class="icon-name">nav-orders</span></div>
+  <div class="icon-card"><img src="icon-nav-bookings.svg"><span class="icon-name">nav-bookings</span></div>
+  <div class="icon-card"><img src="icon-nav-customers.svg"><span class="icon-name">nav-customers</span></div>
+  <div class="icon-card"><img src="icon-nav-messages.svg"><span class="icon-name">nav-messages</span></div>
+  <div class="icon-card"><img src="icon-nav-notifications.svg"><span class="icon-name">nav-notifications</span></div>
+  <div class="icon-card"><img src="icon-nav-integrations.svg"><span class="icon-name">nav-integrations</span></div>
+  <div class="icon-card"><img src="icon-nav-settings.svg"><span class="icon-name">nav-settings</span></div>
+  <div class="icon-card"><img src="icon-nav-team.svg"><span class="icon-name">nav-team</span></div>
+  <div class="icon-card"><img src="icon-nav-partners.svg"><span class="icon-name">nav-partners</span></div>
+  <div class="icon-card"><img src="icon-nav-finance.svg"><span class="icon-name">nav-finance</span></div>
+  <div class="icon-card"><img src="icon-nav-documents.svg"><span class="icon-name">nav-documents</span></div>
+  <div class="icon-card"><img src="icon-nav-taxes.svg"><span class="icon-name">nav-taxes</span></div>
+  <div class="icon-card"><img src="icon-nav-help.svg"><span class="icon-name">nav-help</span></div>
+  <div class="icon-card"><img src="icon-nav-feedback.svg"><span class="icon-name">nav-feedback</span></div>
+  <div class="icon-card"><img src="icon-nav-logout.svg"><span class="icon-name">nav-logout</span></div>
+
+  <div class="icon-card"><img src="icon-crm-home.svg"><span class="icon-name">crm-home</span></div>
+  <div class="icon-card"><img src="icon-crm-orders.svg"><span class="icon-name">crm-orders</span></div>
+  <div class="icon-card"><img src="icon-crm-bookings.svg"><span class="icon-name">crm-bookings</span></div>
+  <div class="icon-card"><img src="icon-crm-customers.svg"><span class="icon-name">crm-customers</span></div>
+  <div class="icon-card"><img src="icon-crm-settings.svg"><span class="icon-name">crm-settings</span></div>
+  <div class="icon-card"><img src="icon-crm-resources.svg"><span class="icon-name">crm-resources</span></div>
+  <div class="icon-card"><img src="icon-crm-slot-templates.svg"><span class="icon-name">crm-slot-templates</span></div>
+  <div class="icon-card"><img src="icon-crm-delivery-zones.svg"><span class="icon-name">crm-delivery-zones</span></div>
+  <div class="icon-card"><img src="icon-crm-delivery.svg"><span class="icon-name">crm-delivery</span></div>
+  <div class="icon-card"><img src="icon-crm-pickup.svg"><span class="icon-name">crm-pickup</span></div>
+</div>
+
+<h2>Actions — Universal CRUD (19)</h2>
+<div class="grid">
+  <div class="icon-card"><img src="icon-action-add.svg"><span class="icon-name">action-add</span></div>
+  <div class="icon-card"><img src="icon-action-edit.svg"><span class="icon-name">action-edit</span></div>
+  <div class="icon-card"><img src="icon-action-save.svg"><span class="icon-name">action-save</span></div>
+  <div class="icon-card"><img src="icon-action-delete.svg"><span class="icon-name">action-delete</span></div>
+  <div class="icon-card"><img src="icon-action-archive.svg"><span class="icon-name">action-archive</span></div>
+  <div class="icon-card"><img src="icon-action-copy.svg"><span class="icon-name">action-copy</span></div>
+  <div class="icon-card"><img src="icon-action-search.svg"><span class="icon-name">action-search</span></div>
+  <div class="icon-card"><img src="icon-action-filter.svg"><span class="icon-name">action-filter</span></div>
+  <div class="icon-card"><img src="icon-action-sort.svg"><span class="icon-name">action-sort</span></div>
+  <div class="icon-card"><img src="icon-action-refresh.svg"><span class="icon-name">action-refresh</span></div>
+  <div class="icon-card"><img src="icon-action-expand.svg"><span class="icon-name">action-expand</span></div>
+  <div class="icon-card"><img src="icon-action-collapse.svg"><span class="icon-name">action-collapse</span></div>
+  <div class="icon-card"><img src="icon-action-export.svg"><span class="icon-name">action-export</span></div>
+  <div class="icon-card"><img src="icon-action-import.svg"><span class="icon-name">action-import</span></div>
+  <div class="icon-card"><img src="icon-action-upload.svg"><span class="icon-name">action-upload</span></div>
+  <div class="icon-card"><img src="icon-action-download.svg"><span class="icon-name">action-download</span></div>
+  <div class="icon-card"><img src="icon-action-share-link.svg"><span class="icon-name">action-share-link</span></div>
+  <div class="icon-card"><img src="icon-action-external-link.svg"><span class="icon-name">action-external-link</span></div>
+  <div class="icon-card"><img src="icon-action-print.svg"><span class="icon-name">action-print</span></div>
+</div>
+
+<h2>Status — Generic + Orders + Bookings (15)</h2>
+<div class="grid">
+  <div class="icon-card"><img src="icon-status-success.svg"><span class="icon-name">status-success</span></div>
+  <div class="icon-card"><img src="icon-status-warning.svg"><span class="icon-name">status-warning</span></div>
+  <div class="icon-card"><img src="icon-status-error.svg"><span class="icon-name">status-error</span></div>
+  <div class="icon-card"><img src="icon-status-info.svg"><span class="icon-name">status-info</span></div>
+  <div class="icon-card"><img src="icon-status-new.svg"><span class="icon-name">status-new</span></div>
+  <div class="icon-card"><img src="icon-status-order-new.svg"><span class="icon-name">order-new</span></div>
+  <div class="icon-card"><img src="icon-status-order-accepted.svg"><span class="icon-name">order-accepted</span></div>
+  <div class="icon-card"><img src="icon-status-order-in-progress.svg"><span class="icon-name">order-in-progress</span></div>
+  <div class="icon-card"><img src="icon-status-order-delivery.svg"><span class="icon-name">order-delivery</span></div>
+  <div class="icon-card"><img src="icon-status-order-done.svg"><span class="icon-name">order-done</span></div>
+  <div class="icon-card"><img src="icon-status-order-cancelled.svg"><span class="icon-name">order-cancelled</span></div>
+  <div class="icon-card"><img src="icon-status-booking-pending.svg"><span class="icon-name">booking-pending</span></div>
+  <div class="icon-card"><img src="icon-status-booking-confirmed.svg"><span class="icon-name">booking-confirmed</span></div>
+  <div class="icon-card"><img src="icon-status-booking-rescheduled.svg"><span class="icon-name">booking-rescheduled</span></div>
+  <div class="icon-card"><img src="icon-status-booking-cancelled.svg"><span class="icon-name">booking-cancelled</span></div>
+</div>
+
+<h2>MAX Ecosystem + Niches (9)</h2>
+<div class="grid">
+  <div class="icon-card"><img src="icon-max-channel.svg"><span class="icon-name">max-channel</span></div>
+  <div class="icon-card"><img src="icon-max-support-bot.svg"><span class="icon-name">max-support-bot</span></div>
+  <div class="icon-card"><img src="icon-max-product-bot.svg"><span class="icon-name">max-product-bot</span></div>
+  <div class="icon-card"><img src="icon-max-community-group.svg"><span class="icon-name">max-community-group</span></div>
+  <div class="icon-card"><img src="icon-niche-bakery.svg"><span class="icon-name">niche-bakery</span></div>
+  <div class="icon-card"><img src="icon-niche-fitness.svg"><span class="icon-name">niche-fitness</span></div>
+  <div class="icon-card"><img src="icon-niche-travel.svg"><span class="icon-name">niche-travel</span></div>
+  <div class="icon-card"><img src="icon-niche-insurance.svg"><span class="icon-name">niche-insurance</span></div>
+  <div class="icon-card"><img src="icon-niche-services.svg"><span class="icon-name">niche-services</span></div>
+</div>
+
+<h2>Roadmap (7)</h2>
+<div class="grid">
+  <div class="icon-card"><img src="icon-roadmap-now.svg"><span class="icon-name">roadmap-now</span></div>
+  <div class="icon-card"><img src="icon-roadmap-quarter.svg"><span class="icon-name">roadmap-quarter</span></div>
+  <div class="icon-card"><img src="icon-roadmap-live.svg"><span class="icon-name">roadmap-live</span></div>
+  <div class="icon-card"><img src="icon-roadmap-loyalty.svg"><span class="icon-name">roadmap-loyalty</span></div>
+  <div class="icon-card"><img src="icon-roadmap-analytics.svg"><span class="icon-name">roadmap-analytics</span></div>
+  <div class="icon-card"><img src="icon-roadmap-automation.svg"><span class="icon-name">roadmap-automation</span></div>
+  <div class="icon-card"><img src="icon-roadmap-advisor.svg"><span class="icon-name">roadmap-advisor</span></div>
+</div>
+
+<h2>UI-core (30, existing — для reference сравнения штриха)</h2>
+<div class="grid">
+  <div class="icon-card"><img src="ui-core/home.svg"><span class="icon-name">ui-core/home</span></div>
+  <div class="icon-card"><img src="ui-core/settings.svg"><span class="icon-name">ui-core/settings</span></div>
+  <div class="icon-card"><img src="ui-core/calendar-clock.svg"><span class="icon-name">ui-core/calendar-clock</span></div>
+  <div class="icon-card"><img src="ui-core/credit-card.svg"><span class="icon-name">ui-core/credit-card</span></div>
+  <div class="icon-card"><img src="ui-core/info.svg"><span class="icon-name">ui-core/info</span></div>
+  <div class="icon-card"><img src="ui-core/lock.svg"><span class="icon-name">ui-core/lock</span></div>
+  <div class="icon-card"><img src="ui-core/megaphone.svg"><span class="icon-name">ui-core/megaphone</span></div>
+  <div class="icon-card"><img src="ui-core/message-circle.svg"><span class="icon-name">ui-core/message-circle</span></div>
+  <div class="icon-card"><img src="ui-core/users.svg"><span class="icon-name">ui-core/users</span></div>
+  <div class="icon-card"><img src="ui-core/warning.svg"><span class="icon-name">ui-core/warning</span></div>
+  <div class="icon-card"><img src="ui-core/help-circle.svg"><span class="icon-name">ui-core/help-circle</span></div>
+  <div class="icon-card"><img src="ui-core/bar-chart.svg"><span class="icon-name">ui-core/bar-chart</span></div>
+  <div class="icon-card"><img src="ui-core/bolt.svg"><span class="icon-name">ui-core/bolt</span></div>
+  <div class="icon-card"><img src="ui-core/briefcase.svg"><span class="icon-name">ui-core/briefcase</span></div>
+  <div class="icon-card"><img src="ui-core/clock.svg"><span class="icon-name">ui-core/clock</span></div>
+  <div class="icon-card"><img src="ui-core/download.svg"><span class="icon-name">ui-core/download</span></div>
+  <div class="icon-card"><img src="ui-core/external-link.svg"><span class="icon-name">ui-core/external-link</span></div>
+  <div class="icon-card"><img src="ui-core/file.svg"><span class="icon-name">ui-core/file</span></div>
+  <div class="icon-card"><img src="ui-core/file-text.svg"><span class="icon-name">ui-core/file-text</span></div>
+  <div class="icon-card"><img src="ui-core/flask.svg"><span class="icon-name">ui-core/flask</span></div>
+  <div class="icon-card"><img src="ui-core/id-card.svg"><span class="icon-name">ui-core/id-card</span></div>
+  <div class="icon-card"><img src="ui-core/keyboard.svg"><span class="icon-name">ui-core/keyboard</span></div>
+  <div class="icon-card"><img src="ui-core/layers.svg"><span class="icon-name">ui-core/layers</span></div>
+  <div class="icon-card"><img src="ui-core/life-buoy.svg"><span class="icon-name">ui-core/life-buoy</span></div>
+  <div class="icon-card"><img src="ui-core/mouse-pointer.svg"><span class="icon-name">ui-core/mouse-pointer</span></div>
+  <div class="icon-card"><img src="ui-core/percent.svg"><span class="icon-name">ui-core/percent</span></div>
+  <div class="icon-card"><img src="ui-core/plug.svg"><span class="icon-name">ui-core/plug</span></div>
+  <div class="icon-card"><img src="ui-core/rocket.svg"><span class="icon-name">ui-core/rocket</span></div>
+  <div class="icon-card"><img src="ui-core/scroll.svg"><span class="icon-name">ui-core/scroll</span></div>
+  <div class="icon-card"><img src="ui-core/user.svg"><span class="icon-name">ui-core/user</span></div>
+</div>
+
+</body>
+</html>

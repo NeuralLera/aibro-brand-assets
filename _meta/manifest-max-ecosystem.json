@@ -1,0 +1,132 @@
+{
+  "phase": "MAX ecosystem add-on",
+  "scope": "Entity icons + niche icons + status badges",
+  "sections": [
+    {
+      "id": "entity",
+      "title": "MAX — сущности экосистемы",
+      "meta": "каналы, боты, сообщество",
+      "icons": [
+        "max-channel",
+        "max-support-bot",
+        "max-product-bot",
+        "max-community-group"
+      ]
+    },
+    {
+      "id": "niche",
+      "title": "Демо-ниши",
+      "meta": "для карточек / примеров",
+      "icons": [
+        "niche-bakery",
+        "niche-fitness",
+        "niche-travel",
+        "niche-insurance",
+        "niche-services"
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "name": "max-channel",
+      "label": "Канал MAX",
+      "file": "icons/icon-max-channel.svg",
+      "inner": "<path d=\"M4 10v4l13 6V4z\"/>\n<path d=\"M17 9a3 3 0 0 1 0 6\"/>\n<path d=\"M7 14v3a2 2 0 0 0 4 0v-2\"/>"
+    },
+    {
+      "name": "max-support-bot",
+      "label": "Бот поддержки",
+      "file": "icons/icon-max-support-bot.svg",
+      "inner": "<circle cx=\"12\" cy=\"12\" r=\"9\"/>\n<circle cx=\"12\" cy=\"12\" r=\"3.5\"/>\n<path d=\"M9.5 9.5L5 5\"/>\n<path d=\"M14.5 9.5L19 5\"/>\n<path d=\"M9.5 14.5L5 19\"/>\n<path d=\"M14.5 14.5L19 19\"/>"
+    },
+    {
+      "name": "max-product-bot",
+      "label": "Продукт-бот",
+      "file": "icons/icon-max-product-bot.svg",
+      "inner": "<path d=\"M8 4.5V3\"/>\n<path d=\"M16 4.5V3\"/>\n<rect x=\"4\" y=\"4.5\" width=\"16\" height=\"15\" rx=\"3.5\"/>\n<path d=\"M12 9c0 1.7.9 2.6 2.6 2.6-1.7 0-2.6.9-2.6 2.6 0-1.7-.9-2.6-2.6-2.6 1.7 0 2.6-.9 2.6-2.6z\"/>\n<path d=\"M9 19.5v1.5\"/>\n<path d=\"M15 19.5v1.5\"/>"
+    },
+    {
+      "name": "max-community-group",
+      "label": "Сообщество",
+      "file": "icons/icon-max-community-group.svg",
+      "inner": "<path d=\"M3 6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H8l-3 2.5V12a2 2 0 0 1-2-2z\"/>\n<path d=\"M9 14v1a2 2 0 0 0 2 2h8l3 2.5V17a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-3\"/>"
+    },
+    {
+      "name": "niche-bakery",
+      "label": "Пекарня",
+      "file": "icons/icon-niche-bakery.svg",
+      "inner": "<path d=\"M3.5 17c0-5.5 17-5.5 17 0z\"/>\n<path d=\"M3.5 17h17\"/>\n<path d=\"M8 13V9.5\"/>\n<path d=\"M12 12V8.5\"/>\n<path d=\"M16 13V9.5\"/>"
+    },
+    {
+      "name": "niche-fitness",
+      "label": "Фитнес",
+      "file": "icons/icon-niche-fitness.svg",
+      "inner": "<path d=\"M3 12h18\"/>\n<path d=\"M5 8.5v7\"/>\n<path d=\"M7.5 6.5v11\"/>\n<path d=\"M16.5 6.5v11\"/>\n<path d=\"M19 8.5v7\"/>"
+    },
+    {
+      "name": "niche-travel",
+      "label": "Тревел",
+      "file": "icons/icon-niche-travel.svg",
+      "inner": "<circle cx=\"12\" cy=\"12\" r=\"9\"/>\n<ellipse cx=\"12\" cy=\"12\" rx=\"9\" ry=\"3.5\"/>\n<path d=\"M12 3c2.8 3 2.8 15 0 18\"/>\n<path d=\"M12 3c-2.8 3-2.8 15 0 18\"/>"
+    },
+    {
+      "name": "niche-insurance",
+      "label": "Страхование",
+      "file": "icons/icon-niche-insurance.svg",
+      "inner": "<path d=\"M12 3.2 4.5 6v6c0 4.5 3.2 7.4 7.5 8.5 4.3-1.1 7.5-4 7.5-8.5V6z\"/>\n<path d=\"M12 9v6\"/>\n<path d=\"M9 12h6\"/>"
+    },
+    {
+      "name": "niche-services",
+      "label": "Услуги",
+      "file": "icons/icon-niche-services.svg",
+      "inner": "<circle cx=\"6\" cy=\"6.5\" r=\"2.5\"/>\n<circle cx=\"6\" cy=\"17.5\" r=\"2.5\"/>\n<path d=\"M8.2 8L20 16.5\"/>\n<path d=\"M8.2 16L20 7.5\"/>\n<path d=\"M11.5 12h2\"/>"
+    }
+  ],
+  "badges": [
+    {
+      "name": "official",
+      "text": "Официально",
+      "width": 110,
+      "hasDot": true,
+      "file": "icons/badge-official.svg",
+      "colorVar": "--brand-accent",
+      "softVar": "--brand-accent-soft"
+    },
+    {
+      "name": "demo",
+      "text": "Демо",
+      "width": 64,
+      "hasDot": false,
+      "file": "icons/badge-demo.svg",
+      "colorVar": "--badge-neutral",
+      "softVar": "--surface-raised"
+    },
+    {
+      "name": "soon",
+      "text": "Скоро",
+      "width": 72,
+      "hasDot": true,
+      "file": "icons/badge-soon.svg",
+      "colorVar": "--semantic-warning",
+      "softVar": "--semantic-warning-soft"
+    },
+    {
+      "name": "support",
+      "text": "Поддержка",
+      "width": 104,
+      "hasDot": true,
+      "file": "icons/badge-support.svg",
+      "colorVar": "--semantic-info",
+      "softVar": "--semantic-info-soft"
+    },
+    {
+      "name": "service",
+      "text": "Сервис",
+      "width": 80,
+      "hasDot": false,
+      "file": "icons/badge-service.svg",
+      "colorVar": "--badge-neutral",
+      "softVar": "--surface-raised"
+    }
+  ]
+}

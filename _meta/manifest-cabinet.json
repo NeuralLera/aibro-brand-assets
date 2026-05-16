@@ -1,0 +1,239 @@
+{
+  "phase": "A",
+  "scope": "Aibro cabinet navigation + CRM sub-navigation",
+  "sections": [
+    {
+      "id": "nav",
+      "title": "Кабинет — навигация",
+      "meta": "20 верхнеуровневых пунктов",
+      "icons": [
+        "nav-home",
+        "nav-content",
+        "nav-quick-post",
+        "nav-plan",
+        "nav-products",
+        "nav-orders",
+        "nav-bookings",
+        "nav-customers",
+        "nav-messages",
+        "nav-notifications",
+        "nav-integrations",
+        "nav-settings",
+        "nav-team",
+        "nav-partners",
+        "nav-finance",
+        "nav-documents",
+        "nav-taxes",
+        "nav-help",
+        "nav-feedback",
+        "nav-logout"
+      ]
+    },
+    {
+      "id": "crm",
+      "title": "CRM — подменю",
+      "meta": "5 разделов внутри /crm",
+      "icons": [
+        "crm-home",
+        "crm-orders",
+        "crm-bookings",
+        "crm-customers",
+        "crm-settings"
+      ]
+    },
+    {
+      "id": "crm-settings",
+      "title": "CRM — настройки",
+      "meta": "подразделы /crm/settings",
+      "icons": [
+        "crm-resources",
+        "crm-slot-templates",
+        "crm-delivery-zones",
+        "crm-delivery",
+        "crm-pickup"
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "name": "nav-home",
+      "label": "Главная",
+      "file": "icons/icon-nav-home.svg",
+      "inner": "<path d=\"M3.5 11 12 3.5 20.5 11V20a1 1 0 0 1-1 1H4.5a1 1 0 0 1-1-1Z\"/>\n<path d=\"M9.5 21V14h5v7\"/>"
+    },
+    {
+      "name": "nav-content",
+      "label": "Контент",
+      "file": "icons/icon-nav-content.svg",
+      "inner": "<rect x=\"3.5\" y=\"6.5\" width=\"13\" height=\"14\" rx=\"2\"/>\n<path d=\"M7 6.5V5a1.5 1.5 0 0 1 1.5-1.5h11A1.5 1.5 0 0 1 21 5v11.5a1.5 1.5 0 0 1-1.5 1.5h-3\"/>\n<path d=\"M7 11.5h6.5\"/>\n<path d=\"M7 15.5h4\"/>"
+    },
+    {
+      "name": "nav-quick-post",
+      "label": "Быстрый пост",
+      "file": "icons/icon-nav-quick-post.svg",
+      "inner": "<path d=\"M13.5 3 5 13.5h6L9.5 21 19 10.5h-6Z\"/>"
+    },
+    {
+      "name": "nav-plan",
+      "label": "Контент-план",
+      "file": "icons/icon-nav-plan.svg",
+      "inner": "<rect x=\"3.5\" y=\"4.5\" width=\"17\" height=\"16\" rx=\"2.5\"/>\n<path d=\"M8 3V6.5\"/>\n<path d=\"M16 3V6.5\"/>\n<path d=\"M3.5 9.5h17\"/>\n<rect x=\"6.5\" y=\"11.5\" width=\"4\" height=\"2.5\" rx=\"0.7\"/>\n<rect x=\"13.5\" y=\"11.5\" width=\"4\" height=\"2.5\" rx=\"0.7\"/>\n<rect x=\"10\" y=\"16\" width=\"4\" height=\"2.5\" rx=\"0.7\"/>"
+    },
+    {
+      "name": "nav-products",
+      "label": "Услуги",
+      "file": "icons/icon-nav-products.svg",
+      "inner": "<path d=\"M3.5 7.4 12 3.5l8.5 3.9v9.2L12 20.5l-8.5-3.9z\"/>\n<path d=\"M3.5 7.4 12 11.3l8.5-3.9\"/>\n<path d=\"M12 11.3v9.2\"/>"
+    },
+    {
+      "name": "nav-orders",
+      "label": "Заказы",
+      "file": "icons/icon-nav-orders.svg",
+      "inner": "<path d=\"M5.5 8h13l1 12.5h-15z\"/>\n<path d=\"M9 8V6a3 3 0 0 1 6 0v2\"/>"
+    },
+    {
+      "name": "nav-bookings",
+      "label": "Записи",
+      "file": "icons/icon-nav-bookings.svg",
+      "inner": "<rect x=\"3.5\" y=\"5.5\" width=\"17\" height=\"15\" rx=\"2.5\"/>\n<path d=\"M8 3.5V7\"/>\n<path d=\"M16 3.5V7\"/>\n<path d=\"M3.5 10.5h17\"/>\n<circle cx=\"12\" cy=\"15.5\" r=\"2.6\"/>\n<path d=\"M12 13.6V15.5L13.4 16.4\"/>"
+    },
+    {
+      "name": "nav-customers",
+      "label": "Клиенты",
+      "file": "icons/icon-nav-customers.svg",
+      "inner": "<circle cx=\"12\" cy=\"8.5\" r=\"4\"/>\n<path d=\"M4 20.5c0-4 3.6-7 8-7s8 3 8 7\"/>"
+    },
+    {
+      "name": "nav-messages",
+      "label": "Сообщения",
+      "file": "icons/icon-nav-messages.svg",
+      "inner": "<path d=\"M3.5 7.5a3 3 0 0 1 3-3h11a3 3 0 0 1 3 3v6.5a3 3 0 0 1-3 3H11l-5 4v-4H6.5a3 3 0 0 1-3-3Z\"/>"
+    },
+    {
+      "name": "nav-notifications",
+      "label": "Уведомления",
+      "file": "icons/icon-nav-notifications.svg",
+      "inner": "<path d=\"M6 16c0-1 .6-1.5.6-3v-2.4a5.4 5.4 0 0 1 10.8 0V13c0 1.5.6 2 .6 3Z\"/>\n<path d=\"M10 19a2 2 0 0 0 4 0\"/>"
+    },
+    {
+      "name": "nav-integrations",
+      "label": "Интеграции",
+      "file": "icons/icon-nav-integrations.svg",
+      "inner": "<rect x=\"3.5\" y=\"3.5\" width=\"7.5\" height=\"7.5\" rx=\"1.5\"/>\n<rect x=\"13\" y=\"3.5\" width=\"7.5\" height=\"7.5\" rx=\"1.5\"/>\n<rect x=\"3.5\" y=\"13\" width=\"7.5\" height=\"7.5\" rx=\"1.5\"/>\n<path d=\"M16.75 13.5v7\"/>\n<path d=\"M13.25 17h7\"/>"
+    },
+    {
+      "name": "nav-settings",
+      "label": "Настройки",
+      "file": "icons/icon-nav-settings.svg",
+      "inner": "<circle cx=\"12\" cy=\"12\" r=\"3\"/>\n<path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z\"/>"
+    },
+    {
+      "name": "nav-team",
+      "label": "Команда",
+      "file": "icons/icon-nav-team.svg",
+      "inner": "<circle cx=\"9\" cy=\"8.5\" r=\"3.5\"/>\n<path d=\"M2.5 20.5c0-3.7 3-6.2 6.5-6.2s6.5 2.5 6.5 6.2\"/>\n<circle cx=\"17\" cy=\"9.5\" r=\"2.5\"/>\n<path d=\"M15 14.7c.7-.2 1.4-.3 2-.3 2.7 0 4.5 2 4.5 5.3\"/>"
+    },
+    {
+      "name": "nav-partners",
+      "label": "Партнёры",
+      "file": "icons/icon-nav-partners.svg",
+      "inner": "<circle cx=\"9\" cy=\"12\" r=\"5\"/>\n<circle cx=\"15\" cy=\"12\" r=\"5\"/>"
+    },
+    {
+      "name": "nav-finance",
+      "label": "Финансы",
+      "file": "icons/icon-nav-finance.svg",
+      "inner": "<circle cx=\"12\" cy=\"12\" r=\"9\"/>\n<path d=\"M9 7.5h3.5a2.5 2.5 0 0 1 0 5H9\"/>\n<path d=\"M9 7.5V16.5\"/>\n<path d=\"M7.5 14h6\"/>"
+    },
+    {
+      "name": "nav-documents",
+      "label": "Документы",
+      "file": "icons/icon-nav-documents.svg",
+      "inner": "<path d=\"M6 3.5h7.5L19 9v10.5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z\"/>\n<path d=\"M13.5 3.5V9H19\"/>\n<path d=\"M9 13h6\"/>\n<path d=\"M9 16.5h4\"/>"
+    },
+    {
+      "name": "nav-taxes",
+      "label": "Налоги",
+      "file": "icons/icon-nav-taxes.svg",
+      "inner": "<path d=\"M5.5 3.5h13v17l-2-1.5-2 1.5-2.5-1.5-2.5 1.5-2-1.5-2 1.5z\"/>\n<circle cx=\"9.5\" cy=\"9\" r=\"1.3\"/>\n<circle cx=\"14.5\" cy=\"14\" r=\"1.3\"/>\n<path d=\"M9 14.5 15 8\"/>"
+    },
+    {
+      "name": "nav-help",
+      "label": "Помощь",
+      "file": "icons/icon-nav-help.svg",
+      "inner": "<circle cx=\"12\" cy=\"12\" r=\"9\"/>\n<path d=\"M9.5 10a2.5 2.5 0 1 1 4 2c-.7.5-1.5 1-1.5 2.2\"/>\n<circle cx=\"12\" cy=\"17.2\" r=\"0.9\" fill=\"currentColor\" stroke=\"none\"/>"
+    },
+    {
+      "name": "nav-feedback",
+      "label": "Отзыв",
+      "file": "icons/icon-nav-feedback.svg",
+      "inner": "<path d=\"M3.5 6a2 2 0 0 1 2-2h11.5a2 2 0 0 1 2 2v6.5a2 2 0 0 1-2 2H10l-4 4V14.5a2 2 0 0 1-2-2z\"/>\n<path d=\"M11.5 6.5c0 2 1 3 3 3-2 0-3 1-3 3 0-2-1-3-3-3 2 0 3-1 3-3z\"/>"
+    },
+    {
+      "name": "nav-logout",
+      "label": "Выход",
+      "file": "icons/icon-nav-logout.svg",
+      "inner": "<path d=\"M10 4.5H5.5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1H10\"/>\n<path d=\"M14.5 8l4 4-4 4\"/>\n<path d=\"M8.5 12H18.5\"/>"
+    },
+    {
+      "name": "crm-home",
+      "label": "CRM · Главная",
+      "file": "icons/icon-crm-home.svg",
+      "inner": "<rect x=\"3.5\" y=\"4.5\" width=\"17\" height=\"15\" rx=\"2\"/>\n<path d=\"M3.5 9.5h17\"/>\n<path d=\"M7 16V13\"/>\n<path d=\"M11 16V11.5\"/>\n<path d=\"M15 16V13.5\"/>"
+    },
+    {
+      "name": "crm-orders",
+      "label": "CRM · Заказы",
+      "file": "icons/icon-crm-orders.svg",
+      "inner": "<rect x=\"4.5\" y=\"5\" width=\"15\" height=\"15.5\" rx=\"1.5\"/>\n<rect x=\"8\" y=\"3.5\" width=\"8\" height=\"4\" rx=\"1\"/>\n<path d=\"M8 12l1.5 1.5L13 10\"/>\n<path d=\"M8 17l1.5 1.5L13 15\"/>"
+    },
+    {
+      "name": "crm-bookings",
+      "label": "CRM · Записи",
+      "file": "icons/icon-crm-bookings.svg",
+      "inner": "<path d=\"M5.5 4.5h13\"/>\n<path d=\"M8 3V6\"/>\n<path d=\"M16 3V6\"/>\n<circle cx=\"12\" cy=\"13.5\" r=\"7.5\"/>\n<path d=\"M12 9.5V13.5L15 15.2\"/>"
+    },
+    {
+      "name": "crm-customers",
+      "label": "CRM · Клиенты",
+      "file": "icons/icon-crm-customers.svg",
+      "inner": "<rect x=\"3.5\" y=\"4.5\" width=\"17\" height=\"15\" rx=\"2\"/>\n<circle cx=\"9\" cy=\"10.5\" r=\"2.2\"/>\n<path d=\"M5.5 16c.4-1.6 1.8-2.6 3.5-2.6s3.1 1 3.5 2.6\"/>\n<path d=\"M13.5 9h5\"/>\n<path d=\"M13.5 12.5h3.5\"/>"
+    },
+    {
+      "name": "crm-settings",
+      "label": "CRM · Настройки",
+      "file": "icons/icon-crm-settings.svg",
+      "inner": "<path d=\"M4 6h8\"/>\n<path d=\"M16 6h4\"/>\n<circle cx=\"14\" cy=\"6\" r=\"2\"/>\n<path d=\"M4 12h3\"/>\n<path d=\"M11 12h9\"/>\n<circle cx=\"9\" cy=\"12\" r=\"2\"/>\n<path d=\"M4 18h12\"/>\n<circle cx=\"18\" cy=\"18\" r=\"2\"/>"
+    },
+    {
+      "name": "crm-resources",
+      "label": "Ресурсы",
+      "file": "icons/icon-crm-resources.svg",
+      "inner": "<circle cx=\"9\" cy=\"8\" r=\"3.5\"/>\n<path d=\"M3 20.5c0-3.5 2.7-6 6-6\"/>\n<circle cx=\"16.5\" cy=\"16\" r=\"4.5\"/>\n<path d=\"M14.5 16 15.9 17.4 18.7 14.6\"/>"
+    },
+    {
+      "name": "crm-slot-templates",
+      "label": "Шаблоны слотов",
+      "file": "icons/icon-crm-slot-templates.svg",
+      "inner": "<rect x=\"3.5\" y=\"3.5\" width=\"7.5\" height=\"7.5\" rx=\"1.5\"/>\n<rect x=\"13\" y=\"3.5\" width=\"7.5\" height=\"7.5\" rx=\"1.5\"/>\n<rect x=\"3.5\" y=\"13\" width=\"7.5\" height=\"7.5\" rx=\"1.5\"/>\n<rect x=\"13\" y=\"13\" width=\"7.5\" height=\"7.5\" rx=\"1.5\"/>"
+    },
+    {
+      "name": "crm-delivery-zones",
+      "label": "Зоны доставки",
+      "file": "icons/icon-crm-delivery-zones.svg",
+      "inner": "<path d=\"M7 3.5c-2.4 0-4.3 1.9-4.3 4.2 0 3.3 4.3 7.8 4.3 7.8s4.3-4.5 4.3-7.8c0-2.3-1.9-4.2-4.3-4.2Z\"/>\n<circle cx=\"7\" cy=\"7.7\" r=\"1.3\"/>\n<path d=\"M17 10.5c-2.4 0-4.3 1.9-4.3 4.2 0 3.3 4.3 5.8 4.3 5.8s4.3-2.5 4.3-5.8c0-2.3-1.9-4.2-4.3-4.2Z\"/>\n<circle cx=\"17\" cy=\"14.7\" r=\"1.3\"/>"
+    },
+    {
+      "name": "crm-delivery",
+      "label": "Доставка",
+      "file": "icons/icon-crm-delivery.svg",
+      "inner": "<path d=\"M3.5 7.5a1 1 0 0 1 1-1H13a1 1 0 0 1 1 1v9.5H3.5z\"/>\n<path d=\"M14 10.5h3.5l3 3v3.5H14z\"/>\n<circle cx=\"7\" cy=\"17.5\" r=\"2\"/>\n<circle cx=\"17\" cy=\"17.5\" r=\"2\"/>"
+    },
+    {
+      "name": "crm-pickup",
+      "label": "Самовывоз",
+      "file": "icons/icon-crm-pickup.svg",
+      "inner": "<path d=\"M3 9.5 5 5h14l2 4.5\"/>\n<path d=\"M4 9.5V20.5h16V9.5\"/>\n<path d=\"M10 20.5V14h4v6.5\"/>"
+    }
+  ]
+}
