@@ -18,7 +18,7 @@ aibro-brand-assets/
 ├── README.md                     — этот файл
 │
 ├── logos/
-│   ├── aibro/                    — 4 SVG бренд (robot-icon-{light,dark} + favicon-{light,dark})
+│   ├── aibro/                    — 🟢 PRIMARY зелёный маскот (aibro-mascot.svg) + favicon-{light,dark} + circle-1024 (svg/transparent-svg/png)
 │   └── max/                      — 8 SVG MAX (glyph / light / dark / mono / circle / outline / brand-emerald)
 │
 ├── icons/                        — 110+ canonical SVG (stroke 1.8, 24×24, currentColor)
@@ -53,7 +53,7 @@ aibro-brand-assets/
 
 | Категория | Кол-во SVG |
 |---|---|
-| Aibro logos (light + dark) | 4 |
+| Aibro logos (mascot + favicons + circle) | 5 SVG + 1 PNG |
 | MAX logos (variants) | 8 |
 | Icons (из manifests, flat) | 80 |
 | Icons / ui-core | 30 |
@@ -117,7 +117,7 @@ aibro-brand-assets/
 
 ### Product canon (immutable)
 - **Tariff:** single 4 990 ₽/мес (no multi-tier, no add-ons)
-- **Trial:** 5 days без карты
+- **Trial:** 5 дней (с привязкой карты, card-on-file)
 - **Platform:** ONLY MAX messenger (отдельный мессенджер группы VK, свой бренд)
 - **CRM-pivot:** заказы + записи + мини-CRM. Оплата клиента — мимо нас (не платёжный агент).
 - **Brand wordmark:** «СММ АЙБРО» (Cyrillic, Onest Bold, tracking -0.02em). Never «Aibro» / «AIBRO».

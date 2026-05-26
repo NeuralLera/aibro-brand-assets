@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="СММ АЙБРО — friendly emerald robot mascot">
+  <defs>
+    <linearGradient id="m-head" x1="0.18" y1="0.08" x2="0.92" y2="0.96">
+      <stop offset="0" stop-color="#34d399"></stop>
+      <stop offset="0.50" stop-color="#10b981"></stop>
+      <stop offset="1" stop-color="#047857"></stop>
+    </linearGradient>
+    <radialGradient id="m-sheen" cx="0.30" cy="0.18" r="0.55">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.42"></stop>
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0.06"></stop>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="m-shade" cx="0.82" cy="0.92" r="0.70">
+      <stop offset="0" stop-color="#064e3b" stop-opacity="0.42"></stop>
+      <stop offset="1" stop-color="#064e3b" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id="m-ball" x1="0.15" y1="0.10" x2="0.85" y2="0.95">
+      <stop offset="0" stop-color="#6ee7b7"></stop>
+      <stop offset="0.55" stop-color="#10b981"></stop>
+      <stop offset="1" stop-color="#047857"></stop>
+    </linearGradient>
+    <linearGradient id="m-ear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#10b981"></stop>
+      <stop offset="1" stop-color="#047857"></stop>
+    </linearGradient>
+    <clipPath id="m-clip">
+      <rect x="26" y="46" width="140" height="124" rx="42" ry="42"></rect>
+    </clipPath>
+  </defs>
+
+  <g>
+    <line x1="96" y1="48" x2="96" y2="28" stroke="#047857" stroke-width="5" stroke-linecap="round"></line>
+    <circle cx="96" cy="22" r="7.5" fill="url(#m-ball)" stroke="#047857" stroke-opacity="0.55" stroke-width="1.5"></circle>
+    <circle cx="93.6" cy="19.5" r="2" fill="#ffffff" fill-opacity="0.75"></circle>
+  </g>
+
+  <g>
+    <rect x="12" y="92" width="20" height="38" rx="10" fill="url(#m-ear)" stroke="#047857" stroke-opacity="0.55" stroke-width="2"></rect>
+    <rect x="17" y="97" width="10" height="28" rx="5" fill="#34d399" opacity="0.55"></rect>
+  </g>
+  <g>
+    <rect x="160" y="92" width="20" height="38" rx="10" fill="url(#m-ear)" stroke="#047857" stroke-opacity="0.55" stroke-width="2"></rect>
+    <rect x="165" y="97" width="10" height="28" rx="5" fill="#34d399" opacity="0.55"></rect>
+  </g>
+
+  <rect x="26" y="46" width="140" height="124" rx="42" ry="42" fill="url(#m-head)" stroke="#047857" stroke-width="3" stroke-linejoin="round"></rect>
+
+  <g clip-path="url(#m-clip)">
+    <rect x="26" y="46" width="140" height="124" fill="url(#m-sheen)"></rect>
+    <rect x="26" y="46" width="140" height="124" fill="url(#m-shade)"></rect>
+  </g>
+
+  <rect x="40" y="78" width="112" height="68" rx="30" ry="30" fill="none" stroke="#047857" stroke-opacity="0.18" stroke-width="1.5"></rect>
+
+  <g>
+    <circle cx="74" cy="102" r="15" fill="#ffffff" stroke="#047857" stroke-opacity="0.40" stroke-width="1.8"></circle>
+    <circle cx="118" cy="102" r="15" fill="#ffffff" stroke="#047857" stroke-opacity="0.40" stroke-width="1.8"></circle>
+    <circle cx="75.8" cy="100" r="6.5" fill="#0a0d0c"></circle>
+    <circle cx="119.8" cy="100" r="6.5" fill="#0a0d0c"></circle>
+    <circle cx="78" cy="97.8" r="2.1" fill="#ffffff"></circle>
+    <circle cx="122" cy="97.8" r="2.1" fill="#ffffff"></circle>
+  </g>
+
+  <path d="M 84 132 Q 96 144 108 132" fill="none" stroke="#ffffff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
