@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Счета — документ с суммовыми строками">
+<path d="M6.5 3.5 H14 L18.5 8 V19 A1.5 1.5 0 0 1 17 20.5 H6.5 A1.5 1.5 0 0 1 5 19 V5 A1.5 1.5 0 0 1 6.5 3.5 Z"></path>
+<path d="M14 3.5 V6.5 A1.5 1.5 0 0 0 15.5 8 H18.5"></path>
+<path d="M8 11.5 H11"></path>
+<path d="M13.5 11.5 H15.5"></path>
+<path d="M8 14.5 H11"></path>
+<path d="M13.5 14.5 H15.5"></path>
+<path d="M8 17.5 H11"></path>
+</svg>

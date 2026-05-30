@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Слияние дублей — ветки сходятся в одну">
+<circle cx="7" cy="5" r="1.7"></circle>
+<circle cx="17" cy="5" r="1.7"></circle>
+<path d="M7 6.7 V9 C7 11.8 9.2 12.7 12 12.7 C14.8 12.7 17 11.8 17 9 V6.7"></path>
+<path d="M12 12.7 V19.5"></path>
+<path d="M9.4 17 L12 19.6 L14.6 17"></path>
+</svg>
