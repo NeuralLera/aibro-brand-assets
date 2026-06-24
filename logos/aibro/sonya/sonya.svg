@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="С.О.Н.Я — ИИ-ассистентка СММ АЙБРО">
+  <defs>
+    <radialGradient id="sonya-warm-glow-x91" cx="50%" cy="44%" r="58%">
+      <stop offset="0" stop-color="#A7F3D0" stop-opacity="0.55"></stop>
+      <stop offset="0.55" stop-color="#6EE7B7" stop-opacity="0.16"></stop>
+      <stop offset="1" stop-color="#10B981" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id="sonya-hair-grad-x91" x1="0.18" y1="0.05" x2="0.85" y2="0.95">
+      <stop offset="0" stop-color="#6EE7B7"></stop>
+      <stop offset="0.42" stop-color="#34D399"></stop>
+      <stop offset="0.78" stop-color="#10B981"></stop>
+      <stop offset="1" stop-color="#059669"></stop>
+    </linearGradient>
+    <linearGradient id="sonya-hair-back-grad-x91" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#34D399"></stop>
+      <stop offset="0.55" stop-color="#10B981"></stop>
+      <stop offset="1" stop-color="#047857"></stop>
+    </linearGradient>
+    <linearGradient id="sonya-hair-shine-x91" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#ECFDF5" stop-opacity="0.55"></stop>
+      <stop offset="0.55" stop-color="#ECFDF5" stop-opacity="0"></stop>
+    </linearGradient>
+    <linearGradient id="sonya-skin-grad-x91" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#FFF1DD"></stop>
+      <stop offset="0.55" stop-color="#FFE5C7"></stop>
+      <stop offset="1" stop-color="#FBD3AC"></stop>
+    </linearGradient>
+    <radialGradient id="sonya-cheek-grad-x91" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FB7185" stop-opacity="0.55"></stop>
+      <stop offset="0.6" stop-color="#FB7185" stop-opacity="0.18"></stop>
+      <stop offset="1" stop-color="#FB7185" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id="sonya-turtleneck-grad-x91" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#10B981"></stop>
+      <stop offset="1" stop-color="#047857"></stop>
+    </linearGradient>
+    <linearGradient id="sonya-headset-grad-x91" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"></stop>
+      <stop offset="1" stop-color="#D1FAE5"></stop>
+    </linearGradient>
+    <radialGradient id="sonya-earcup-grad-x91" cx="35%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#FFFFFF"></stop>
+      <stop offset="0.55" stop-color="#ECFDF5"></stop>
+      <stop offset="1" stop-color="#A7F3D0"></stop>
+    </radialGradient>
+    <radialGradient id="sonya-eye-grad-x91" cx="40%" cy="35%" r="80%">
+      <stop offset="0" stop-color="#1F2937"></stop>
+      <stop offset="1" stop-color="#064E3B"></stop>
+    </radialGradient>
+  </defs>
+
+  
+  <circle cx="120" cy="118" r="108" fill="url(#sonya-warm-glow-x91)"></circle>
+
+  
+  <path d="M 40 232 C 56 198, 86 188, 120 188 C 154 188, 184 198, 200 232 L 200 240 L 40 240 Z" fill="url(#sonya-turtleneck-grad-x91)"></path>
+  <path d="M 76 200 C 96 192, 144 192, 164 200 C 150 198, 130 196, 120 196 C 110 196, 90 198, 76 200 Z" fill="#A7F3D0" opacity="0.55"></path>
+
+  
+  <path d="M 52 138 C 48 96, 68 52, 108 44 C 124 41, 138 41, 152 44 C 188 52, 196 96, 192 138 L 196 178 C 198 196, 184 206, 168 200 C 156 196, 150 188, 150 178 L 150 168 L 90 168 L 90 178 C 90 188, 84 196, 72 200 C 56 206, 42 196, 44 178 Z" fill="url(#sonya-hair-back-grad-x91)"></path>
+
+  
+  <path d="M 78 70 C 92 56, 148 56, 162 70 C 152 64, 88 64, 78 70 Z" fill="url(#sonya-hair-shine-x91)"></path>
+
+  
+  <path d="M 76 116 C 76 86, 96 70, 120 70 C 144 70, 164 86, 164 116 C 164 142, 156 162, 142 174 C 134 181, 126 184, 120 184 C 114 184, 106 181, 98 174 C 84 162, 76 142, 76 116 Z" fill="url(#sonya-skin-grad-x91)"></path>
+
+  
+  <path d="M 86 150 C 96 168, 108 180, 120 184 C 132 180, 144 168, 154 150 C 146 162, 134 170, 120 170 C 106 170, 94 162, 86 150 Z" fill="#E8A879" opacity="0.20"></path>
+
+  
+  <path d="M 70 122 C 64 122, 60 128, 62 136 C 64 144, 70 148, 76 146 Z" fill="#FBD3AC"></path>
+  <path d="M 68 130 C 70 132, 72 132, 73 134" stroke="#E8A879" stroke-width="1.2" fill="none" stroke-linecap="round"></path>
+
+  
+  <path d="M 76 102 C 74 78, 92 60, 120 58 C 150 56, 168 76, 168 104 C 168 100, 162 96, 154 95 C 142 93, 124 96, 110 102 C 100 106, 88 110, 80 110 C 76 110, 74 108, 76 102 Z" fill="url(#sonya-hair-grad-x91)"></path>
+  <path d="M 100 90 C 116 84, 144 84, 162 92 C 152 86, 134 84, 118 88 C 108 90, 102 92, 100 90 Z" fill="#ECFDF5" opacity="0.35"></path>
+  <path d="M 68 110 C 60 116, 58 126, 62 134 C 60 124, 64 116, 72 112 Z" fill="url(#sonya-hair-back-grad-x91)"></path>
+
+  
+  <path d="M 58 108 C 58 64, 100 44, 140 50 C 172 55, 188 80, 186 110" fill="none" stroke="url(#sonya-headset-grad-x91)" stroke-width="6" stroke-linecap="round"></path>
+  <path d="M 60 106 C 62 70, 100 52, 140 56 C 168 60, 184 82, 184 108" fill="none" stroke="#10B981" stroke-opacity="0.18" stroke-width="1.2" stroke-linecap="round"></path>
+
+  
+  <ellipse cx="58" cy="124" rx="13" ry="17" fill="url(#sonya-earcup-grad-x91)" stroke="#10B981" stroke-opacity="0.30" stroke-width="1.2"></ellipse>
+  <ellipse cx="58" cy="124" rx="8" ry="11" fill="#10B981" opacity="0.18"></ellipse>
+  <ellipse cx="55" cy="120" rx="2.5" ry="3.5" fill="#FFFFFF" opacity="0.75"></ellipse>
+
+  
+  <ellipse cx="186" cy="120" rx="6" ry="10" fill="url(#sonya-earcup-grad-x91)" stroke="#10B981" stroke-opacity="0.25" stroke-width="1.2"></ellipse>
+
+  
+  <path d="M 60 138 C 58 156, 70 172, 90 172 L 102 168" fill="none" stroke="#FFFFFF" stroke-width="4.2" stroke-linecap="round"></path>
+  <path d="M 60 138 C 58 156, 70 172, 90 172 L 102 168" fill="none" stroke="#10B981" stroke-opacity="0.22" stroke-width="1.4" stroke-linecap="round"></path>
+  <ellipse cx="104" cy="167" rx="6.5" ry="5" fill="url(#sonya-headset-grad-x91)" stroke="#10B981" stroke-opacity="0.35" stroke-width="1.2"></ellipse>
+  <ellipse cx="102.5" cy="165.5" rx="2.4" ry="1.6" fill="#FFFFFF" opacity="0.8"></ellipse>
+  <circle cx="64" cy="148" r="2.2" fill="#10B981"></circle>
+  <circle cx="63.4" cy="147.4" r="0.8" fill="#A7F3D0"></circle>
+
+  
+  <path d="M 92 108 C 99 104, 110 104, 116 108" stroke="#7C4A2D" stroke-width="2.6" fill="none" stroke-linecap="round"></path>
+  <path d="M 134 108 C 140 104, 151 104, 158 108" stroke="#7C4A2D" stroke-width="2.6" fill="none" stroke-linecap="round"></path>
+
+  
+  <ellipse cx="92" cy="142" rx="12" ry="8" fill="url(#sonya-cheek-grad-x91)"></ellipse>
+  <ellipse cx="148" cy="142" rx="12" ry="8" fill="url(#sonya-cheek-grad-x91)"></ellipse>
+
+  
+  <path d="M 88 124 C 96 116, 116 116, 122 124 C 116 132, 96 132, 88 124 Z" fill="#FFFFFF"></path>
+  <path d="M 128 124 C 134 116, 154 116, 162 124 C 154 132, 134 132, 128 124 Z" fill="#FFFFFF"></path>
+  <circle cx="105" cy="125" r="6.2" fill="url(#sonya-eye-grad-x91)"></circle>
+  <circle cx="145" cy="125" r="6.2" fill="url(#sonya-eye-grad-x91)"></circle>
+  <circle cx="105" cy="125" r="2.8" fill="#10B981" opacity="0.55"></circle>
+  <circle cx="145" cy="125" r="2.8" fill="#10B981" opacity="0.55"></circle>
+  <circle cx="107.2" cy="122.5" r="1.8" fill="#FFFFFF"></circle>
+  <circle cx="147.2" cy="122.5" r="1.8" fill="#FFFFFF"></circle>
+  <circle cx="103.5" cy="127" r="0.9" fill="#FFFFFF" opacity="0.85"></circle>
+  <circle cx="143.5" cy="127" r="0.9" fill="#FFFFFF" opacity="0.85"></circle>
+
+  
+  <path d="M 88 124 C 96 116, 116 116, 122 124" stroke="#3B2A1F" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.85"></path>
+  <path d="M 128 124 C 134 116, 154 116, 162 124" stroke="#3B2A1F" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.85"></path>
+  <path d="M 88 124 L 84 121" stroke="#3B2A1F" stroke-width="1.6" stroke-linecap="round"></path>
+  <path d="M 162 124 L 166 121" stroke="#3B2A1F" stroke-width="1.6" stroke-linecap="round"></path>
+
+  
+  <path d="M 120 138 C 122 142, 122 146, 120 148 C 118 149, 117 148, 117 147" stroke="#C98859" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.75"></path>
+
+  
+  <path d="M 108 158 C 113 165, 127 165, 132 158 C 127 162, 113 162, 108 158 Z" fill="#7C2D2D"></path>
+  <path d="M 111 159 C 116 162, 124 162, 129 159 C 124 160.5, 116 160.5, 111 159 Z" fill="#FFFFFF" opacity="0.95"></path>
+  <path d="M 106 156 C 108 158, 110 159, 112 159" stroke="#7C2D2D" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+  <path d="M 134 156 C 132 158, 130 159, 128 159" stroke="#7C2D2D" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+  <path d="M 110 163 C 116 165, 124 165, 130 163" stroke="#D97757" stroke-width="1.3" fill="none" stroke-linecap="round" opacity="0.7"></path>
+
+  
+  <path d="M 156 70 L 158 76 L 164 78 L 158 80 L 156 86 L 154 80 L 148 78 L 154 76 Z" fill="#ECFDF5" opacity="0.9"></path>
+</svg>
