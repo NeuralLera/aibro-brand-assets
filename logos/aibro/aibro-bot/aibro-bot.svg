@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 620" width="620" height="620" role="img" aria-label="АЙБРО Сервис — системный бот">
+  <defs>
+    <linearGradient id="aibro-bot-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2F4F6"></stop>
+      <stop offset="0.18" stop-color="#E1E5EA"></stop>
+      <stop offset="0.48" stop-color="#B9C1CA"></stop>
+      <stop offset="0.78" stop-color="#8A949F"></stop>
+      <stop offset="1" stop-color="#6B7480"></stop>
+    </linearGradient>
+    <linearGradient id="aibro-bot-sheen" x1="0" y1="0" x2="1" y2="0.6">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"></stop>
+      <stop offset="0.35" stop-color="#ffffff" stop-opacity="0.22"></stop>
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0"></stop>
+      <stop offset="0.85" stop-color="#ffffff" stop-opacity="0.10"></stop>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"></stop>
+    </linearGradient>
+    <linearGradient id="aibro-bot-topbevel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"></stop>
+      <stop offset="0.7" stop-color="#ffffff" stop-opacity="0"></stop>
+    </linearGradient>
+    <linearGradient id="aibro-bot-chinShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0"></stop>
+      <stop offset="1" stop-color="#1a2028" stop-opacity="0.22"></stop>
+    </linearGradient>
+    <linearGradient id="aibro-bot-visorBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0e1217"></stop>
+      <stop offset="0.5" stop-color="#1b232c"></stop>
+      <stop offset="1" stop-color="#0a0d11"></stop>
+    </linearGradient>
+    <linearGradient id="aibro-bot-visorScan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#10b981" stop-opacity="0"></stop>
+      <stop offset="0.18" stop-color="#10b981" stop-opacity="0.55"></stop>
+      <stop offset="0.5" stop-color="#6EE7B7" stop-opacity="0.95"></stop>
+      <stop offset="0.82" stop-color="#10b981" stop-opacity="0.55"></stop>
+      <stop offset="1" stop-color="#10b981" stop-opacity="0"></stop>
+    </linearGradient>
+    <linearGradient id="aibro-bot-visorGloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.16"></stop>
+      <stop offset="0.45" stop-color="#ffffff" stop-opacity="0"></stop>
+    </linearGradient>
+    <linearGradient id="aibro-bot-cup" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#5C6670"></stop>
+      <stop offset="0.5" stop-color="#3F4750"></stop>
+      <stop offset="1" stop-color="#272D34"></stop>
+    </linearGradient>
+    <radialGradient id="aibro-bot-cuppad" cx="0.5" cy="0.5" r="0.55">
+      <stop offset="0" stop-color="#2A3038"></stop>
+      <stop offset="0.7" stop-color="#161A1F"></stop>
+      <stop offset="1" stop-color="#0A0D11"></stop>
+    </radialGradient>
+    <linearGradient id="aibro-bot-band" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9AA3AE"></stop>
+      <stop offset="0.5" stop-color="#6E7884"></stop>
+      <stop offset="1" stop-color="#454C56"></stop>
+    </linearGradient>
+    <radialGradient id="aibro-bot-led" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#D1FAE5"></stop>
+      <stop offset="0.35" stop-color="#34D399"></stop>
+      <stop offset="0.85" stop-color="#10b981"></stop>
+      <stop offset="1" stop-color="#047857"></stop>
+    </radialGradient>
+    <radialGradient id="aibro-bot-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#34D399" stop-opacity="0.6"></stop>
+      <stop offset="0.6" stop-color="#10b981" stop-opacity="0.15"></stop>
+      <stop offset="1" stop-color="#10b981" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id="aibro-bot-antenna" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C6CDD5"></stop>
+      <stop offset="1" stop-color="#6B7480"></stop>
+    </linearGradient>
+    <clipPath id="aibro-bot-visorClip">
+      <rect x="170" y="240" width="280" height="62" rx="22" ry="22"></rect>
+    </clipPath>
+  </defs>
+
+  
+  <ellipse cx="310" cy="556" rx="150" ry="14" fill="#0e0f12" opacity="0.14"></ellipse>
+
+  
+  <rect x="305" y="60" width="10" height="60" rx="3" fill="url(#aibro-bot-antenna)"></rect>
+  <circle cx="310" cy="62" r="28" fill="url(#aibro-bot-glow)"></circle>
+  <circle cx="310" cy="62" r="12" fill="url(#aibro-bot-led)"></circle>
+  <circle cx="306" cy="58" r="3.5" fill="#ECFDF5" opacity="0.9"></circle>
+
+  
+  <path d="M 132 240 C 132 158, 200 110, 310 110 C 420 110, 488 158, 488 240" fill="none" stroke="url(#aibro-bot-band)" stroke-width="18" stroke-linecap="round"></path>
+  <path d="M 152 232 C 158 168, 220 128, 310 126 C 400 128, 462 168, 468 232" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.45"></path>
+
+  
+  <rect x="130" y="138" width="360" height="370" rx="78" ry="74" fill="url(#aibro-bot-body)"></rect>
+  <rect x="130" y="138" width="360" height="180" rx="78" ry="74" fill="url(#aibro-bot-topbevel)"></rect>
+  <rect x="130" y="138" width="360" height="370" rx="78" ry="74" fill="url(#aibro-bot-sheen)"></rect>
+
+  
+  <line x1="310" y1="412" x2="310" y2="486" stroke="#0e0f12" stroke-width="1" opacity="0.10"></line>
+  <circle cx="220" cy="470" r="3.2" fill="#0e0f12" opacity="0.22"></circle>
+  <circle cx="220" cy="470" r="1.6" fill="#ffffff" opacity="0.4"></circle>
+  <circle cx="400" cy="470" r="3.2" fill="#0e0f12" opacity="0.22"></circle>
+  <circle cx="400" cy="470" r="1.6" fill="#ffffff" opacity="0.4"></circle>
+
+  
+  <rect x="130" y="138" width="360" height="370" rx="78" ry="74" fill="url(#aibro-bot-chinShade)"></rect>
+
+  
+  <g opacity="0.32" fill="#1a2028">
+    <rect x="186" y="372" width="36" height="3" rx="1.5"></rect>
+    <rect x="186" y="380" width="28" height="3" rx="1.5"></rect>
+    <rect x="186" y="388" width="22" height="3" rx="1.5"></rect>
+  </g>
+  <g opacity="0.32" fill="#1a2028">
+    <rect x="398" y="372" width="36" height="3" rx="1.5"></rect>
+    <rect x="406" y="380" width="28" height="3" rx="1.5"></rect>
+    <rect x="412" y="388" width="22" height="3" rx="1.5"></rect>
+  </g>
+
+  
+  <circle cx="172" cy="246" r="14" fill="url(#aibro-bot-glow)"></circle>
+  <circle cx="172" cy="246" r="5.5" fill="url(#aibro-bot-led)"></circle>
+  <circle cx="170" cy="244" r="1.8" fill="#ECFDF5"></circle>
+
+  
+  <rect x="166" y="236" width="288" height="70" rx="26" ry="26" fill="#0a0d11" opacity="0.55"></rect>
+  <rect x="170" y="240" width="280" height="62" rx="22" ry="22" fill="url(#aibro-bot-visorBase)"></rect>
+  <rect x="178" y="262" width="264" height="18" rx="9" fill="url(#aibro-bot-visorScan)"></rect>
+  <circle cx="248" cy="271" r="6.5" fill="#ECFDF5"></circle>
+  <circle cx="248" cy="271" r="3.2" fill="#10b981"></circle>
+  <circle cx="372" cy="271" r="6.5" fill="#ECFDF5"></circle>
+  <circle cx="372" cy="271" r="3.2" fill="#10b981"></circle>
+  <rect x="282" y="268" width="60" height="6" rx="3" fill="#6EE7B7" opacity="0.85"></rect>
+  <g clip-path="url(#aibro-bot-visorClip)">
+    <rect x="170" y="240" width="280" height="30" fill="url(#aibro-bot-visorGloss)"></rect>
+    <path d="M 196 244 L 240 244 L 220 264 L 176 264 Z" fill="#ffffff" opacity="0.10"></path>
+  </g>
+  <rect x="170" y="240" width="280" height="62" rx="22" ry="22" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"></rect>
+  <rect x="170.5" y="240.5" width="279" height="61" rx="21.5" ry="21.5" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="1"></rect>
+
+  
+  <g>
+    <rect x="118" y="232" width="22" height="36" rx="6" fill="url(#aibro-bot-band)"></rect>
+    <ellipse cx="116" cy="298" rx="46" ry="62" fill="url(#aibro-bot-cup)"></ellipse>
+    <ellipse cx="116" cy="298" rx="34" ry="48" fill="url(#aibro-bot-cuppad)"></ellipse>
+    <ellipse cx="116" cy="298" rx="46" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.2"></ellipse>
+    <path d="M 102 340 Q 70 396, 132 432 L 178 444" fill="none" stroke="#3F4750" stroke-width="7" stroke-linecap="round"></path>
+    <path d="M 102 340 Q 70 396, 132 432 L 178 444" fill="none" stroke="#ffffff" stroke-opacity="0.22" stroke-width="1.5" stroke-linecap="round"></path>
+    <ellipse cx="186" cy="446" rx="14" ry="9" fill="#1b2128"></ellipse>
+    <ellipse cx="186" cy="446" rx="14" ry="9" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1"></ellipse>
+    <g fill="#34D399" opacity="0.8">
+      <circle cx="180" cy="446" r="1.2"></circle>
+      <circle cx="186" cy="443" r="1.2"></circle>
+      <circle cx="186" cy="449" r="1.2"></circle>
+      <circle cx="192" cy="446" r="1.2"></circle>
+    </g>
+  </g>
+
+  
+  <g>
+    <rect x="480" y="232" width="22" height="36" rx="6" fill="url(#aibro-bot-band)"></rect>
+    <ellipse cx="504" cy="298" rx="46" ry="62" fill="url(#aibro-bot-cup)"></ellipse>
+    <ellipse cx="504" cy="298" rx="34" ry="48" fill="url(#aibro-bot-cuppad)"></ellipse>
+    <ellipse cx="504" cy="298" rx="46" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.2"></ellipse>
+    <circle cx="504" cy="262" r="9" fill="url(#aibro-bot-glow)"></circle>
+    <circle cx="504" cy="262" r="3.2" fill="url(#aibro-bot-led)"></circle>
+  </g>
+
+  
+  <path d="M 158 170 C 174 154, 210 142, 244 142 L 240 200 C 212 206, 188 220, 174 240 Z" fill="#ffffff" opacity="0.16"></path>
+</svg>
