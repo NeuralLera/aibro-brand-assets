@@ -1,0 +1,5 @@
+<svg width="512" height="512" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Пульс Фитнес">
+  <circle cx="60" cy="60" r="58" fill="#14B8C4"></circle>
+  <path d="M18 64 H46 L53 56 L60 70 L69 28 L79 92 L86 54 L92 64 H102" fill="none" stroke="#FFFFFF" stroke-width="9.5" stroke-linecap="round" stroke-linejoin="round"></path>
+  <circle cx="69" cy="28" r="7.5" fill="#F26A1B"></circle>
+</svg>
